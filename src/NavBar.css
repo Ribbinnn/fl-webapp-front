@@ -1,0 +1,49 @@
+/* @import '~antd/dist/antd.css'; */
+.ant-menu:not(.ant-menu-horizontal),
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected{
+  background: transparent;
+  color: #58595b;
+}
+.ant-menu-submenu-arrow::before,
+.ant-menu-submenu-arrow::after{
+    background-color: #58595b;
+}
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item::after,
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-submenu::after {
+  border-right: none !important;
+  transition: none !important;
+}
+.ant-menu {
+  background-color: white;
+}
+.ant-menu-submenu-title:hover,
+.ant-menu-submenu-selected,
+.ant-menu-submenu-selected:hover {
+  color: #de5c8e !important;
+}
+
+.ant-menu .ant-menu-inline-item:hover,
+.ant-menu .ant-menu-inline-submenu:hover,
+.ant-menu .ant-menu-item:hover,
+.ant-menu .ant-menu-submenu:hover {
+  color: #de5c8e;
+}
+.ant-menu .ant-menu-highlight {
+  color: #de5c8e;
+}
+.ant-menu .ant-menu-item:focus {
+  background-color: #f8e1ea;
+}
+.ant-menu .ant-menu-submenu-active {
+  color: none !important;
+}
+
+.ant-menu-submenu:hover .ant-menu-submenu-arrow::before,
+.ant-menu-submenu:hover .ant-menu-submenu-arrow::after,
+.ant-menu-submenu-selected .ant-menu-submenu-arrow::before,
+.ant-menu-submenu-selected .ant-menu-submenu-arrow::after,
+.ant-menu-submenu-title:hover .ant-menu-submenu-arrow::before,
+.ant-menu-submenu-title:hover .ant-menu-submenu-arrow::after {
+  background-color: #de5c8e;
+}
+
