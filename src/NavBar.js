@@ -1,6 +1,6 @@
 import React from "react";
 import "antd/dist/antd.css";
-import { Menu } from "antd";
+import { Menu, Button } from "antd";
 import {
   ControlOutlined,
   HistoryOutlined,
@@ -9,7 +9,7 @@ import {
   HomeOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import "./NavBar.css"
+import "./LayOut.css"
 const { SubMenu } = Menu;
 
 export default class NavBar extends React.Component {
@@ -18,8 +18,8 @@ export default class NavBar extends React.Component {
     return (
       <div style={{ width: 180 }}>
         <Menu
-          defaultSelectedKeys={["1"]}
-          defaultOpenKeys={["sub1"]}
+          defaultSelectedKeys={["home"]}
+          defaultOpenKeys={["record"]}
           mode="inline"
           style={{height:'100vh'}}
         >
