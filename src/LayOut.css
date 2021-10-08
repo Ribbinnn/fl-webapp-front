@@ -15,6 +15,7 @@
 .ant-menu {
   background-color: white;
 }
+
 .ant-menu-submenu-title:hover,
 .ant-menu-submenu-selected,
 .ant-menu-submenu-selected:hover {
@@ -61,4 +62,10 @@
   align-items:center;
   margin-right: 10;
   color: white;
+}
+
+.layout-ctn{
+  display:flex;
+  flex-direction:column;
+  background-color:#F0F2F5;
 }
