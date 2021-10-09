@@ -36,21 +36,18 @@ export default function UploadRecord () {
           <Step key={item.title} title={item.title}/>
         ))}
       </Steps>
-      <div className="steps-content">{steps[current].content}</div>
+      {/* 
+      ----- add content here --------
+      */}
       <div className="steps-action">
-        {current < steps.length - 1 && (
-          <Button type="primary" onClick={() => next()}>
-            Next
-          </Button>
-        )}
-        {current === steps.length - 1 && (
-          <Button type="primary" onClick={() => message.success('Processing complete!')}>
-            Done
-          </Button>
-        )}
         {current > 0 && (
-          <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
-            Previous
+          <Button className="primary-btn" style={{ margin: '0 8px' }} onClick={() => prev()}>
+            Back
+          </Button>
+        )}
+        {current < steps.length  && (
+          <Button className="primary-btn" onClick={() => next()}>
+            Next
           </Button>
         )}
       </div>
