@@ -16,12 +16,12 @@ const { SubMenu } = Menu;
 export default function NavBar() {
   const history = useHistory();
   return (
-    <div style={{ width: 180 }}>
+    <div className="navbar" style={{ width: 200, backgroundColor:"white"}}>
       <Menu
         defaultSelectedKeys={["home"]}
         defaultOpenKeys={["record"]}
         mode="inline"
-        style={{ height: "100vh" }}
+        style={{height:'100vh'}}
       >
         <Menu.Item
           key="home"
