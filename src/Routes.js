@@ -4,6 +4,7 @@ import Home from "./Home";
 import Login from "./Login";
 import NavBar from "./NavBar";
 import Header from "./Header";
+import UploadRecord from "./UploadRecord"
 
 import "./LayOut.css";
 
@@ -23,7 +24,7 @@ function Routes() {
               <Home />
             </Route>
             <Route path="/record/upload" exact>
-              {Upload}
+              <UploadRecord/>
             </Route>
             <Route path="/record/myrecord" exact>
               {MyRecord}
