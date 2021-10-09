@@ -48,6 +48,7 @@
 }
 
 #header{
+  width: 100%;
   background-color: #de5c8e;
   height:50px;
   display: flex;
@@ -69,3 +70,4 @@
   flex-direction:column;
   background-color:#F0F2F5;
 }
+
