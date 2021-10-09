@@ -88,16 +88,14 @@
 .ant-steps-item-finish
   > .ant-steps-item-container
   > .ant-steps-item-content
-  > .ant-steps-item-title {
-  color: #de5c8e;
-}
-
-.ant-steps-item-process
+  > .ant-steps-item-title,
+  .ant-steps-item-process
   > .ant-steps-item-container
   > .ant-steps-item-content
   > .ant-steps-item-title {
   color: #de5c8e;
 }
+
 .ant-steps-item-container > .ant-steps-item-content {
   margin-top: 40px;
   margin-left: 15px;
@@ -141,7 +139,7 @@
   height: 40px;
 }
 .ant-steps.ant-steps-horizontal.ant-steps-label-vertical.ant-steps-dot {
-  width: 85%;
+  width: 75%;
   margin: auto;
 }
 
