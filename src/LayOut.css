@@ -71,3 +71,78 @@
   background-color:#F0F2F5;
 }
 
+.content{
+  background-color:white; 
+  padding: 40px;
+  margin: 25px; 
+  width:100%;
+}
+
+.ant-steps-item-finish
+  > .ant-steps-item-container
+  > .ant-steps-item-tail::after{
+  background-color: #de5c8e !important;
+}
+
+.ant-steps-item-finish
+  > .ant-steps-item-container
+  > .ant-steps-item-content
+  > .ant-steps-item-title{
+    color: #de5c8e;
+  }
+
+  .ant-steps-item-process
+  > .ant-steps-item-container
+  > .ant-steps-item-content
+  > .ant-steps-item-title{
+    color: #de5c8e;
+  }
+.ant-steps-item-container
+  > .ant-steps-item-content{
+    margin-top: 40px;
+    margin-left: 15px;
+  }
+
+.ant-steps-item-wait
+  > .ant-steps-item-container
+  > .ant-steps-item-tail::after,
+  .ant-steps-item-process
+  > .ant-steps-item-container
+  > .ant-steps-item-tail::after,
+  .ant-steps-item-finish
+  > .ant-steps-item-container
+  > .ant-steps-item-tail::after{
+  background-color: #C4C4C4 ;
+  height: 2px;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.ant-steps-item-wait
+  > .ant-steps-item-container
+  > .ant-steps-item-icon
+  > .ant-steps-icon
+  >.ant-steps-icon-dot{
+    background-color: #C4C4C4;
+    width: 40px;
+    height: 40px;
+  }
+
+.ant-steps-item-process
+  > .ant-steps-item-container
+  > .ant-steps-item-icon
+  > .ant-steps-icon
+  >.ant-steps-icon-dot,
+  .ant-steps-item-finish
+  > .ant-steps-item-container
+  > .ant-steps-item-icon
+  > .ant-steps-icon
+  >.ant-steps-icon-dot{
+  background-color: #de5c8e;
+  width: 40px;
+  height: 40px;
+}
+.ant-steps.ant-steps-horizontal.ant-steps-label-vertical.ant-steps-dot{
+  width: 85%;
+  margin: auto;
+}
