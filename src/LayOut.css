@@ -1,11 +1,12 @@
 .ant-menu:not(.ant-menu-horizontal),
-.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected{
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
   background: white;
   color: #58595b;
+  font-size: medium;
 }
 .ant-menu-submenu-arrow::before,
-.ant-menu-submenu-arrow::after{
-    background-color: #58595b;
+.ant-menu-submenu-arrow::after {
+  background-color: #58595b;
 }
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-item::after,
 .ant-menu:not(.ant-menu-horizontal) .ant-menu-submenu::after {
@@ -47,27 +48,110 @@
   background-color: #de5c8e;
 }
 
-#header{
+#header {
   width: 100%;
   background-color: #de5c8e;
-  height:50px;
+  height: 50px;
   display: flex;
   flex-direction: row;
-  align-items:center; 
-  justify-content:space-between;
+  align-items: center;
+  justify-content: space-between;
 }
 
-#right-pane{
-  display:flex; 
-  flex-direction:row;
-  align-items:center;
+#right-pane {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   margin-right: 10;
   color: white;
 }
 
-.layout-ctn{
-  display:flex;
-  flex-direction:column;
-  background-color:#F0F2F5;
+.layout-ctn {
+  display: flex;
+  flex-direction: column;
+  background-color: #f0f2f5;
 }
 
+.content {
+  background-color: white;
+  padding: 40px;
+  margin: 25px;
+  width: 100%;
+}
+
+.ant-steps-item-finish
+  > .ant-steps-item-container
+  > .ant-steps-item-tail::after {
+  background-color: #de5c8e !important;
+}
+
+.ant-steps-item-finish
+  > .ant-steps-item-container
+  > .ant-steps-item-content
+  > .ant-steps-item-title,
+  .ant-steps-item-process
+  > .ant-steps-item-container
+  > .ant-steps-item-content
+  > .ant-steps-item-title {
+  color: #de5c8e;
+}
+
+.ant-steps-item-container > .ant-steps-item-content {
+  margin-top: 40px;
+  margin-left: 15px;
+}
+
+.ant-steps-item-wait > .ant-steps-item-container > .ant-steps-item-tail::after,
+.ant-steps-item-process
+  > .ant-steps-item-container
+  > .ant-steps-item-tail::after,
+.ant-steps-item-finish
+  > .ant-steps-item-container
+  > .ant-steps-item-tail::after {
+  background-color: #c4c4c4;
+  height: 2px;
+  margin-top: 20px;
+  margin-left: 20px;
+}
+
+.ant-steps-item-wait
+  > .ant-steps-item-container
+  > .ant-steps-item-icon
+  > .ant-steps-icon
+  > .ant-steps-icon-dot {
+  background-color: #c4c4c4;
+  width: 40px;
+  height: 40px;
+}
+
+.ant-steps-item-process
+  > .ant-steps-item-container
+  > .ant-steps-item-icon
+  > .ant-steps-icon
+  > .ant-steps-icon-dot,
+.ant-steps-item-finish
+  > .ant-steps-item-container
+  > .ant-steps-item-icon
+  > .ant-steps-icon
+  > .ant-steps-icon-dot {
+  background-color: #de5c8e;
+  width: 40px;
+  height: 40px;
+}
+.ant-steps.ant-steps-horizontal.ant-steps-label-vertical.ant-steps-dot {
+  width: 75%;
+  margin: auto;
+}
+
+.primary-btn,
+.primary-btn:hover,
+.primary-btn:focus{
+  background-color: #de5c8e;
+  font-weight: 700;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: x-large;
+  min-height: 50px;
+  min-width: 100px;
+}

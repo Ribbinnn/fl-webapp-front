@@ -16,7 +16,7 @@ const { SubMenu } = Menu;
 export default function NavBar() {
   const history = useHistory();
   return (
-    <div className="navbar" style={{ width: 200, backgroundColor:"white"}}>
+    <div className="navbar" style={{ width: 250, backgroundColor:"white"}}>
       <Menu
         defaultSelectedKeys={["home"]}
         defaultOpenKeys={["record"]}
@@ -71,7 +71,7 @@ export default function NavBar() {
           key="admin"
           className="menuitem"
           icon={<ControlOutlined />}
-          style={{ marginTop: 20 }}
+          style={{ marginTop: 40 }}
         >
           Admin
         </Menu.Item>
