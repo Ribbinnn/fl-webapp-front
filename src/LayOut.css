@@ -71,3 +71,8 @@
   background-color:#F0F2F5;
 }
 
+.layout-ctn-nobg {
+  display:flex;
+  flex-direction:column;
+  height: 100%;
+}
