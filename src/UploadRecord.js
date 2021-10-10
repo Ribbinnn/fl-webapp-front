@@ -1,26 +1,41 @@
-import React, { useState } from 'react';
-import { Steps, Button, message } from 'antd';
+import React, { useState, useHistory } from "react";
+import { Steps, Button } from "antd";
 import "antd/dist/antd.css";
-import "./LayOut.css";
+import Completed from "./Completed"
+
 const { Step } = Steps;
 
 const steps = [
   {
-    title: 'Select Project',
-    content: 'First-content'
+    title: "Select Project",
+    content: "First-content",
   },
   {
-    title: 'Upload File',
-    content: 'Second-content'
+    title: "Upload File",
+    content: "Second-content",
   },
   {
-    title: 'Upload Completed',
-    content: 'Last-content'
-  }
+    title: "Upload Completed",
+    content: "Last-content",
+  },
 ];
 
-export default function UploadRecord () {
-    const [current, setCurrent] = useState(0);
+const btnList = [
+  { 
+    title: "Back to Home", 
+    destination: "/" 
+  }, 
+  { 
+    title: "Upload New Record", 
+    destination: "/record/upload" 
+  }, 
+  { 
+    title: "Go to My Record", 
+    destination: "/record/myrecord" 
+  }]
+
+export default function UploadRecord() {
+  const [current, setCurrent] = useState(0);
   const next = () => {
     setCurrent(current + 1);
   };
@@ -30,27 +45,31 @@ export default function UploadRecord () {
   };
 
   return (
-   <div className="content" >
-       <Steps progressDot current={current}>
-        {steps.map(item => (
-          <Step key={item.title} title={item.title}/>
+    <div className="content">
+      <Steps progressDot current={current}>
+        {steps.map((item) => (
+          <Step key={item.title} title={item.title} />
         ))}
       </Steps>
       {/* 
       ----- add content here --------
       */}
-      <div className="steps-action">
-        {current > 0 && (
-          <Button className="primary-btn" style={{ margin: '0 8px' }} onClick={() => prev()}>
+      {current === steps.length -1 &&
+      <Completed btnList={btnList} title="Upload Completed"/>}
+      {current < steps.length - 1 && (
+        <div className="steps-action">
+          <Button
+            className="primary-btn"
+            style={current > 0 ? null : { visibility: "hidden" }}
+            onClick={() => prev()}
+          >
             Back
           </Button>
-        )}
-        {current < steps.length  && (
           <Button className="primary-btn" onClick={() => next()}>
             Next
           </Button>
-        )}
-      </div>
-   </div>
+        </div>
+      )}
+    </div>
   );
-};
+}
