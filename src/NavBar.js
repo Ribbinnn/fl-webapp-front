@@ -10,7 +10,6 @@ import {
   HomeOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import "./LayOut.css";
 const { SubMenu } = Menu;
 
 export default function NavBar() {

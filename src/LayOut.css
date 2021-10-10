@@ -158,6 +158,20 @@
   justify-content: center;
 }
 
+.steps-action{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.btn-column{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 50px;
+}
+
 /* button --------------------- */
 .primary-btn,
 .primary-btn:hover,
@@ -171,6 +185,11 @@
   font-size: x-large;
   min-height: 50px;
   min-width: 100px;
+}
+
+.btn-column .primary-btn {
+  width: 300px;
+  margin-top: 10px;
 }
 
 [ant-click-animating-without-extra-node="true"]::after {
