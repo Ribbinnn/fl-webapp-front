@@ -15,10 +15,10 @@ function Routes() {
   const ViewHistory = () => <h1>This is view history component</h1>;
   return (
     <BrowserRouter>
-      <div className={/*if login*/ false ? "layout-ctn" : "layout-ctn-nobg"}>
-        {/*if login*/ false && <Header />}
+      <div className={/*if login*/ true ? "layout-ctn" : "layout-ctn-nobg"}>
+        {/*if login*/ true && <Header />}
         <div style={{ display: "flex", flexDirection: "row", height: "100%"}}>
-          {/*if login*/ false && <NavBar />}
+          {/*if login*/ true && <NavBar />}
           <Switch>
             <Route path="/" exact>
               <Home />
