@@ -11,7 +11,6 @@ import "./LayOut.css";
 
 function Routes() {
   const MyRecord = () => <h1>This is my record component</h1>;
-  const Upload = () => <h1>This is upload record component</h1>;
   const ViewHistory = () => <h1>This is view history component</h1>;
   return (
     <BrowserRouter>
