@@ -4,7 +4,6 @@ import "antd/dist/antd.css";
 import {
     LogoutOutlined
   } from "@ant-design/icons";
-import "./LayOut.css"
 
 export default function Header(){
     const logout = () => {
