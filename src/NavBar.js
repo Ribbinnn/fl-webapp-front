@@ -14,13 +14,22 @@ const { SubMenu } = Menu;
 
 export default function NavBar() {
   const history = useHistory();
+  const findSelected = () => {
+    let path = (window.location.pathname).slice(1).split("/")
+    if (path[0]==="") {return(["home"])}
+    if (path[0] === "record") {
+      if (path[1].includes("upload")) {return ["upload"]}
+      if (path[1].includes("myrecord")) {return ["myrecord"]}
+    }
+    return [path[0]]
+  }
   return (
-    <div className="navbar" style={{ width: 250, backgroundColor:"white"}}>
+    <div className="navbar" style={{ minWidth: 180, padding: 0, backgroundColor:"white", height:'calc(100vh - 50px)'}}>
       <Menu
-        defaultSelectedKeys={["home"]}
+        defaultSelectedKeys={findSelected}
         defaultOpenKeys={["record"]}
         mode="inline"
-        style={{height:'100vh'}}
+        style={{height:'100%', paddingTop:60}}
       >
         <Menu.Item
           key="home"
