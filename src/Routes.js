@@ -2,12 +2,12 @@ import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Home from "./Home";
 import Login from "./Login";
-import NavBar from "./NavBar";
-import Header from "./Header";
-import UploadRecord from "./UploadRecord"
-import Diagnosis from "./Diagnosis"
+import NavBar from "./layout/NavBar";
+import Header from "./layout/Header";
+import UploadRecord from "./record/UploadRecord"
+import Diagnosis from "./diagnosis/Diagnosis"
 
-import "./LayOut.css";
+import "./layout/LayOut.css";
 
 function Routes() {
   const MyRecord = () => <h1>This is my record component</h1>;
