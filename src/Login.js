@@ -26,7 +26,7 @@ function Login() {
                             <Form.Item>
                                 <div style={{display: "inline-block"}}>
                                     <label id="smaller-label" className="center-div checkbox-container">
-                                        <Input type="checkbox" className="input-checkbox" />
+                                        <Input type="checkbox" />
                                         <span className="checkmark"></span>
                                         Remember me
                                     </label>
