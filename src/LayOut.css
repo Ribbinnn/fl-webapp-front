@@ -5,6 +5,11 @@
   color: #58595b;
   font-size: medium;
 }
+
+.ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+  background: #f8e1ea;
+}
+
 .ant-menu-submenu-arrow::before,
 .ant-menu-submenu-arrow::after {
   background-color: #58595b;
@@ -110,7 +115,7 @@
   height: 40px;
 }
 .ant-steps.ant-steps-horizontal.ant-steps-label-vertical.ant-steps-dot {
-  width: 75%;
+  width: 90%;
   margin: auto;
 }
 
@@ -183,8 +188,12 @@
   border: none;
   border-radius: 8px;
   font-size: large;
-  min-height: 50px;
+  height: 50px;
   min-width: 100px;
+}
+
+.primary-btn.smaller{
+  height: 38px;
 }
 
 .btn-column .primary-btn {
