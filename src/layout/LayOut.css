@@ -54,6 +54,14 @@
   background-color: #de5c8e;
 }
 
+.ant-menu-item .ant-menu-item-active .menuitem{
+  background-color: transparent !important;
+  color: #de5c8e;
+}
+.ant-menu-submenu-title:active{
+  background-color: #f8e1ea !important;
+}
+
 /* step menu --------------------- */
 .ant-steps-item-finish
   > .ant-steps-item-container
