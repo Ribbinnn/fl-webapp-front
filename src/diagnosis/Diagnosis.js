@@ -51,14 +51,14 @@ export default function Diagnosis() {
       {/* ----- add content below -------- */ }
       {current===0 && <SelectHN HN={HN} setHN={setHN} Project={Project} setProject={setProject}/>}
       {/* ----- add content above -------- */ }
-      <div className="steps-action">
-          <Button
+      <div className={`steps-action${current===0?" steps-action-1":""}`}>
+          {current>0 && <Button
             className="primary-btn"
             style={current > 0 ? null : { visibility: "hidden" }}
             onClick={() => prev()}
           >
             Back
-          </Button>
+          </Button>}
           {HN!=="" && Project!== "none" && <Button className="primary-btn" onClick={() => next()}>
             Next
           </Button>}
@@ -82,7 +82,7 @@ function SelectHN(props) {
     >
       <div style={{ padding: 30 }}>
         <Form layout="vertical">
-          <Form.Item label="Patient's HN" style={{ marginBottom: "10px" }}>
+          <Form.Item label="Patient's HN">
             <Input className="input-text" style={{ width: "300px" }} defaultValue={props.HN}/>
             <Button
               className="primary-btn smaller"
@@ -94,7 +94,7 @@ function SelectHN(props) {
           </Form.Item>
         </Form>
       </div>
-      <div style={{ paddingTop: 66, paddingLeft: 60 }}>
+      <div style={{ paddingTop: 30, paddingLeft: 60 }}>
         {props.HN && <SelectProject setProject={props.setProject} Project={props.Project}/>}
       </div>
     </div>
@@ -130,6 +130,7 @@ function SelectProject(props) {
   }
   return (
     <div style={{ minWidth: 450 }}>
+      <p className="project-lable" style={{ marginBottom: "8px" }}> Project </p>
       <Select onChange={handleChange} dropdownStyle={{ borderRadius: 8 }} defaultValue={setDefaultValue}>
         {itemList.map((item, i) => (
           <Option key={i} value={i}>
