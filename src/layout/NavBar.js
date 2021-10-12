@@ -29,7 +29,7 @@ export default function NavBar() {
         defaultSelectedKeys={findSelected}
         defaultOpenKeys={["record"]}
         mode="inline"
-        style={{height:'100%', paddingTop:60}}
+        style={{height:'100%', paddingTop:40}}
       >
         <Menu.Item
           key="home"
