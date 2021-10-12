@@ -158,6 +158,12 @@
   justify-content: center;
 }
 
+.steps-content {
+  width: 100%;
+  height: 83%;
+  padding: 50px 20px;
+}
+
 .steps-action{
   display: flex;
   flex-direction: row;

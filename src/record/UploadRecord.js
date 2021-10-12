@@ -1,5 +1,5 @@
 import React, { useState, useHistory } from "react";
-import { Steps, Button } from "antd";
+import { Steps, Button, Row, Col } from "antd";
 import "antd/dist/antd.css";
 import Completed from "../layout/Completed"
 
@@ -32,7 +32,7 @@ const btnList = [
   { 
     title: "Go to My Record", 
     destination: "/record/myrecord" 
-  }]
+  }];
 
 export default function UploadRecord() {
   const [current, setCurrent] = useState(0);
@@ -51,11 +51,23 @@ export default function UploadRecord() {
           <Step key={item.title} title={item.title} />
         ))}
       </Steps>
-      {/* 
-      ----- add content here --------
-      */}
+      {current < steps.length - 1 &&
+        <div className="steps-content">
+          <Row>
+            <Col span={8}>
+              <label>Project:</label>
+              {/* -------- add select project here -------- */}
+            </Col>
+            <Col span={16}>
+              {current === 1 &&
+                <label>Form</label>
+              }
+            </Col>
+          </Row>
+        </div>
+      }
       {current === steps.length -1 &&
-      <Completed btnList={btnList} title="Upload Completed"/>}
+        <Completed btnList={btnList} title="Upload Completed"/>}
       {current < steps.length - 1 && (
         <div className="steps-action">
           <Button
