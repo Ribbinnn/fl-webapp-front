@@ -1,4 +1,4 @@
-import React, { useState, useHistory } from "react";
+import React, { useState } from "react";
 import { Steps, Button, Row, Col } from "antd";
 import "antd/dist/antd.css";
 import Completed from "../layout/Completed"
