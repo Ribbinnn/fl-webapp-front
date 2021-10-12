@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Steps, Button, Form, Input, Select, Collapse, Tag } from "antd";
 import "antd/dist/antd.css";
 const { Step } = Steps;
@@ -102,10 +102,12 @@ function SelectHN(props) {
 }
 
 function SelectProject(props) {
-  const [selectedItem, setSelectedItem] = useState(-1);
-  useEffect(() => {
-    setSelectedItem(itemList.findIndex(obj => obj.ProjectName===props.Project.ProjectName))
-  })
+  const setDefaultValue = () => {
+    for (let i=0; i < itemList.length; i++){
+      if (itemList[i].ProjectName === props.Project.ProjectName) return i;
+    }
+    return ""
+  }
   const itemList = /* []call api get all project* */[
     {
       ProjectName: "COVID-19",
@@ -123,32 +125,31 @@ function SelectProject(props) {
     },
   ]; 
   function handleChange(value) {
-    setSelectedItem(value);
     props.setProject(itemList[value])
+    console.log(`select value = ${value}`)
   }
   return (
     <div style={{ minWidth: 450 }}>
-      <Select onChange={handleChange} dropdownStyle={{ borderRadius: 8 }}>
+      <Select onChange={handleChange} dropdownStyle={{ borderRadius: 8 }} defaultValue={setDefaultValue}>
         {itemList.map((item, i) => (
           <Option key={i} value={i}>
             {item.ProjectName}
           </Option>
         ))}
       </Select>
-      {(selectedItem!==-1) && <Collapse defaultActiveKey={["1"]} expandIconPosition="right" ghost>
+      {(props.Project !== "none") && <Collapse defaultActiveKey={["1"]} expandIconPosition="right" ghost>
         <Panel key="1" header="Project information">
           <div className="project-info">
             <div>
-              Task : <Tag className="brown">{itemList[selectedItem].Task}</Tag>
+              Task : <Tag className="brown">{props.Project.Task}</Tag>
             </div>
             <div>
-              Classes : <Tag className="yellow">normal</Tag>
-              <Tag className="pink">COVID-19</Tag>
+              Classes : {(props.Project.Classes).map((item, i)=>(<Tag key={i} className="pink">{item}</Tag>))}
             </div>
-            <div>Description: {itemList[selectedItem].Description}</div>
+            <div>Description: {props.Project.Description}</div>
             <div>
               Requirement :
-              {(itemList[selectedItem].Requirement).map((item)=>(<ol>{item}</ol>))}
+              {(props.Project.Requirement).map((item, i)=>(<ol key={i}>{item}</ol>))}
             </div>
           </div>
         </Panel>
