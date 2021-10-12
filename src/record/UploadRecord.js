@@ -3,6 +3,7 @@ import { Steps, Button, Row, Col } from "antd";
 import "antd/dist/antd.css";
 import Completed from "../layout/Completed"
 import UploadRecordForm from "./UploadRecordForm";
+import SelectProject from "../diagnosis/SelectProject";
 
 const { Step } = Steps;
 
@@ -37,6 +38,7 @@ const btnList = [
 
 export default function UploadRecord() {
   const [current, setCurrent] = useState(0);
+  const [project, setProject] = useState('none');
   const next = () => {
     setCurrent(current + 1);
   };
@@ -56,8 +58,7 @@ export default function UploadRecord() {
         <div className="steps-content">
           <Row>
             <Col span={8}>
-              <label>Project:</label>
-              {/* -------- add select project here -------- */}
+              <SelectProject setProject={setProject} Project={project} minWidth='200px'/>
             </Col>
             <Col span={16}>
               {current === 1 &&
@@ -77,9 +78,10 @@ export default function UploadRecord() {
           >
             Back
           </Button>
+          {project!="none" &&
           <Button className="primary-btn" onClick={() => next()}>
             Next
-          </Button>
+          </Button>}
         </div>
       )}
     </div>
