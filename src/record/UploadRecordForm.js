@@ -6,71 +6,60 @@ function UploadRecordForm() {
 
     const [filename, setFilename] = useState("filename.xlsx");
 
-    const uploadedRecords = [ // get from uploaded file > map
-        {
-            key: "1",
-            hn: "0001",
+    const uploadedRecords = []; // get from uploaded file > map
+    for (let i = 1; i < 4; i++) {
+        uploadedRecords.push({
+            key: i,
+            hn: "000" + i,
             age: 28,
             gender: "F",
             pulse_rate: 77,
             blood_pressure: "120/80",
             temperature: 36.7,
-        },
-        {
-            key: "2",
-            hn: "0002",
-            age: 35,
-            gender: "M",
-            pulse_rate: 81,
-            blood_pressure: "118/84",
-            temperature: 36.3,
-        },
-        {
-            key: "3",
-            hn: "0003",
-            age: 22,
-            gender: "M",
-            pulse_rate: 94,
-            blood_pressure: "125/82",
-            temperature: 37.1,
-        },
-    ];
+        });
+      }
 
     const columns = [ // get from project > map
         {
             title: "HN",
             dataIndex: "hn",
             key: "hn",
+            align: "center",
         },
         {
             title: "Age",
             dataIndex: "age",
             key: "age",
+            align: "center",
         },
         {
             title: "Gender",
             dataIndex: "gender",
             key: "gender",
+            align: "center",
         },
         {
             title: "Pulse rate",
             dataIndex: "pulse_rate",
             key: "pulse_rate",
+            align: "center",
         },
         {
             title: "Blood pressure",
             dataIndex: "blood_pressure",
             key: "blood_pressure",
+            align: "center",
         },
         {
             title: "Temperature",
             dataIndex: "temperature",
             key: "temperature",
+            align: "center",
         }
     ];
 
     return(
-        <div>
+        <div className="upload-record-form">
             <label style={{display: "block"}}>Medical Records</label>
             <a 
                 style={{color: "#de5c8e", display: "flex", alignItems: "center"}}
@@ -80,24 +69,31 @@ function UploadRecordForm() {
                     Download Template
                     <CloudDownloadOutlined style={{marginLeft: "5px"}} />
             </a>
-            <Button 
-                type="primary" 
-                className="primary-btn" 
-                onClick={() => {
-                    /* call upload file api */
-                }}>
-                    Upload
-            </Button>
-            <label>{filename}</label>
-            <label id="smaller-label" style={{display: "block", color: "#de5c8e"}}>
-                *accepted file type: .xlsx, .csv
-            </label>
+            <div style={{margin: "8px 0 20px 30px"}}>
+                <Button 
+                    type="primary" 
+                    className="primary-btn smaller" 
+                    onClick={() => {
+                        /* call upload file api */
+                    }}>
+                        Upload
+                </Button>
+                <label style={{marginLeft: "20px"}}>{filename}</label>
+                <label id="smaller-label" style={{display: "block", color: "#de5c8e", margin: "8px 0 0 10px"}}>
+                    *accepted file type: .xlsx, .csv
+                </label>
+            </div>
             {uploadedRecords &&
                 <div>
-                    <label style={{display: "block"}}>Preview</label>
-                    <Table columns={columns} dataSource={uploadedRecords} pagination={{ position: ["none", "none"] }} />
-                </div>
-            }
+                    <label style={{display: "block", marginBottom: "20px"}}>Preview</label>
+                    <Table 
+                        columns={columns} 
+                        dataSource={uploadedRecords} 
+                        pagination={{position: ["none", "none"]}} 
+                        // scroll={{y: 140}} // bugs: table is shaking and its width is fixed :(
+                        size="middle"
+                    />
+                </div>}
         </div>
     );
 }

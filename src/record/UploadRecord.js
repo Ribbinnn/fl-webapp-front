@@ -65,8 +65,7 @@ export default function UploadRecord() {
               }
             </Col>
           </Row>
-        </div>
-      }
+        </div>}
       {current === steps.length -1 &&
         <Completed btnList={btnList} title="Upload Completed"/>}
       {current < steps.length - 1 && (
