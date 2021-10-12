@@ -175,6 +175,10 @@
   justify-content: space-between;
 }
 
+.steps-action-1{
+  justify-content: flex-end !important;
+}
+
 .btn-column{
   display: flex;
   flex-direction: column;
@@ -302,7 +306,8 @@ ol {
 a,
 label,
 .ant-form label,
-.ant-form-item-label > label {
+.ant-form-item-label > label,
+.project-lable {
   color: #58595b;
   font-size: large;
 }
