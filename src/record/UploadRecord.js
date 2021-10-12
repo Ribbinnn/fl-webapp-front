@@ -2,6 +2,7 @@ import React, { useState, useHistory } from "react";
 import { Steps, Button, Row, Col } from "antd";
 import "antd/dist/antd.css";
 import Completed from "../layout/Completed"
+import UploadRecordForm from "./UploadRecordForm";
 
 const { Step } = Steps;
 
@@ -60,7 +61,7 @@ export default function UploadRecord() {
             </Col>
             <Col span={16}>
               {current === 1 &&
-                <label>Form</label>
+                <UploadRecordForm />
               }
             </Col>
           </Row>
