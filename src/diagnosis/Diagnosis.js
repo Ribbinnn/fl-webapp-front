@@ -77,7 +77,6 @@ function SelectHN(props) {
       style={{
         display: "flex",
         flexDirection: "row",
-        minWidth: "100%",
       }}
     >
       <div style={{ padding: 30 }}>
