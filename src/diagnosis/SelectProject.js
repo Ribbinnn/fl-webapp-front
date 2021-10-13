@@ -36,7 +36,6 @@ export default function SelectProject(props) {
 
   function handleChange(value) {
     props.setProject(itemList[value]);
-    console.log(`select value = ${value}`);
   }
   return (
     <div style={{ minWidth: props.minWidth ?? 450 }}>

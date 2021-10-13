@@ -9,7 +9,6 @@ export const login = async (username, password) => {
       localStorage.setItem("token", respond.data.token);
       localStorage.setItem("user", JSON.stringify({id: respond.data.user_id, username: respond.data.username}))
       localStorage.setItem("auth", true)
-      console.log(localStorage.getItem("user"))
       updateToken()
       return respond
     } catch (e) {
