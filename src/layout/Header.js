@@ -4,12 +4,11 @@ import "antd/dist/antd.css";
 import {
     LogoutOutlined
   } from "@ant-design/icons";
-import { useHistory } from 'react-router-dom';
 import { logout } from '../api/logout';
 
 export default function Header(){
 
-    const history = useHistory();
+    const username = JSON.parse(localStorage.getItem("user")).username
 
     return(
             <div id="header">
@@ -18,10 +17,10 @@ export default function Header(){
                 </div>
 
                 <div id="right-pane">
-                    Hi, username.
+                    Hi, {username}.
                     <Button 
                     type = "link" 
-                    style={{color:'#E9C869', fontWeight:'bold'}} 
+                    style={{color:'#E9C869', fontWeight:'bold', fontSize: "large", position: "relative", top:"-3px"}} 
                     onClick={() => {
                         /* logut api */
                         logout().then((respond) => {
@@ -30,7 +29,7 @@ export default function Header(){
                             console.log(e);
                         })
                     }}>
-                        Log out <LogoutOutlined style={{strokeWidth: 50, stroke:'#E9C869'}}/>
+                        Log out <LogoutOutlined style={{strokeWidth: 50, stroke:'#E9C869', position: "relative", top: "-3px"}}/>
                     </Button>
                 </div>
             </div>
