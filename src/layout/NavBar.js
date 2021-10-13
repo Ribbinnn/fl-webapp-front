@@ -24,12 +24,12 @@ export default function NavBar() {
     return [path[0]]
   }
   return (
-    <div className="navbar" style={{ minWidth: 180, padding: 0, backgroundColor:"white", height:'calc(100vh - 50px)'}}>
+    <div className="navbar" style={{ minWidth: 180, padding: 0, backgroundColor:"white", height:"100%"}}>
       <Menu
         defaultSelectedKeys={findSelected}
         defaultOpenKeys={["record"]}
         mode="inline"
-        style={{height:'100%', paddingTop:40}}
+        style={{height:'calc(100vh - 50px)', paddingTop:40}}
       >
         <Menu.Item
           key="home"

@@ -10,8 +10,8 @@ import Diagnosis from "./diagnosis/Diagnosis"
 import "./layout/LayOut.css";
 
 function Routes() {
-  const MyRecord = () => <h1>This is my record component</h1>;
-  const ViewHistory = () => <h1>This is view history component</h1>;
+  const MyRecord = () => <div className="content"><h1>This is my record component</h1></div>;
+  const ViewHistory = () => <div className="content"><h1>This is view history component</h1></div>;
   const auth = localStorage.getItem('auth') === 'true' ? true : false;
 
   // if already login, redirect to home. if not, show login page
