@@ -89,7 +89,7 @@ function UploadRecordForm() {
                     <Table 
                         columns={columns} 
                         dataSource={uploadedRecords} 
-                        pagination={{position: ["none", "none"]}} 
+                        pagination={false} 
                         // scroll={{y: 140}} // bugs: table is shaking and its width is fixed :(
                         size="middle"
                     />
