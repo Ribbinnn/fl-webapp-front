@@ -13,6 +13,7 @@ export const login = async (username, password) => {
       })).data;
       localStorage.setItem("token", respond.data.token);
       localStorage.setItem("user", JSON.stringify({id: respond.data.user_id, username: respond.data.username}))
+      localStorage.setItem("auth", true)
       return respond
     } catch (e) {
       throw e
