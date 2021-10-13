@@ -12,22 +12,22 @@ import "./layout/LayOut.css";
 function Routes() {
   const MyRecord = () => <h1>This is my record component</h1>;
   const ViewHistory = () => <h1>This is view history component</h1>;
-  //const auth = localStorage.getItem('auth') === 'true' ? true : false;
+  const auth = localStorage.getItem('auth') === 'true' ? true : false;
 
   // if already login, redirect to home. if not, show login page
   return (
     <BrowserRouter>
-      <div className={localStorage.getItem('auth') === 'true' ? "layout-ctn" : "layout-ctn-nobg"}>
-        {localStorage.getItem('auth') === 'true' && <Header />}
+      <div className={auth ? "layout-ctn" : "layout-ctn-nobg"}>
+        {auth && <Header />}
         <div style={{ display: "flex", flexDirection: "row", height: "100%"}}>
-          {localStorage.getItem('auth') === 'true' && <NavBar />}
+          {auth && <NavBar />}
           <Switch>
-            <Route path="/" exact render={()=>(localStorage.getItem('auth') === 'true'?<Home/>:<Redirect to='/login'/>)}/>
-            <Route path="/record/upload" exact render={()=>(localStorage.getItem('auth') === 'true'?<UploadRecord/>:<Redirect to='/login'/>)}/>
-            <Route path="/record/myrecord" exactrender={()=>(localStorage.getItem('auth') === 'true'?MyRecord:<Redirect to='/login'/>)}/>
-            <Route path="/diagnosis" exact render={()=>(localStorage.getItem('auth') === 'true'?<Diagnosis/>:<Redirect to='/login'/>)}/>
-            <Route path="/viewhistory" exact render={()=>(localStorage.getItem('auth') === 'true'?ViewHistory:<Redirect to='/login'/>)}/>
-            <Route path="/login" render={()=>(localStorage.getItem('auth') === 'true'?<Redirect to='/'/>:<Login/>)}/>
+            <Route path="/" exact render={()=>(auth?<Home/>:<Redirect to='/login'/>)}/>
+            <Route path="/record/upload" exact render={()=>(auth?<UploadRecord/>:<Redirect to='/login'/>)}/>
+            <Route path="/record/myrecord" exact render={()=>(auth?<MyRecord/>:<Redirect to='/login'/>)}/>
+            <Route path="/diagnosis" exact render={()=>(auth?<Diagnosis/>:<Redirect to='/login'/>)}/>
+            <Route path="/viewhistory" exact render={()=>(auth?<ViewHistory/>:<Redirect to='/login'/>)}/>
+            <Route path="/login" render={()=>(auth?<Redirect to='/'/>:<Login/>)}/>
           </Switch>
         </div>
       </div>
