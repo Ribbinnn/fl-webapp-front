@@ -1,11 +1,9 @@
 import React, {useState} from 'react';
 import { Row, Col, Form, Input, Button } from 'antd';
-import { useHistory } from 'react-router-dom';
 import { login } from './api/login';
 
 function Login() {
 
-    const history = useHistory();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
