@@ -4,57 +4,6 @@ import axios from "axios";
 const { Panel } = Collapse;
 const { Option } = Select;
 
-// "data": [
-//   {
-//       "_id": "616589104c2b3de77a2f911f",
-//       "__v": 0,
-//       "createdAt": "2021-10-12T13:09:36.715Z",
-//       "description": "sth",
-//       "name": "COVID-19",
-//       "predClasses": [
-//           "[\"COVID-19\",\"normal\"]"
-//       ],
-//       "requirements": "[{\"name\":\"gender\",\"type\":\"string\"},{\"name\":\"age\",\"type\":\"int\"},{\"name\":\"pules\",\"type\":\"int\"}]",
-//       "task": "2D-classification",
-//       "updatedAt": "2021-10-12T13:09:36.715Z",
-//       "users": [
-//           "[{\"$oid\":\"61658748b55132dad0db4300\"}]"
-//       ]
-//   },
-//   {
-//       "_id": "6165da3a0eb37a145f11203f",
-//       "__v": 0,
-//       "createdAt": "2021-10-12T18:55:54.642Z",
-//       "description": "classification for pneumonia",
-//       "name": "Pneumonia",
-//       "predClasses": [
-//           "[\"COVID-19\",\"normal\",\"Pneumonia\"]"
-//       ],
-//       "requirements": "[{\"name\":\"weight\",\"type\":\"float\"},{\"name\":\"age\",\"type\":\"int\"},{\"name\":\"pules\",\"type\":\"int\"},{\"name\":\"fever\",\"type\":\"string\"}]",
-//       "task": "2D-classification",
-//       "updatedAt": "2021-10-12T18:55:54.642Z",
-//       "users": [
-//           "[{\"$oid\":\"6165d93c0eb37a145f11203b\"},{\"$oid\":\"6165d7e40eb37a145f112029\"}]"
-//       ]
-//   },
-//   {
-//       "_id": "6165db7f0eb37a145f11204d",
-//       "__v": 0,
-//       "createdAt": "2021-10-12T19:01:19.925Z",
-//       "description": "classification for pneumonia",
-//       "name": "Pneumonia (2)",
-//       "predClasses": [
-//           "[\"COVID-19\",\"normal\",\"Pneumonia\"]"
-//       ],
-//       "requirements": "[{\"name\":\"weight\",\"type\":\"float\"}]",
-//       "task": "2D-classification",
-//       "updatedAt": "2021-10-12T19:01:19.925Z",
-//       "users": [
-//           "[{\"$oid\":\"61658748b55132dad0db4300\"},{\"$oid\":\"6165d93c0eb37a145f11203b\"}]"
-//       ]
-//   }
-// ]
-
 export default function SelectProject(props) {
   const [itemList, setItemList] = useState([]);
 
@@ -74,8 +23,8 @@ export default function SelectProject(props) {
             ProjectID: project._id,
             ProjectName: project.name,
             Description: project.description,
-            Requirement: JSON.parse(project.requirements),
-            Classes: JSON.parse(project.predClasses),
+            Requirement: project.requirements,
+            Classes: project.predClasses,
             Owner: project.users,
             Task: project.task
           })
