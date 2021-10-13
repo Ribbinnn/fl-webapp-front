@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Select, Collapse, Tag } from "antd";
-import axios from "axios";
+import {selectProject} from '../api/project'
 const { Panel } = Collapse;
 const { Option } = Select;
 
@@ -59,23 +59,17 @@ export default function SelectProject(props) {
   const [itemList, setItemList] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/api/projects", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization:
-            `Bearer ${/**insert auth token*/""}`
-        },
-      })
-      .then((response) => {
+      selectProject().then((response) => {
         console.log(response);
-        let res_list = (response.data.data).map((project)=>{
+        let res_list = (response.data.projects).map((project)=>{
           return({
             ProjectID: project._id,
             ProjectName: project.name,
             Description: project.description,
-            Requirement: JSON.parse(project.requirements),
-            Classes: JSON.parse(project.predClasses),
+            // Requirement: JSON.parse(project.requirements),
+            // Classes: JSON.parse(project.predClasses),
+            Requirement: project.requirements,
+            Classes: project.predClasses,
             Owner: project.users,
             Task: project.task
           })
