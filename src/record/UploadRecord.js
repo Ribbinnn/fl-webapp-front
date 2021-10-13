@@ -62,8 +62,7 @@ export default function UploadRecord() {
             </Col>
             <Col span={16}>
               {current === 1 &&
-                <UploadRecordForm />
-              }
+                <UploadRecordForm />}
             </Col>
           </Row>
         </div>}

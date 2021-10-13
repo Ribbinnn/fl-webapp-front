@@ -1,13 +1,9 @@
-import axios from 'axios';
-import {serverURL} from './config';
+import { instance } from '.';
 
 export const selectProject = async () => {
     try {
-        const respond = (await axios.get(serverURL + "/projects/user/" + (JSON.parse(localStorage.getItem('user'))).id, {
-            headers: {
-            "Content-Type": "application/json",
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }})).data;
+      console.log(localStorage.getItem('token'))
+        const respond = (await instance.get("/projects/user/" + (JSON.parse(localStorage.getItem('user'))).id)).data;
         return respond
       } catch (e) {
         throw e
