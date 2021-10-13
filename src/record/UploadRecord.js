@@ -57,10 +57,10 @@ export default function UploadRecord() {
       {current < steps.length - 1 &&
         <div className="steps-content">
           <Row>
-            <Col span={8}>
+            <Col span={9}>
               <SelectProject setProject={setProject} Project={project} minWidth='200px'/>
             </Col>
-            <Col span={16}>
+            <Col span={15}>
               {current === 1 &&
                 <UploadRecordForm />}
             </Col>
