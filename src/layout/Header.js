@@ -25,7 +25,7 @@ export default function Header(){
                     onClick={() => {
                         /* logut api */
                         logout().then((respond) => {
-                            history.push("/login");
+                            window.location.reload();
                         }).catch((e) => {
                             console.log(e);
                         })
