@@ -60,7 +60,7 @@ function Login() {
                                     onClick={async () => {
                                         /* call sign in api */
                                         login(username, password).then((respond)=>{
-                                            history.push("/");
+                                            window.location.reload();
                                         }).catch((e)=>{
                                             console.log(e)
                                         })
