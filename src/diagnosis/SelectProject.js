@@ -58,26 +58,6 @@ export default function SelectProject(props) {
       {props.Project !== "none" && (
         <Collapse defaultActiveKey={["1"]} expandIconPosition="right" ghost>
           <Panel key="1" header="Project information">
-            {/* <div className="project-info">
-              <div>
-                Task : <Tag className="brown">{props.Project.Task}</Tag>
-              </div>
-              <div>
-                Classes :{" "}
-                {props.Project.Classes.map((item, i) => (
-                  <Tag key={i} className="pink">
-                    {item}
-                  </Tag>
-                ))}
-              </div>
-              <div>Description: {props.Project.Description}</div>
-              <div>
-                Requirement :
-                {props.Project.Requirement.map((item, i) => (
-                  <ol key={i}>{item.name}</ol>
-                ))}
-              </div>
-            </div> */}
             <ProjectInfo Project = {props.Project}/>
           </Panel>
         </Collapse>
