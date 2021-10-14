@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Select, Collapse, Tag } from "antd";
+import { Select, Collapse } from "antd";
 import {selectProject} from '../api/project'
+import ProjectInfo from "./ProjectInfo";
 const { Panel } = Collapse;
 const { Option } = Select;
 
@@ -57,7 +58,7 @@ export default function SelectProject(props) {
       {props.Project !== "none" && (
         <Collapse defaultActiveKey={["1"]} expandIconPosition="right" ghost>
           <Panel key="1" header="Project information">
-            <div className="project-info">
+            {/* <div className="project-info">
               <div>
                 Task : <Tag className="brown">{props.Project.Task}</Tag>
               </div>
@@ -76,10 +77,12 @@ export default function SelectProject(props) {
                   <ol key={i}>{item.name}</ol>
                 ))}
               </div>
-            </div>
+            </div> */}
+            <ProjectInfo Project = {props.Project}/>
           </Panel>
         </Collapse>
       )}
     </div>
   );
 }
+
