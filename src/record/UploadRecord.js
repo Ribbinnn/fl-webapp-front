@@ -57,10 +57,10 @@ export default function UploadRecord() {
       {current < steps.length - 1 &&
         <div className="steps-content">
           <Row>
-            <Col span={8}>
+            <Col span={9}>
               <SelectProject setProject={setProject} Project={project} minWidth='200px'/>
             </Col>
-            <Col span={16}>
+            <Col span={15}>
               {current === 1 &&
                 <UploadRecordForm />}
             </Col>
@@ -68,21 +68,18 @@ export default function UploadRecord() {
         </div>}
       {current === steps.length -1 &&
         <Completed btnList={btnList} title="Upload Completed"/>}
-      {current < steps.length - 1 && (
-        <div className="steps-action">
-          <Button
+      <div className={`steps-action${current===0?" steps-action-1":""}`}>
+          {current>0 && current < steps.length -1 && <Button
             className="primary-btn"
             style={current > 0 ? null : { visibility: "hidden" }}
             onClick={() => prev()}
           >
             Back
-          </Button>
-          {project!="none" &&
-          <Button className="primary-btn" onClick={() => next()}>
+          </Button>}
+          {project!== "none" && current < steps.length -1 && <Button className="primary-btn" onClick={() => next()}>
             Next
           </Button>}
         </div>
-      )}
     </div>
   );
 }

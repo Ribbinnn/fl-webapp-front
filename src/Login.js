@@ -1,11 +1,9 @@
 import React, {useState} from 'react';
 import { Row, Col, Form, Input, Button } from 'antd';
-import { useHistory } from 'react-router-dom';
 import { login } from './api/login';
 
 function Login() {
 
-    const history = useHistory();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
@@ -60,7 +58,7 @@ function Login() {
                                     onClick={async () => {
                                         /* call sign in api */
                                         login(username, password).then((respond)=>{
-                                            history.push("/");
+                                            window.location.reload();
                                         }).catch((e)=>{
                                             console.log(e)
                                         })

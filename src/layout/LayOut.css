@@ -129,6 +129,10 @@
 
 /* div ----------------------- */
 #header {
+  position: -webkit-sticky;
+  position: sticky;  
+  top: 0;
+  z-index: 1;
   width: 100%;
   background-color: #de5c8e;
   height: 50px;
@@ -138,12 +142,21 @@
   justify-content: space-between;
 }
 
+.navbar{
+  position: fixed;  
+  z-index: 1; /* Stay on top */
+  top: 50px; /* Stay at the top */
+  left: 0;
+  overflow-x: hidden;
+}
+
 #right-pane {
   display: flex;
   flex-direction: row;
   align-items: center;
   margin-right: 10;
   color: white;
+  font-size: large;
 }
 
 .layout-ctn {
@@ -162,7 +175,9 @@
   background-color: white;
   padding: 40px;
   margin: 25px;
-  width: 100%;
+  margin-left: 205px;
+  width: calc(100vw - 230px);
+  min-height: calc(100vh - 100px);
 }
 
 .center-div {
