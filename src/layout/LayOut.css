@@ -432,3 +432,30 @@ label,
   border-color: #C69C25;
   color: #C69C25;
 }
+
+
+/* calendar ---------------- */
+.ant-picker,
+.ant-picker:hover{
+  box-shadow: none;
+  border-radius: 8px;
+  border-color: #58595b;
+}
+
+.ant-picker-today-btn {
+  color: #58595b;
+}
+
+.ant-picker-today-btn:hover,
+.ant-picker-header-view button:hover {
+  color: #de5c8e;
+}
+
+.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
+  color: #fff;
+  background: #de5c8e;
+}
+
+.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner:before {
+  border-color: #de5c8e;
+}
