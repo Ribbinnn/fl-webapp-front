@@ -449,12 +449,13 @@ label,
 }
 
 
-/* calendar ---------------- */
+/* date picker ---------------- */
 .ant-picker,
 .ant-picker:hover{
   box-shadow: none;
   border-radius: 8px;
   border-color: #58595b;
+  height: 38px;
 }
 
 .ant-picker-today-btn {
@@ -473,4 +474,13 @@ label,
 
 .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner:before {
   border-color: #de5c8e;
+}
+
+.ant-picker-input > input,
+.ant-picker-input > input::placeholder {
+  font-size: large;
+}
+
+.ant-picker-input > input::placeholder {
+  color: transparent;
 }
