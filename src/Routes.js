@@ -6,11 +6,11 @@ import NavBar from "./layout/NavBar";
 import Header from "./layout/Header";
 import UploadRecord from "./record/UploadRecord"
 import Diagnosis from "./diagnosis/Diagnosis"
+import MyRecord from "./record/MyRecord";
 
 import "./layout/LayOut.css";
 
 function Routes() {
-  const MyRecord = () => <div className="content"><h1>This is my record component</h1></div>;
   const ViewHistory = () => <div className="content"><h1>This is view history component</h1></div>;
   const auth = localStorage.getItem('auth') === 'true' ? true : false;
 
