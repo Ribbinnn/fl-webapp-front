@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Steps, Button, Form, Input } from "antd";
 import "antd/dist/antd.css";
-import SelectProject from "./SelectProject";
+import SelectProject from "../component/SelectProject";
 const { Step } = Steps;
 
 const steps = [

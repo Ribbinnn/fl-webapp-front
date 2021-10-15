@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Steps, Button, Row, Col } from "antd";
 import "antd/dist/antd.css";
-import Completed from "../layout/Completed"
+import Completed from "../component/Completed"
 import UploadRecordForm from "./UploadRecordForm";
-import SelectProject from "../diagnosis/SelectProject";
+import SelectProject from "../component/SelectProject";
 
 const { Step } = Steps;
 
