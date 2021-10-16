@@ -7,10 +7,10 @@ function UploadRecordForm() {
     const [filename, setFilename] = useState("filename.xlsx");
 
     const uploadedRecords = []; // get from uploaded file > map
-    for (let i = 1; i < 4; i++) {
+    for (let i = 1; i <= 50; i++) {
         uploadedRecords.push({
             key: i,
-            hn: "000" + i,
+            hn: i,
             age: 28,
             gender: "F",
             pulse_rate: 77,
@@ -25,36 +25,54 @@ function UploadRecordForm() {
             dataIndex: "hn",
             key: "hn",
             align: "center",
+            ellipsis: {
+                showTitle: true
+            },
         },
         {
             title: "Age",
             dataIndex: "age",
             key: "age",
             align: "center",
+            ellipsis: {
+                showTitle: true
+            },
         },
         {
             title: "Gender",
             dataIndex: "gender",
             key: "gender",
             align: "center",
+            ellipsis: {
+                showTitle: true
+            },
         },
         {
             title: "Pulse rate",
             dataIndex: "pulse_rate",
             key: "pulse_rate",
             align: "center",
+            ellipsis: {
+                showTitle: true
+            },
         },
         {
             title: "Blood pressure",
             dataIndex: "blood_pressure",
             key: "blood_pressure",
             align: "center",
+            ellipsis: {
+                showTitle: true
+            },
         },
         {
             title: "Temperature",
             dataIndex: "temperature",
             key: "temperature",
             align: "center",
+            ellipsis: {
+                showTitle: true
+            },
         }
     ];
 
@@ -90,8 +108,7 @@ function UploadRecordForm() {
                         columns={columns} 
                         dataSource={uploadedRecords} 
                         pagination={false} 
-                        // scroll={{y: 140}} // bugs: table is shaking and its width is fixed :(
-                        size="middle"
+                        size="small"
                     />
                 </div>}
         </div>

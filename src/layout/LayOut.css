@@ -484,3 +484,54 @@ label,
 .ant-picker-input > input::placeholder {
   color: transparent;
 }
+
+/* table ------------------------- */
+tbody {
+  display: block;
+  max-height: 123px; /* 3 rows */
+  overflow: scroll;
+}
+
+thead, tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.ant-table-thead > tr > th {
+  background: rgba(88, 89, 91, 0.7);
+  font-size: medium;
+  font-weight: bold;
+  color: white;
+  border: unset;
+}
+
+.ant-table-small .ant-table-thead > tr > th {
+  background-color: rgba(88, 89, 91, 0.7);
+}
+
+.ant-table-container table > thead > tr:first-child th:last-child {
+  border-top-right-radius: 0;
+}
+
+.ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+  content: none;
+}
+
+.ant-table-tbody > tr:nth-child(odd) {
+  background-color: #e5e5e5;
+}
+
+.ant-table-tbody > tr:nth-child(even) {
+  background-color: white;
+}
+
+.ant-table-tbody > tr > td {
+  color: #58595b;
+  font-size: medium;
+  border: unset;
+}
+
+.ant-table .ant-table-tbody > tr:hover > td {
+  background: unset;
+}

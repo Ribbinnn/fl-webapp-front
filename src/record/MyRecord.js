@@ -21,18 +21,27 @@ function MyRecord () {
             dataIndex: "updated",
             key: "updated",
             align: "center",
+            ellipsis: {
+                showTitle: true
+            },
         },
         {
             title: "Record Name",
             dataIndex: "rec_name",
             key: "rec_name",
             align: "center",
+            ellipsis: {
+                showTitle: true
+            },
         },
         {
             title: "Project Name",
             dataIndex: "proj_name",
             key: "proj_name",
             align: "center",
+            ellipsis: {
+                showTitle: true
+            },
         }
     ];
 
@@ -127,7 +136,7 @@ function MyRecord () {
                     columns={columns} 
                     dataSource={uploadedItem} 
                     pagination={false} 
-                    size="middle"
+                    size="small"
                     onRow={(record, rowIndex) => {
                         return {
                           onClick: event => {
