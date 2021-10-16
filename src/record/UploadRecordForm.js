@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Button, Table } from "antd";
+import { Button, Input, Table } from "antd";
 import { CloudDownloadOutlined } from '@ant-design/icons';
 
 function UploadRecordForm() {
 
-    const [filename, setFilename] = useState("filename.xlsx");
+    const [uploadedFile, setUploadedFile] = useState(null);
+    const [uploadedFileName, setUploadedFileName] = useState("");
 
     const uploadedRecords = []; // get from uploaded file > map
     for (let i = 1; i <= 50; i++) {
@@ -83,6 +84,7 @@ function UploadRecordForm() {
                 style={{color: "#de5c8e", display: "flex", alignItems: "center"}}
                 onClick={() => {
                     /* call download template api */
+                    // maybe generate from field list (json to csv)
                 }}>
                     Download Template
                     <CloudDownloadOutlined style={{marginLeft: "5px"}} />
@@ -92,25 +94,48 @@ function UploadRecordForm() {
                     type="primary" 
                     className="primary-btn smaller" 
                     onClick={() => {
-                        /* call upload file api */
+                        document.getElementById("input-file").click();
                     }}>
                         Upload
+                        <input 
+                            type="file" 
+                            id="input-file" 
+                            accept=".xlsx, .csv" 
+                            hidden 
+                            onChange={(event) => {
+                                // console.log(event.target.files[0]);
+                                setUploadedFile(event.target.files[0]);
+                                const name = event.target.files[0].name.split(".");
+                                setUploadedFileName(name[0]);
+                                /* call upload file api */
+                            }} />
                 </Button>
-                <label style={{marginLeft: "20px"}}>{filename}</label>
+                <label style={{marginLeft: "20px"}}>
+                    {uploadedFile ? uploadedFile.name : null}
+                </label>
                 <label id="smaller-label" style={{display: "block", color: "#de5c8e", margin: "8px 0 0 10px"}}>
                     *accepted file type: .xlsx, .csv
                 </label>
             </div>
-            {uploadedRecords &&
+            {uploadedFile && 
                 <div>
-                    <label style={{display: "block", marginBottom: "20px"}}>Preview</label>
-                    <Table 
-                        columns={columns} 
-                        dataSource={uploadedRecords} 
-                        pagination={false} 
-                        size="small"
-                    />
+                    <label style={{display: "block", marginBottom: "5px"}}>Preview</label>
+                    <label>Record name:</label>
+                    <Input 
+                        className="input-text" 
+                        style={{width: "300px", marginLeft: "10px", marginBottom: "10px"}}
+                        value={uploadedFileName}
+                        onChange={(event) => {
+                            setUploadedFileName(event.target.value)
+                        }} />
                 </div>}
+            {uploadedFile &&
+                <Table 
+                    columns={columns} 
+                    dataSource={uploadedRecords} 
+                    pagination={false} 
+                    size="small"
+                />}
         </div>
     );
 }
