@@ -535,3 +535,8 @@ thead, tbody tr {
 .ant-table .ant-table-tbody > tr:hover > td {
   background: unset;
 }
+
+.clickable-table .ant-table .ant-table-tbody > tr:hover > td {
+  background: #f8e1ea;
+  cursor: pointer;
+}

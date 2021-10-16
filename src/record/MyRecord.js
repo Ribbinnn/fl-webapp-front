@@ -148,6 +148,7 @@ function MyRecord () {
                         };
                       }}
                     style={{width:"60%"}}
+                    className="clickable-table"
                 />
             </div>
         </div>
