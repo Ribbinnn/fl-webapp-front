@@ -24,6 +24,9 @@ function MyRecord () {
             ellipsis: {
                 showTitle: true
             },
+            sorter: {
+                compare: (a, b) => new Date(a.updated) - new Date(b.updated)
+            }
         },
         {
             title: "Record Name",
@@ -33,6 +36,9 @@ function MyRecord () {
             ellipsis: {
                 showTitle: true
             },
+            sorter: {
+                compare: (a, b) => a.proj_name.localeCompare(b.proj_name)
+            },
         },
         {
             title: "Project Name",
@@ -41,6 +47,9 @@ function MyRecord () {
             align: "center",
             ellipsis: {
                 showTitle: true
+            },
+            sorter: {
+                compare: (a, b) => a.proj_name.localeCompare(b.proj_name)
             },
         }
     ];
@@ -67,6 +76,7 @@ function MyRecord () {
                 rec_name: project.filename,
                 proj_name: project.name
             }))
+            
             setUploadedItem(res_list)
             setVitalsList(res_list)
         })
@@ -85,7 +95,7 @@ function MyRecord () {
     }
 
     function onChangeLastDate(date, dateString) {
-        setLastDate(date? date.startOf('day').toDate(): "none") // Moment Object
+        setLastDate(date? date.endOf('day').toDate(): "none") // Moment Object
     }
 
     function onChangeName(item) {
@@ -147,7 +157,7 @@ function MyRecord () {
                             }, // click row
                         };
                       }}
-                    style={{width:"60%"}}
+                    style={{width:"700px"}}
                     className="clickable-table"
                 />
             </div>

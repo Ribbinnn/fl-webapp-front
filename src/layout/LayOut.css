@@ -448,7 +448,6 @@ label,
   color: #C69C25;
 }
 
-
 /* date picker ---------------- */
 .ant-picker,
 .ant-picker:hover{
@@ -539,4 +538,16 @@ thead, tbody tr {
 .clickable-table .ant-table .ant-table-tbody > tr:hover > td {
   background: #f8e1ea;
   cursor: pointer;
+}
+
+td.ant-table-column-sort {
+  background-color: transparent;
+}
+
+.ant-table-column-sorter-up.active, .ant-table-column-sorter-down.active {
+  color: #ffb9d3;
+}
+
+.ant-table-thead th.ant-table-column-has-sorters:hover {
+  background-color:rgba(88, 89, 91, 0.7);
 }
