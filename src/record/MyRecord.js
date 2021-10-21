@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Form, Input, Select, DatePicker } from "antd";
-import styles from "./myrecord.css"
 import {selectProject} from '../api/project'
 import { searchVitlasProject } from "../api/vitals";
 
@@ -120,7 +119,7 @@ function MyRecord () {
                         <Input className="input-text" onChange={onChangeName} style={{width:"200px"}} />
                     </Form.Item>
                     <Form.Item label="Project" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>                
-                        <Select defaultValue="All" onChange={handleChangeProject}>
+                        <Select className="search-component" defaultValue="All" onChange={handleChangeProject}>
                             {itemList.map((item, i) => (
                             <Option key={i} value={i}>
                                 {item.ProjectName}

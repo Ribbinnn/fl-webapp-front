@@ -381,6 +381,11 @@ label,
   padding-top: 3px;
 }
 
+.search-component.ant-select:not(.ant-select-customize-input) .ant-select-selector,
+.search-component.ant-select-focused:not(.ant-select-disabled) .ant-select:not(.ant-select-customize-input) .ant-select-selector{
+  width: 200px;
+}
+
 .ant-select-dropdown .ant-select-dropdown-placement-bottomLeft{
   border-radius: 8;
 }
