@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Steps, Button, Row, Col } from "antd";
 import "antd/dist/antd.css";
 import Completed from "../component/Completed"
@@ -37,6 +37,9 @@ const btnList = [
   }];
 
 export default function UploadRecord() {
+
+  const uploadRecordFormRef = useRef();
+  
   const [current, setCurrent] = useState(0);
   const [project, setProject] = useState('none');
   const next = () => {
@@ -62,7 +65,7 @@ export default function UploadRecord() {
             </Col>
             <Col span={15}>
               {current === 1 &&
-                <UploadRecordForm />}
+                <UploadRecordForm ref={uploadRecordFormRef} project={project} />}
             </Col>
           </Row>
         </div>}
@@ -76,9 +79,17 @@ export default function UploadRecord() {
           >
             Back
           </Button>}
-          {project!== "none" && current < steps.length -1 && <Button className="primary-btn" onClick={() => next()}>
-            Next
-          </Button>}
+          {project!== "none" && current < steps.length -1 && 
+            <Button 
+              className="primary-btn" 
+              onClick={() => {
+                if (current === 1) {
+                  uploadRecordFormRef.current.uploadFile();
+                }
+                next();
+              }}>
+                Next
+            </Button>}
         </div>
     </div>
   );
