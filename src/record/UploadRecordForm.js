@@ -2,7 +2,6 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from "rea
 import { Button, Input, Table } from "antd";
 import { CloudDownloadOutlined, WarningOutlined } from '@ant-design/icons';
 import XLSX from "xlsx";
-import UploadRecord from "./UploadRecord";
 
 const UploadRecordForm = forwardRef((props, ref) => {
 
@@ -60,9 +59,9 @@ const UploadRecordForm = forwardRef((props, ref) => {
             }
         }
         if (missing_field.length != 0) {
-            console.log("error!");
             setMissingField(missing_field);
             setUploadedFileName({with_ext: null, without_ext: null});
+            setColumns(null);
             setUploadedRecords(null);
         } else {
             setMissingField(null);
