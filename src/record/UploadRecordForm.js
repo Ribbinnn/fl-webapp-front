@@ -24,7 +24,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
     const printMissingField = () => {
         var string = ""
         for (const i in missingField) {
-            i == missingField.length - 1 ? string += missingField[i] + " " : string += missingField[i] + ", ";
+            i === missingField.length - 1 ? string += missingField[i] + " " : string += missingField[i] + ", ";
         }
         return <label>{string}</label>;
     }
@@ -46,7 +46,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
         const last_char = target_workbook["!ref"].split(":")[1].charAt(0).charCodeAt(0);
         var current_char = "A".charCodeAt(0);
         var change_field = "";
-        event.target.files[0].name.split(".")[1] == "xlsx" ? change_field = "w" : change_field = "v";
+        event.target.files[0].name.split(".")[1] === "xlsx" ? change_field = "w" : change_field = "v";
         while (current_char <= last_char) {
             var column_name = target_workbook[String.fromCharCode(current_char) + "1"];
             column_name[change_field] = column_name[change_field].split(" ").join("_").toLowerCase();
@@ -60,7 +60,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 missing_field.push(required_field[i]);
             }
         }
-        if (missing_field.length != 0) {
+        if (missing_field.length !== 0) {
             setMissingField(missing_field);
             setUploadedFileName({with_ext: null, without_ext: null});
             setColumns(null);
