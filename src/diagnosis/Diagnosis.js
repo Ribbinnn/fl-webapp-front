@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Steps, Button, Form, Input } from "antd";
+import { Steps, Button, Form, Input, Row, Col, Collapse } from "antd";
 import "antd/dist/antd.css";
 import SelectProject from "../component/SelectProject";
+import ProjectInfo from "../component/ProjectInfo";
 const { Step } = Steps;
+const { Panel } = Collapse;
 
 const steps = [
   {
@@ -49,6 +51,31 @@ export default function Diagnosis() {
       </Steps>
       {/* ----- add content below -------- */ }
       {current===0 && <SelectHN HN={HN} setHN={setHN} Project={Project} setProject={setProject}/>}
+      {current === 1 &&
+        <div className="steps-content" style={{height: "78%"}}>
+          <Row>
+            <Col span={9}>
+              <div>
+                <label style={{display: "block", color: "#de5c8e", marginBottom: "10px"}}>
+                  Patient's HN: {HN}
+                </label>
+                <label style={{display: "block"}}>
+                  Project: {Project.ProjectName}
+                </label>
+                <Collapse defaultActiveKey={["1"]} expandIconPosition="right" ghost style={{margin: 0}}>
+                  <Panel key="1" header="Project information">
+                    <ProjectInfo Project = {Project}/>
+                  </Panel>
+                </Collapse>
+              </div>
+            </Col>
+            <Col span={15}>
+              <div>
+                <label style={{display: "block"}}>Medical Records</label>
+              </div>
+            </Col>
+          </Row>
+        </div>}
       {/* ----- add content above -------- */ }
       <div className={`steps-action${current===0?" steps-action-1":""}`}>
           {current>0 && <Button

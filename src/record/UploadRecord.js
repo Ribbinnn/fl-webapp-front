@@ -58,7 +58,7 @@ export default function UploadRecord() {
         ))}
       </Steps>
       {current < steps.length - 1 &&
-        <div className="steps-content">
+        <div className="steps-content" style={{height: "82%"}}>
           <Row>
             <Col span={9}>
               <SelectProject setProject={setProject} Project={project} minWidth='200px'/>
