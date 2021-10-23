@@ -186,9 +186,16 @@
   justify-content: center;
 }
 
-.steps-content {
+.steps-content-upload {
   width: 100%;
+  height: 82%;
   padding: 40px 20px;
+}
+
+.steps-content-diagnosis {
+  width: 100%;
+  height: 78%;
+  padding: 30px;
 }
 
 .steps-action{
