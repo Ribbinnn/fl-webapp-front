@@ -1,18 +1,27 @@
 import { instance, updateToken } from '.';
 
-export const login = async (username, password) => {
+export const login = async (username, password, remember) => {
     try {
-      const respond = (await instance.post('/auth/login', {
-        username: username,
-        password: password,
+      const response = (await instance.post('/auth/login', {
+        username,
+        password,
+        remember
       })).data;
-      localStorage.setItem("token", respond.data.token);
-      localStorage.setItem("user", JSON.stringify({id: respond.data.user_id, username: respond.data.username}))
-      localStorage.setItem("auth", true)
+
+      sessionStorage.setItem("token", response.data.token);
+      sessionStorage.setItem("user", JSON.stringify({id: response.data.user_id, username: response.data.username}));
+      sessionStorage.setItem("auth", true);
+      
+      if (remember) {
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify({id: response.data.user_id, username: response.data.username}));
+        localStorage.setItem("auth", true);
+      }
       updateToken()
-      return respond
+      return response
     } catch (e) {
-      throw e
+      // throw e.response.data
+      throw e;
     }
 
 }
