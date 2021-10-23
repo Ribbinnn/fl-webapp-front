@@ -2,7 +2,6 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from "rea
 import { Button, Input, Table } from "antd";
 import { CloudDownloadOutlined, WarningOutlined } from '@ant-design/icons';
 import XLSX from "xlsx";
-import UploadRecord from "./UploadRecord";
 
 const UploadRecordForm = forwardRef((props, ref) => {
 
@@ -11,7 +10,9 @@ const UploadRecordForm = forwardRef((props, ref) => {
     useEffect(() => {
         // add additional required field of each project
         for (const i in props.project.Requirement) {
-            required_field.push(props.project.Requirement[i]["name"]);
+            if (!required_field.includes(props.project.Requirement[i]["name"])) {
+                required_field.push(props.project.Requirement[i]["name"]);
+            }
         }
     });
 
@@ -52,7 +53,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
             uploaded_field.push(column_name[change_field]);
             current_char++;
         }
-        // check that uploaded file has all required fields
+        // check if uploaded file has all required fields
         const missing_field = [];
         for (const i in required_field) {
             if (!uploaded_field.includes(required_field[i])) {
@@ -60,9 +61,9 @@ const UploadRecordForm = forwardRef((props, ref) => {
             }
         }
         if (missing_field.length != 0) {
-            console.log("error!");
             setMissingField(missing_field);
             setUploadedFileName({with_ext: null, without_ext: null});
+            setColumns(null);
             setUploadedRecords(null);
         } else {
             setMissingField(null);
@@ -110,7 +111,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     Download Template
                     <CloudDownloadOutlined style={{marginLeft: "5px"}} />
             </a>
-            <div style={{margin: "8px 0 20px 30px"}}>
+            <div style={{margin: "8px 0 22px 30px"}}>
                 <Button 
                     type="primary" 
                     className="primary-btn smaller" 
@@ -151,7 +152,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     <label>Record name:</label>
                     <Input 
                         className="input-text" 
-                        style={{width: "300px", marginLeft: "10px", marginBottom: "10px"}}
+                        style={{maxWidth: "300px", marginLeft: "10px", marginBottom: "10px"}}
                         value={uploadedFileName.without_ext}
                         onChange={(event) => {
                             setUploadedFileName({...uploadedFileName, without_ext: event.target.value});

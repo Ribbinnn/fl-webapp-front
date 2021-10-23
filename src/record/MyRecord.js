@@ -2,10 +2,19 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Form, Input, Select, DatePicker } from "antd";
 import {selectProject} from '../api/project'
 import { searchVitlasProject } from "../api/vitals";
+import RecordList from "./RecordList";
 
 const { Option } = Select;
 
 function MyRecord () {
+    const [current, setCurrent] = useState(0);
+    const next = () => {
+        setCurrent(current + 1);
+    };
+
+    const prev = () => {
+        setCurrent(current - 1);
+    };
     const [project, setProject] = useState({ProjectName:"All"});
     const [itemList, setItemList] = useState([]);
     const [name, setName] = useState("");
@@ -13,8 +22,9 @@ function MyRecord () {
     const [lastDate, setLastDate] = useState("none");
     const [uploadedItem, setUploadedItem] = useState([]);
     const [vitalsList, setVitalsList] = useState([])
+    const [currentRecord, setCurrentRecord] = useState(null);
 
-    const columns = [ // get from project > map
+    const columns = [
         {
             title: "Uploaded Time",
             dataIndex: "updated",
@@ -113,53 +123,69 @@ function MyRecord () {
 
     return (
         <div className="content">
-            <div>
-                <Form layout="inline">
-                    <Form.Item label="Record Name" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>
-                        <Input className="input-text" onChange={onChangeName} style={{width:"200px"}} />
-                    </Form.Item>
-                    <Form.Item label="Project" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>                
-                        <Select className="search-component" defaultValue="All" onChange={handleChangeProject}>
-                            {itemList.map((item, i) => (
-                            <Option key={i} value={i}>
-                                {item.ProjectName}
-                            </Option>
-                            ))}
-                        </Select>
-                    </Form.Item>
-                    <Form.Item label="From" style={{display:"flex", flexDirection:"column", alignItems:"flex-start", marginLeft:"20px"}}>   
-                        <DatePicker onChange={onChangeFirstDate} style={{width:"200px"}} />
-                    </Form.Item>
-                    <Form.Item label="To" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>
-                        <DatePicker onChange={onChangeLastDate} style={{width:"200px"}} />
-                    </Form.Item>
-                    <Form.Item style={{marginLeft:"20px"}}>
-                        <Button className="primary-btn smaller" style={{marginTop:"32px"}} onClick={onClickSearch}>
-                            Search
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </div>
-            <div style={{marginTop:"30px"}}>
-                <Table 
-                    columns={columns} 
-                    dataSource={uploadedItem} 
-                    pagination={false} 
-                    size="small"
-                    onRow={(record, rowIndex) => {
-                        return {
-                          onClick: event => {
+            {current === 0 &&
+                <div>
+                    <div>
+                        <Form layout="inline">
+                            <Form.Item label="Record Name" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>
+                                <Input className="input-text" onChange={onChangeName} style={{width:"200px"}} />
+                            </Form.Item>
+                            <Form.Item label="Project" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>                
+                                <Select className="search-component" defaultValue="All" onChange={handleChangeProject}>
+                                    {itemList.map((item, i) => (
+                                    <Option key={i} value={i}>
+                                        {item.ProjectName}
+                                    </Option>
+                                    ))}
+                                </Select>
+                            </Form.Item>
+                            <Form.Item label="From" style={{display:"flex", flexDirection:"column", alignItems:"flex-start", marginLeft:"20px"}}>   
+                                <DatePicker onChange={onChangeFirstDate} style={{width:"200px"}} />
+                            </Form.Item>
+                            <Form.Item label="To" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>
+                                <DatePicker onChange={onChangeLastDate} style={{width:"200px"}} />
+                            </Form.Item>
+                            <Form.Item style={{marginLeft:"20px"}}>
+                                <Button className="primary-btn smaller" style={{marginTop:"32px"}} onClick={onClickSearch}>
+                                    Search
+                                </Button>
+                            </Form.Item>
+                        </Form>
+                    </div>
+                    <div style={{marginTop:"30px"}}>
+                        <Table 
+                            columns={columns} 
+                            dataSource={uploadedItem} 
+                            pagination={false} 
+                            size="small"
+                            onRow={(record, rowIndex) => {
+                                return {
+                                onClick: event => {
 
-                              /* SHOW ALL RECORD INTERFACE */
-
-                              console.log(record)
-                            }, // click row
-                        };
-                      }}
-                    style={{width:"700px"}}
-                    className="clickable-table"
-                />
-            </div>
+                                    /* SHOW ALL RECORD INTERFACE */
+                                    console.log(record);
+                                    setCurrentRecord(record);
+                                    next();
+                                    }, // click row
+                                };
+                            }}
+                            style={{width:"700px"}}
+                            className="clickable-table"
+                        />
+                    </div>
+                </div>}
+            {current === 1 &&
+                <div>
+                    <RecordList record={currentRecord} />
+                    <Button
+                        className="primary-btn"
+                        onClick={() => {
+                            setCurrentRecord(null);
+                            prev();
+                        }}>
+                            Back
+                    </Button>
+                </div>}
         </div>
     )
 }
