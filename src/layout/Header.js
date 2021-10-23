@@ -8,7 +8,7 @@ import { logout } from '../api/logout';
 
 export default function Header(){
 
-    const username = JSON.parse(localStorage.getItem("user")).username
+    const username = JSON.parse(sessionStorage.getItem("user")).username
 
     return(
             <div id="header">
@@ -27,6 +27,7 @@ export default function Header(){
                             window.location.reload();
                         }).catch((e) => {
                             console.log(e);
+                            window.location.reload();
                         })
                     }}>
                         Log out <LogoutOutlined style={{strokeWidth: 50, stroke:'#E9C869', position: "relative", top: "-3px"}}/>
