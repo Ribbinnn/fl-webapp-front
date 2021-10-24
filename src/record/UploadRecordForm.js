@@ -14,7 +14,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 required_field.push(props.project.Requirement[i]["name"]);
             }
         }
-    });
+    }, []);
 
     const [uploadedFileName, setUploadedFileName] = useState({with_ext: null, without_ext: null});
     const [uploadedRecords ,setUploadedRecords] = useState(null);
@@ -24,7 +24,8 @@ const UploadRecordForm = forwardRef((props, ref) => {
     const printMissingField = () => {
         var string = ""
         for (const i in missingField) {
-            i === missingField.length - 1 ? string += missingField[i] + " " : string += missingField[i] + ", ";
+            (i === missingField.length - 1 || missingField.length === 1) ? 
+                string += missingField[i] + " " : string += missingField[i] + ", ";
         }
         return <label>{string}</label>;
     }
@@ -111,7 +112,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     Download Template
                     <CloudDownloadOutlined style={{marginLeft: "5px"}} />
             </a>
-            <div style={{margin: "8px 0 22px 30px"}}>
+            <div style={{margin: "8px 0 20px 30px"}}>
                 <Button 
                     type="primary" 
                     className="primary-btn smaller" 
