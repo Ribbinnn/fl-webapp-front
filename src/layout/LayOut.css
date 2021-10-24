@@ -270,6 +270,12 @@ ol {
   opacity: 0;
 }
 
+.ant-btn-link,
+.ant-btn-link:hover,
+.ant-btn-link:active,
+.ant-btn-link:focus{
+  color: #58595b;
+}
 /* input ----------------------- */
 .input-text,
 .input-text:hover,
@@ -495,6 +501,18 @@ label,
 
 .ant-picker-input > input::placeholder {
   color: transparent;
+}
+
+/* modal ------------- */
+
+.ant-modal-header{
+  border-bottom: none;
+}
+
+.ant-modal-title {
+  text-align: center;
+  font-size: large;
+  color: #58595b;
 }
 
 /* table ------------------------- */
