@@ -31,7 +31,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
     }
 
     useImperativeHandle(ref, () => ({
-        uploadFile: () => {
+        uploadRecord: () => {
             console.log("hi");
             /* call upload file api */
         }
@@ -70,7 +70,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
             setMissingField(null);
             setUploadedFileName({
                 with_ext: event.target.files[0].name, 
-                without_ext: event.target.files[0].name.split(".")[0],});
+                without_ext: event.target.files[0].name.split(".")[0]});
             // create columns for table
             const columns_set = [];
             for (const i in uploaded_field) {
@@ -104,14 +104,14 @@ const UploadRecordForm = forwardRef((props, ref) => {
     return(
         <div className="upload-record-grid">
             <label style={{display: "block"}}>Medical Records</label>
-            <a 
+            <label 
                 style={{color: "#de5c8e", display: "flex", alignItems: "center"}}
                 onClick={() => {
                     /* call download template api */
                 }}>
                     Download Template
                     <CloudDownloadOutlined style={{marginLeft: "5px"}} />
-            </a>
+            </label>
             <div style={{margin: "8px 0 20px 30px"}}>
                 <Button 
                     type="primary" 

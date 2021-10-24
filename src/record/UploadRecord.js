@@ -84,7 +84,7 @@ export default function UploadRecord() {
               className="primary-btn" 
               onClick={() => {
                 if (current === 1) {
-                  uploadRecordFormRef.current.uploadFile();
+                  uploadRecordFormRef.current.uploadRecord();
                 }
                 next();
               }}>
