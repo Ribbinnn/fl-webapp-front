@@ -6,6 +6,7 @@ function Login() {
 
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [remember, setRemember] = useState(false);
 
     function usernameOnChange(item) {
         setUsername(item.target.value)
@@ -13,6 +14,10 @@ function Login() {
 
     function passwordOnChange(item) {
         setPassword(item.target.value)
+    }
+
+    function rememberOnChange(item) {
+        setRemember(item.target.checked)
     }
 
     return(
@@ -43,12 +48,12 @@ function Login() {
                             <Form.Item>
                                 <div style={{display: "inline-block"}}>
                                     <label id="smaller-label" className="center-div checkbox-container">
-                                        <Input type="checkbox" />
+                                        <Input type="checkbox" onChange={rememberOnChange}/>
                                         <span className="checkmark"></span>
                                         Remember me
                                     </label>
                                 </div>
-                                <a id="smaller-label" style={{float: "right", color: "#de5c8e"}}>Forgot password?</a>
+                                <label id="smaller-label" style={{float: "right", color: "#de5c8e"}}>Forgot password?</label>
                             </Form.Item>
                             <Form.Item>
                                 <Button 
@@ -57,7 +62,7 @@ function Login() {
                                     style={{width: "100%"}}
                                     onClick={async () => {
                                         /* call sign in api */
-                                        login(username, password).then((respond)=>{
+                                        login(username, password, remember).then((respond)=>{
                                             window.location.reload();
                                         }).catch((e)=>{
                                             console.log(e)

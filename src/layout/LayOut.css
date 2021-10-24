@@ -186,10 +186,18 @@
   justify-content: center;
 }
 
-.steps-content {
+.steps-content-upload {
   width: 100%;
-  height: 82%;
-  padding: 50px 20px 40px 20px;
+  min-height: 82%;
+  max-height: 100%;
+  padding: 40px 20px;
+}
+
+.steps-content-diagnosis {
+  width: 100%;
+  min-height: 78%;
+  max-height: 100%;
+  padding: 30px;
 }
 
 .steps-action{
@@ -228,10 +236,10 @@ ol {
   margin-left: 50px;
   }
 
-.upload-record-form {
+.upload-record-grid {
   display: grid;
   grid-auto-flow: row;
-  grid-row-gap: 10px;
+  grid-row-gap: 8px;
 }
 
 /* button --------------------- */
@@ -387,6 +395,11 @@ label,
   padding-top: 3px;
 }
 
+.search-component.ant-select:not(.ant-select-customize-input) .ant-select-selector,
+.search-component.ant-select-focused:not(.ant-select-disabled) .ant-select:not(.ant-select-customize-input) .ant-select-selector{
+  width: 200px;
+}
+
 .ant-select-dropdown .ant-select-dropdown-placement-bottomLeft{
   border-radius: 8;
 }
@@ -454,7 +467,6 @@ label,
   color: #C69C25;
 }
 
-
 /* date picker ---------------- */
 .ant-picker,
 .ant-picker:hover{
@@ -501,4 +513,75 @@ label,
   text-align: center;
   font-size: large;
   color: #58595b;
+}
+
+/* table ------------------------- */
+tbody {
+  display: block;
+  overflow: scroll;
+}
+
+.three-rows-table tbody {
+  max-height: 123px; /* 3 rows */
+}
+
+thead, tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.ant-table-thead > tr > th {
+  background: rgba(88, 89, 91, 0.7);
+  font-size: medium;
+  font-weight: bold;
+  color: white;
+  border: unset;
+}
+
+.ant-table-small .ant-table-thead > tr > th {
+  background-color: rgba(88, 89, 91, 0.7);
+}
+
+.ant-table-container table > thead > tr:first-child th:last-child {
+  border-top-right-radius: 0;
+}
+
+.ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+  content: none;
+}
+
+.ant-table-tbody > tr:nth-child(odd) {
+  background-color: #e5e5e5;
+}
+
+.ant-table-tbody > tr:nth-child(even) {
+  background-color: white;
+}
+
+.ant-table-tbody > tr > td {
+  color: #58595b;
+  font-size: medium;
+  border: unset;
+}
+
+.ant-table .ant-table-tbody > tr:hover > td {
+  background: unset;
+}
+
+.clickable-table .ant-table .ant-table-tbody > tr:hover > td {
+  background: #f8e1ea;
+  cursor: pointer;
+}
+
+td.ant-table-column-sort {
+  background-color: transparent;
+}
+
+.ant-table-column-sorter-up.active, .ant-table-column-sorter-down.active {
+  color: #ffb9d3;
+}
+
+.ant-table-thead th.ant-table-column-has-sorters:hover {
+  background-color:rgba(88, 89, 91, 0.7);
 }

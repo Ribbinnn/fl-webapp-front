@@ -2,12 +2,16 @@ import { instance } from '.';
 
 export const logout = async () => {
     try {
-        const respond = (
+        const response = (
             await instance.post("/auth/logout")
         ).data;
-        localStorage.setItem("auth", false)
-        return respond;
+
+        sessionStorage.clear();
+        localStorage.clear();
+        return response;
     } catch (e) {
+        sessionStorage.clear();
+        localStorage.clear();
         throw e;
     }
 }
