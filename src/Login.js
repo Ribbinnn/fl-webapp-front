@@ -53,7 +53,7 @@ function Login() {
                                         Remember me
                                     </label>
                                 </div>
-                                <a id="smaller-label" style={{float: "right", color: "#de5c8e"}}>Forgot password?</a>
+                                <label id="smaller-label" style={{float: "right", color: "#de5c8e"}}>Forgot password?</label>
                             </Form.Item>
                             <Form.Item>
                                 <Button 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from "rea
 import { Button, Input, Table } from "antd";
 import { CloudDownloadOutlined, WarningOutlined } from '@ant-design/icons';
 import XLSX from "xlsx";
+import { uploadVitalsRecord } from "../api/vitals";
 
 const UploadRecordForm = forwardRef((props, ref) => {
 
@@ -14,25 +15,35 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 required_field.push(props.project.Requirement[i]["name"]);
             }
         }
-    });
+    }, []);
 
-    const [uploadedFileName, setUploadedFileName] = useState({with_ext: null, without_ext: null});
-    const [uploadedRecords ,setUploadedRecords] = useState(null);
+    const [uploadedRecordName, setUploadedRecordName] = useState({with_ext: null, without_ext: null});
+    const [uploadedRecords ,setUploadedRecords] = useState({with_key: null, without_key: null});
     const [columns, setColumns] = useState(null);
 
     const [missingField, setMissingField] = useState(null);
     const printMissingField = () => {
         var string = ""
         for (const i in missingField) {
-            i === missingField.length - 1 ? string += missingField[i] + " " : string += missingField[i] + ", ";
+            (i === missingField.length - 1 || missingField.length === 1) ? 
+                string += missingField[i] + " " : string += missingField[i] + ", ";
         }
         return <label>{string}</label>;
     }
 
     useImperativeHandle(ref, () => ({
-        uploadFile: () => {
-            console.log("hi");
-            /* call upload file api */
+        uploadRecord: () => {
+            uploadVitalsRecord(
+                props.project.ProjectName,
+                (JSON.parse(sessionStorage.getItem('user'))).id,
+                uploadedRecordName.without_ext,
+                uploadedRecords.without_key
+            )
+            .then((res) => {
+                console.log(res);
+            }).catch((err) => {
+                console.log(err);
+            })
         }
     }));
 
@@ -62,14 +73,14 @@ const UploadRecordForm = forwardRef((props, ref) => {
         }
         if (missing_field.length !== 0) {
             setMissingField(missing_field);
-            setUploadedFileName({with_ext: null, without_ext: null});
+            setUploadedRecordName({with_ext: null, without_ext: null});
             setColumns(null);
-            setUploadedRecords(null);
+            setUploadedRecords({with_key: null, without_key: null});
         } else {
             setMissingField(null);
-            setUploadedFileName({
+            setUploadedRecordName({
                 with_ext: event.target.files[0].name, 
-                without_ext: event.target.files[0].name.split(".")[0],});
+                without_ext: event.target.files[0].name.split(".")[0]});
             // create columns for table
             const columns_set = [];
             for (const i in uploaded_field) {
@@ -93,25 +104,26 @@ const UploadRecordForm = forwardRef((props, ref) => {
             // convert file to json
             const data = XLSX.utils.sheet_to_json(target_workbook);
             // add key to each row
-            for (const i in data) {
-                data[i]["key"] = (parseInt(i)+1).toString();
+            const data_with_key = JSON.parse(JSON.stringify(data));
+            for (const i in data_with_key) {
+                data_with_key[i]["key"] = (parseInt(i)+1).toString();
             }
-            setUploadedRecords(data);
+            setUploadedRecords({with_key: data_with_key, without_key: data});
         }
     }
 
     return(
         <div className="upload-record-grid">
             <label style={{display: "block"}}>Medical Records</label>
-            <a 
+            <label 
                 style={{color: "#de5c8e", display: "flex", alignItems: "center"}}
                 onClick={() => {
                     /* call download template api */
                 }}>
                     Download Template
                     <CloudDownloadOutlined style={{marginLeft: "5px"}} />
-            </a>
-            <div style={{margin: "8px 0 22px 30px"}}>
+            </label>
+            <div style={{margin: "8px 0 20px 30px"}}>
                 <Button 
                     type="primary" 
                     className="primary-btn smaller" 
@@ -129,7 +141,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                             }} />
                 </Button>
                 <label style={{marginLeft: "20px"}}>
-                    {uploadedRecords ? uploadedFileName.with_ext : null}
+                    {uploadedRecords.with_key ? uploadedRecordName.with_ext : null}
                 </label>
                 <label id="smaller-label" style={{display: "block", color: "#de5c8e", margin: "8px 0 0 10px"}}>
                     *accepted file type: .xlsx, .csv
@@ -146,24 +158,25 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     </label>
                     <label>Please upload new file with all required fields.</label>
                 </div>}
-            {uploadedRecords && 
+            {uploadedRecords.with_key && 
                 <div>
                     <label style={{display: "block", marginBottom: "5px"}}>Preview</label>
                     <label>Record name:</label>
                     <Input 
                         className="input-text" 
                         style={{maxWidth: "300px", marginLeft: "10px", marginBottom: "10px"}}
-                        value={uploadedFileName.without_ext}
+                        value={uploadedRecordName.without_ext}
                         onChange={(event) => {
-                            setUploadedFileName({...uploadedFileName, without_ext: event.target.value});
+                            setUploadedRecordName({...uploadedRecordName, without_ext: event.target.value});
                         }} />
                 </div>}
-            {uploadedRecords &&
+            {uploadedRecords.with_key &&
                 <Table 
                     columns={columns} 
-                    dataSource={uploadedRecords} 
+                    dataSource={uploadedRecords.with_key} 
                     pagination={false} 
                     size="small"
+                    className="three-rows-table"
                 />}
         </div>
     );
