@@ -82,8 +82,9 @@ function MyRecord () {
             let res_list = (response.data).map((project)=>({
                 vitals_proj_id: project._id,
                 updated: (new Date(project.updatedAt)).toLocaleString(),
-                rec_name: project.filename,
-                proj_name: project.name
+                rec_name: project.record_name,
+                proj_name: project.name,
+                key: project._id
             }))
             
             setUploadedItem(res_list)
