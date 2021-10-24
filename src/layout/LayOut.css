@@ -188,13 +188,15 @@
 
 .steps-content-upload {
   width: 100%;
-  height: 82%;
+  min-height: 82%;
+  max-height: 100%;
   padding: 40px 20px;
 }
 
 .steps-content-diagnosis {
   width: 100%;
-  height: 78%;
+  min-height: 78%;
+  max-height: 100%;
   padding: 30px;
 }
 
@@ -498,8 +500,11 @@ label,
 /* table ------------------------- */
 tbody {
   display: block;
-  max-height: 123px; /* 3 rows */
   overflow: scroll;
+}
+
+.three-rows-table tbody {
+  max-height: 123px; /* 3 rows */
 }
 
 thead, tbody tr {

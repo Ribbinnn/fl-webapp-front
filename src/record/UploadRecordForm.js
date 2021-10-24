@@ -176,6 +176,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     dataSource={uploadedRecords.with_key} 
                     pagination={false} 
                     size="small"
+                    className="three-rows-table"
                 />}
         </div>
     );
