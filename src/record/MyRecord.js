@@ -168,7 +168,7 @@ function MyRecord () {
                                 };
                             }}
                             style={{width:"700px"}}
-                            className="clickable-table"
+                            className="clickable-table seven-rows-table"
                         />
                     </div>
                 </div>}

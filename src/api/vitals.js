@@ -30,3 +30,14 @@ export const getAllRecords = async (vitals_proj_id) => {
         throw e
     }
 }
+
+export const downloadTemplate = async (project_name) => {
+    try {
+        const response = (
+            await instance.get("/vitals/template/" + project_name, { responseType: 'blob' })
+        ).data;
+        return response;
+    } catch (e) {
+        throw e
+    }
+}

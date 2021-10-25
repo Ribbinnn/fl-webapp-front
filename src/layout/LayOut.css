@@ -282,6 +282,12 @@ ol {
   opacity: 0;
 }
 
+.ant-btn-link,
+.ant-btn-link:hover,
+.ant-btn-link:active,
+.ant-btn-link:focus{
+  color: #58595b;
+}
 /* input ----------------------- */
 .input-text,
 .input-text:hover,
@@ -353,6 +359,10 @@ label,
 .project-lable {
   color: #58595b;
   font-size: large;
+}
+
+label.clickable-label:hover {
+  cursor: pointer;
 }
 
 #smaller-label {
@@ -509,10 +519,34 @@ label,
   color: transparent;
 }
 
+.ant-picker-body table tbody {
+  overflow: hidden;
+}
+
+.anticon.anticon-calendar {
+  color: #58595b;
+}
+
+/* modal ------------- */
+
+.ant-modal-header{
+  border-bottom: none;
+}
+
+.ant-modal-title {
+  text-align: center;
+  font-size: large;
+  color: #58595b;
+}
+
 /* table ------------------------- */
 tbody {
   display: block;
   overflow: scroll;
+}
+
+.seven-rows-table tbody {
+  max-height: 303px; /* 7 rows */
 }
 
 .three-rows-table tbody {
