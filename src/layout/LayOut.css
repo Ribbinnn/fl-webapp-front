@@ -218,7 +218,7 @@
   padding-top: 40px;
 }
 
-.project-info{
+.info{
   display: grid;
   grid-auto-flow: row;
   grid-row-gap: 10px;
@@ -287,6 +287,16 @@ ol {
   box-shadow: none;
 }
 
+.input-prev-edit-text,
+.input-prev-edit-text:hover,
+.input-prev-edit-text:focus {
+  color: #58595b;
+  font-size: medium;
+  border: 1px solid #58595b;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
 .checkbox-container {
   cursor: pointer;
   -webkit-user-select: none;
@@ -349,7 +359,7 @@ label,
   font-size: large;
 }
 
-#smaller-label {
+#smaller-label{
   font-size: medium;
 }
 

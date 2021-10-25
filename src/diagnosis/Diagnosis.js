@@ -4,6 +4,7 @@ import "antd/dist/antd.css";
 import SelectProject from "../component/SelectProject";
 import ProjectInfo from "../component/ProjectInfo";
 import Completed from "../component/Completed";
+import PreviewEdit from "./PreviewEdit";
 const { Step } = Steps;
 const { Panel } = Collapse;
 
@@ -49,6 +50,8 @@ const btnList = [
 export default function Diagnosis() {
   const [HN, setHN] = useState("");
   const [Project, setProject] = useState("none");
+  const [Patient, setPatient] = useState({ Name: "John Doe", Age: 42, Gender: "M" });
+  const [MedRec, setMedRec] = useState({"Pulse rate": 77, "Temperature": 37, "Blood pressure": "120/80"});
   const [current, setCurrent] = useState(0);
   const next = () => {
     /** add condition for each step to go next step here */
@@ -126,18 +129,7 @@ export default function Diagnosis() {
           </div>
         )}
         {current === 3 && (
-          <div>
-            <label
-              style={{
-                display: "block",
-                color: "#de5c8e",
-                marginBottom: "10px",
-              }}
-            >
-              Patient's HN: {HN}
-            </label>
-            
-          </div>
+          <PreviewEdit HN={HN} Patient={Patient} MedRec={MedRec}/>
         )}
         {current === steps.length - 1 && (
           <Completed btnList={btnList} title="Diagnosis Started" />
