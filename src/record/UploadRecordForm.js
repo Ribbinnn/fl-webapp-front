@@ -120,11 +120,12 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 className="clickable-label"
                 onClick={() => {
                     downloadTemplate(props.project.ProjectName).then((res) => {
-                        console.log(res)
                         const url = window.URL.createObjectURL(res)
                         const link = document.createElement('a');
+
                         link.href = url;
                         link.setAttribute('download', `template.xlsx`);
+                        
                         document.body.appendChild(link);
                         link.click();
                         document.body.removeChild(link);
