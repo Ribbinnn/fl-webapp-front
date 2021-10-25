@@ -162,7 +162,6 @@ function MyRecord () {
                             onRow={(record, rowIndex) => {
                                 return {
                                 onClick: event => {
-
                                     /* SHOW ALL RECORD INTERFACE */
                                     console.log(record);
                                     setCurrentRecord(record);
@@ -171,7 +170,7 @@ function MyRecord () {
                                 };
                             }}
                             style={{width:"700px"}}
-                            className="clickable-table"
+                            className="clickable-table seven-rows-table"
                         />
                     </div>
                 </div>}
