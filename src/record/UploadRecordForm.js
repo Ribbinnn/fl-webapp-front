@@ -8,15 +8,6 @@ const UploadRecordForm = forwardRef((props, ref) => {
 
     const required_field = ["entry_id", "hn", "gender", "age"]; // required in every project
 
-    useEffect(() => {
-        // add additional required field of each project
-        for (const i in props.project.Requirement) {
-            if (!required_field.includes(props.project.Requirement[i]["name"])) {
-                required_field.push(props.project.Requirement[i]["name"]);
-            }
-        }
-    }, []);
-
     const [uploadedRecordName, setUploadedRecordName] = useState({with_ext: null, without_ext: null});
     const [uploadedRecords ,setUploadedRecords] = useState({with_key: null, without_key: null});
     const [columns, setColumns] = useState(null);
@@ -48,6 +39,12 @@ const UploadRecordForm = forwardRef((props, ref) => {
     }));
 
     async function handleUploadedFile(event) {
+        // add additional required field of each project
+        for (const i in props.project.Requirement) {
+            if (!required_field.includes(props.project.Requirement[i]["name"])) {
+                required_field.push(props.project.Requirement[i]["name"]);
+            }
+        }
         // read file
         const data = await event.target.files[0].arrayBuffer();
         const workbook = XLSX.read(data);
@@ -166,7 +163,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 </div>}
             {uploadedRecords.with_key && 
                 <div>
-                    <label style={{display: "block", marginBottom: "5px"}}>Preview</label>
+                    <label style={{display: "block"}}>Preview</label>
                     <label>Record name:</label>
                     <Input 
                         className="input-text" 

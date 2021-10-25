@@ -190,7 +190,7 @@
   width: 100%;
   min-height: 82%;
   max-height: 100%;
-  padding: 40px 20px;
+  padding: 35px 20px;
 }
 
 .steps-content-diagnosis {
@@ -239,7 +239,7 @@ ol {
 .upload-record-grid {
   display: grid;
   grid-auto-flow: row;
-  grid-row-gap: 8px;
+  grid-row-gap: 5px;
 }
 
 .show-all-records-content {
