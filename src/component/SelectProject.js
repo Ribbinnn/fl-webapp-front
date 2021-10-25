@@ -28,12 +28,6 @@ export default function SelectProject(props) {
         console.error(err);
       });
   }, []);
-  const setDefaultValue = () => {
-    for (let i = 0; i < itemList.length; i++) {
-      if (itemList[i].ProjectName === props.Project.ProjectName) return i;
-    }
-    return "";
-  };
 
   function handleChange(value) {
     props.setProject(itemList[value]);
@@ -47,7 +41,7 @@ export default function SelectProject(props) {
       <Select
         onChange={handleChange}
         dropdownStyle={{ borderRadius: 8 }}
-        defaultValue={setDefaultValue}
+        defaultValue={props.Project.ProjectName || ""}
       >
         {itemList.map((item, i) => (
           <Option key={i} value={i}>

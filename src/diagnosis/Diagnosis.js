@@ -3,6 +3,8 @@ import { Steps, Button, Form, Input, Row, Col, Collapse } from "antd";
 import "antd/dist/antd.css";
 import SelectProject from "../component/SelectProject";
 import ProjectInfo from "../component/ProjectInfo";
+import Completed from "../component/Completed";
+import PreviewEdit from "./PreviewEdit";
 const { Step } = Steps;
 const { Panel } = Collapse;
 
@@ -29,9 +31,27 @@ const steps = [
   },
 ];
 
+const btnList = [
+  {
+    title: "Back to Home",
+    destination: "/",
+  },
+  {
+    title: "Create New Diagnosis",
+    destination: "/diagnosis",
+  },
+  ,
+  {
+    title: "Go to View History",
+    destination: "/viewhistory",
+  },
+];
+
 export default function Diagnosis() {
-  const [HN,setHN] = useState("");
+  const [HN, setHN] = useState("");
   const [Project, setProject] = useState("none");
+  const [Patient, setPatient] = useState({ Name: "John Doe", Age: 42, Gender: "M" });
+  const [MedRec, setMedRec] = useState({"Pulse rate": 77, "Temperature": 37, "Blood pressure": "120/80"});
   const [current, setCurrent] = useState(0);
   const next = () => {
     /** add condition for each step to go next step here */
@@ -49,58 +69,89 @@ export default function Diagnosis() {
           <Step key={item.title} title={item.title} />
         ))}
       </Steps>
-      {/* ----- add content below -------- */ }
+      {/* ----- add content below -------- */}
       <div className="steps-content-diagnosis">
-        {current===0 && <SelectHN HN={HN} setHN={setHN} Project={Project} setProject={setProject}/>}
-        {current === 1 &&
+        {current === 0 && (
+          <SelectHN
+            HN={HN}
+            setHN={setHN}
+            Project={Project}
+            setProject={setProject}
+          />
+        )}
+        {current === 1 && (
           <Row>
             <Col span={9}>
               <div>
-                <label style={{display: "block", color: "#de5c8e", marginBottom: "10px"}}>
+                <label
+                  style={{
+                    display: "block",
+                    color: "#de5c8e",
+                    marginBottom: "10px",
+                  }}
+                >
                   Patient's HN: {HN}
                 </label>
-                <label style={{display: "block"}}>
+                <label style={{ display: "block" }}>
                   Project: {Project.ProjectName}
                 </label>
-                <Collapse defaultActiveKey={["1"]} expandIconPosition="right" ghost style={{margin: 0}}>
+                <Collapse
+                  defaultActiveKey={["1"]}
+                  expandIconPosition="right"
+                  ghost
+                  style={{ margin: 0 }}
+                >
                   <Panel key="1" header="Project information">
-                    <ProjectInfo Project = {Project}/>
+                    <ProjectInfo Project={Project} />
                   </Panel>
                 </Collapse>
               </div>
             </Col>
             <Col span={15}>
               <div>
-                <label style={{display: "block"}}>Medical Records</label>
+                <label style={{ display: "block" }}>Medical Records</label>
               </div>
             </Col>
-          </Row>}
-        {current === 2 &&
+          </Row>
+        )}
+        {current === 2 && (
           <div>
-            <label style={{display: "block", color: "#de5c8e", marginBottom: "10px"}}>
+            <label
+              style={{
+                display: "block",
+                color: "#de5c8e",
+                marginBottom: "10px",
+              }}
+            >
               Patient's HN: {HN}
             </label>
-            <label style={{display: "block"}}>
-              Select X-Ray Image
-            </label>
-          </div>}
+            <label style={{ display: "block" }}>Select X-Ray Image</label>
+          </div>
+        )}
+        {current === 3 && (
+          <PreviewEdit HN={HN} Patient={Patient} MedRec={MedRec}/>
+        )}
+        {current === steps.length - 1 && (
+          <Completed btnList={btnList} title="Diagnosis Started" />
+        )}
       </div>
-      {/* ----- add content above -------- */ }
-      <div className={`steps-action${current===0?" steps-action-1":""}`}>
-          {current>0 && current < steps.length -1 && <Button
+      {/* ----- add content above -------- */}
+      <div className={`steps-action${current === 0 ? " steps-action-1" : ""}`}>
+        {current > 0 && current < steps.length - 1 && (
+          <Button
             className="primary-btn"
             style={current > 0 ? null : { visibility: "hidden" }}
             onClick={() => prev()}
           >
             Back
-          </Button>}
-          {HN!=="" && Project!== "none" && current < steps.length -1 && <Button 
-            className="primary-btn" 
-            onClick={() => next()}
-          >
+          </Button>
+        )}
+        {HN !== "" && Project !== "none" && current < steps.length - 1 && (
+          <Button className="primary-btn" onClick={() => next()}>
             Next
-          </Button>}
-        </div>
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
@@ -108,8 +159,8 @@ export default function Diagnosis() {
 function SelectHN(props) {
   const handleSubmit = () => {
     /*check HN in PACS*/
-    props.setHN("1111" /** set valid HN in PACS */)
-  }
+    props.setHN("1111" /** set valid HN in PACS */);
+  };
   return (
     <div
       style={{
@@ -119,7 +170,11 @@ function SelectHN(props) {
     >
       <Form layout="vertical">
         <Form.Item label="Patient's HN">
-          <Input className="input-text" style={{ width: "300px" }} defaultValue={props.HN}/>
+          <Input
+            className="input-text"
+            style={{ width: "300px" }}
+            defaultValue={props.HN}
+          />
           <Button
             className="primary-btn smaller"
             style={{ marginLeft: "10px" }}
@@ -130,7 +185,12 @@ function SelectHN(props) {
         </Form.Item>
       </Form>
       <div style={{ paddingLeft: 60 }}>
-        {props.HN && <SelectProject setProject={props.setProject} Project={props.Project}/>}
+        {props.HN && (
+          <SelectProject
+            setProject={props.setProject}
+            Project={props.Project}
+          />
+        )}
       </div>
     </div>
   );
