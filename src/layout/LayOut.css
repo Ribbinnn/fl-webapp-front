@@ -349,6 +349,10 @@ label,
   font-size: large;
 }
 
+label.clickable-label:hover {
+  cursor: pointer;
+}
+
 #smaller-label {
   font-size: medium;
 }
@@ -503,6 +507,14 @@ label,
   color: transparent;
 }
 
+.ant-picker-body table tbody {
+  overflow: hidden;
+}
+
+.anticon.anticon-calendar {
+  color: #58595b;
+}
+
 /* modal ------------- */
 
 .ant-modal-header{
@@ -519,6 +531,10 @@ label,
 tbody {
   display: block;
   overflow: scroll;
+}
+
+.seven-rows-table tbody {
+  max-height: 303px; /* 7 rows */
 }
 
 .three-rows-table tbody {
