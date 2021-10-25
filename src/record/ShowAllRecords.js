@@ -54,12 +54,13 @@ function ShowAllRecords(props) {
                     Uploaded Time: {props.record.updated}
                 </label>
             </div>
-            <div style={{width: "800px"}}>
+            <div style={{maxWidth: "800px"}}>
                 <Table 
                     columns={columns} 
                     dataSource={records} 
                     pagination={false} 
                     size="small"
+                    className="seven-rows-table"
                     style={{marginTop: "30px"}}
                 />
                 <Button
