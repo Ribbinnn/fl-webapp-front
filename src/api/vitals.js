@@ -19,3 +19,14 @@ export const uploadVitalsRecord = async (project_name, user_id, record_name, rec
         throw e
     }
 }
+
+export const getAllRecords = async (vitals_proj_id) => {
+    try {
+        const response = (
+            await instance.get("/vitals/projects/" + vitals_proj_id + "/medrec")
+        ).data;
+        return response;
+    } catch (e) {
+        throw e
+    }
+}

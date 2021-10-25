@@ -242,6 +242,18 @@ ol {
   grid-row-gap: 8px;
 }
 
+.show-all-records-content {
+  width: 100%;
+  min-height: 92%;
+  max-height: 100%;
+}
+
+.show-all-records-grid {
+  display: grid;
+  grid-auto-flow: row;
+  grid-row-gap: 5px;
+}
+
 /* button --------------------- */
 .primary-btn,
 .primary-btn:hover,
