@@ -11,7 +11,9 @@ function ShowAllRecords(props) {
         .then((res) => {
             console.log(res);
             let column_list = (Object.keys(res.data[0].records[0])).map((column) => ({
-                title: column === "hn" ? column.toUpperCase() : column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" "),
+                title: column === "hn" ? 
+                    column.toUpperCase() : 
+                    column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" "),
                 dataIndex: column,
                 key: column,
                 align: "center",

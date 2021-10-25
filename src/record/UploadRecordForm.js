@@ -82,25 +82,18 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 with_ext: event.target.files[0].name, 
                 without_ext: event.target.files[0].name.split(".")[0]});
             // create columns for table
-            const columns_set = [];
-            for (const i in uploaded_field) {
-                var title;
-                if (uploaded_field[i] === "hn") {
-                    title = uploaded_field[i].toUpperCase();
-                } else {
-                    title = uploaded_field[i].charAt(0).toUpperCase() + uploaded_field[i].slice(1).split("_").join(" ");
-                }
-                columns_set.push({
-                    title: title,
-                    dataIndex: uploaded_field[i],
-                    key: uploaded_field[i],
-                    align: "center",
-                    ellipsis: {
-                        showTitle: true
-                    },
-                });
-            }
-            setColumns(columns_set);
+            let column_list = (uploaded_field).map((column) => ({
+                title: column === "hn" ? 
+                    column.toUpperCase() : 
+                    column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" "),
+                dataIndex: column,
+                key: column,
+                align: "center",
+                ellipsis: {
+                    showTitle: true,
+                },
+            }));
+            setColumns(column_list);
             // convert file to json
             const data = XLSX.utils.sheet_to_json(target_workbook);
             // add key to each row
