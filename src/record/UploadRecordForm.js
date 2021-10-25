@@ -2,7 +2,7 @@ import React, { useState, useEffect, forwardRef, useImperativeHandle } from "rea
 import { Button, Input, Table } from "antd";
 import { CloudDownloadOutlined, WarningOutlined } from '@ant-design/icons';
 import XLSX from "xlsx";
-import { uploadVitalsRecord } from "../api/vitals";
+import { uploadVitalsRecord, downloadTemplate } from "../api/vitals";
 
 const UploadRecordForm = forwardRef((props, ref) => {
 
@@ -117,8 +117,21 @@ const UploadRecordForm = forwardRef((props, ref) => {
             <label style={{display: "block"}}>Medical Records</label>
             <label 
                 style={{color: "#de5c8e", display: "flex", alignItems: "center"}}
+                className="clickable-label"
                 onClick={() => {
-                    /* call download template api */
+                    downloadTemplate(props.project.ProjectName).then((res) => {
+                        const url = window.URL.createObjectURL(res)
+                        const link = document.createElement('a');
+
+                        link.href = url;
+                        link.setAttribute('download', `template.xlsx`);
+                        
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }).catch((e) => {
+                        console.log(e)
+                    })
                 }}>
                     Download Template
                     <CloudDownloadOutlined style={{marginLeft: "5px"}} />
