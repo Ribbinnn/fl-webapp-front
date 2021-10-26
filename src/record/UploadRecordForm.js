@@ -8,17 +8,8 @@ const UploadRecordForm = forwardRef((props, ref) => {
 
     const required_field = ["entry_id", "hn", "gender", "age"]; // required in every project
 
-    useEffect(() => {
-        // add additional required field of each project
-        for (const i in props.project.Requirement) {
-            if (!required_field.includes(props.project.Requirement[i]["name"])) {
-                required_field.push(props.project.Requirement[i]["name"]);
-            }
-        }
-    }, []);
-
     const [uploadedRecordName, setUploadedRecordName] = useState({with_ext: null, without_ext: null});
-    const [uploadedRecords ,setUploadedRecords] = useState({with_key: null, without_key: null});
+    const [uploadedRecord ,setUploadedRecord] = useState({with_key: null, without_key: null});
     const [columns, setColumns] = useState(null);
 
     const [missingField, setMissingField] = useState(null);
@@ -33,21 +24,32 @@ const UploadRecordForm = forwardRef((props, ref) => {
 
     useImperativeHandle(ref, () => ({
         uploadRecord: () => {
-            uploadVitalsRecord(
-                props.project.ProjectName,
-                (JSON.parse(sessionStorage.getItem('user'))).id,
-                uploadedRecordName.without_ext,
-                uploadedRecords.without_key
-            )
-            .then((res) => {
-                console.log(res);
-            }).catch((err) => {
-                console.log(err);
-            })
-        }
+            if (uploadedRecord.without_key !== null) {
+                uploadVitalsRecord(
+                    props.project.ProjectName,
+                    (JSON.parse(sessionStorage.getItem('user'))).id,
+                    uploadedRecordName.without_ext,
+                    uploadedRecord.without_key
+                )
+                .then((res) => {
+                    console.log(res);
+                }).catch((err) => {
+                    console.log(err);
+                })
+            } else {
+                alert("Please upload record.")
+            }
+        },
+        uploadedRecord: uploadedRecord.without_key,
     }));
 
     async function handleUploadedFile(event) {
+        // add additional required field of each project
+        for (const i in props.project.Requirement) {
+            if (!required_field.includes(props.project.Requirement[i]["name"])) {
+                required_field.push(props.project.Requirement[i]["name"]);
+            }
+        }
         // read file
         const data = await event.target.files[0].arrayBuffer();
         const workbook = XLSX.read(data);
@@ -75,32 +77,25 @@ const UploadRecordForm = forwardRef((props, ref) => {
             setMissingField(missing_field);
             setUploadedRecordName({with_ext: null, without_ext: null});
             setColumns(null);
-            setUploadedRecords({with_key: null, without_key: null});
+            setUploadedRecord({with_key: null, without_key: null});
         } else {
             setMissingField(null);
             setUploadedRecordName({
                 with_ext: event.target.files[0].name, 
                 without_ext: event.target.files[0].name.split(".")[0]});
             // create columns for table
-            const columns_set = [];
-            for (const i in uploaded_field) {
-                var title;
-                if (uploaded_field[i] === "hn") {
-                    title = uploaded_field[i].toUpperCase();
-                } else {
-                    title = uploaded_field[i].charAt(0).toUpperCase() + uploaded_field[i].slice(1).split("_").join(" ");
-                }
-                columns_set.push({
-                    title: title,
-                    dataIndex: uploaded_field[i],
-                    key: uploaded_field[i],
-                    align: "center",
-                    ellipsis: {
-                        showTitle: true
-                    },
-                });
-            }
-            setColumns(columns_set);
+            let column_list = (uploaded_field).map((column) => ({
+                title: column === "hn" ? 
+                    column.toUpperCase() : 
+                    column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" "),
+                dataIndex: column,
+                key: column,
+                align: "center",
+                ellipsis: {
+                    showTitle: true,
+                },
+            }));
+            setColumns(column_list);
             // convert file to json
             const data = XLSX.utils.sheet_to_json(target_workbook);
             // add key to each row
@@ -108,7 +103,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
             for (const i in data_with_key) {
                 data_with_key[i]["key"] = (parseInt(i)+1).toString();
             }
-            setUploadedRecords({with_key: data_with_key, without_key: data});
+            setUploadedRecord({with_key: data_with_key, without_key: data});
         }
     }
 
@@ -154,7 +149,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                             }} />
                 </Button>
                 <label style={{marginLeft: "20px"}}>
-                    {uploadedRecords.with_key ? uploadedRecordName.with_ext : null}
+                    {uploadedRecord.with_key ? uploadedRecordName.with_ext : null}
                 </label>
                 <label id="smaller-label" style={{display: "block", color: "#de5c8e", margin: "8px 0 0 10px"}}>
                     *accepted file type: .xlsx, .csv
@@ -171,9 +166,9 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     </label>
                     <label>Please upload new file with all required fields.</label>
                 </div>}
-            {uploadedRecords.with_key && 
+            {uploadedRecord.with_key && 
                 <div>
-                    <label style={{display: "block", marginBottom: "5px"}}>Preview</label>
+                    <label style={{display: "block"}}>Preview</label>
                     <label>Record name:</label>
                     <Input 
                         className="input-text" 
@@ -183,10 +178,10 @@ const UploadRecordForm = forwardRef((props, ref) => {
                             setUploadedRecordName({...uploadedRecordName, without_ext: event.target.value});
                         }} />
                 </div>}
-            {uploadedRecords.with_key &&
+            {uploadedRecord.with_key &&
                 <Table 
                     columns={columns} 
-                    dataSource={uploadedRecords.with_key} 
+                    dataSource={uploadedRecord.with_key} 
                     pagination={false} 
                     size="small"
                     className="three-rows-table"

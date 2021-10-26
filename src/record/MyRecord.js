@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Table, Button, Form, Input, Select, DatePicker } from "antd";
 import {selectProject} from '../api/project'
 import { searchVitlasProject } from "../api/vitals";
-import RecordList from "./RecordList";
+import ShowAllRecords from "./ShowAllRecords";
 
 const { Option } = Select;
 
@@ -162,8 +162,6 @@ function MyRecord () {
                             onRow={(record, rowIndex) => {
                                 return {
                                 onClick: event => {
-                                    /* SHOW ALL RECORD INTERFACE */
-                                    console.log(record);
                                     setCurrentRecord(record);
                                     next();
                                     }, // click row
@@ -175,8 +173,8 @@ function MyRecord () {
                     </div>
                 </div>}
             {current === 1 &&
-                <div>
-                    <RecordList record={currentRecord} />
+                <div style={{height: "100%"}}>
+                    <ShowAllRecords record={currentRecord} />
                     <Button
                         className="primary-btn"
                         onClick={() => {
