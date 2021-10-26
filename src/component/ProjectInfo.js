@@ -3,7 +3,7 @@ import { Tag } from "antd";
 
 export default function ProjectInfo(props){
     return(
-      <div className="project-info">
+      <div className="info">
                 <div>
                   Task : <Tag className="brown">{props.Project.Task}</Tag>
                 </div>
