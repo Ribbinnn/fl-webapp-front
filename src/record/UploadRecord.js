@@ -86,7 +86,9 @@ export default function UploadRecord() {
                 if (current === 1) {
                   uploadRecordFormRef.current.uploadRecord();
                 }
-                next();
+                if (current === 0 || (current === 1 && uploadRecordFormRef.current.uploadedRecord !== null)) {
+                  next();
+                }
               }}>
                 Next
             </Button>}

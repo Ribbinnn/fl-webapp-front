@@ -9,7 +9,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
     const required_field = ["entry_id", "hn", "gender", "age"]; // required in every project
 
     const [uploadedRecordName, setUploadedRecordName] = useState({with_ext: null, without_ext: null});
-    const [uploadedRecords ,setUploadedRecords] = useState({with_key: null, without_key: null});
+    const [uploadedRecord ,setUploadedRecord] = useState({with_key: null, without_key: null});
     const [columns, setColumns] = useState(null);
 
     const [missingField, setMissingField] = useState(null);
@@ -24,18 +24,23 @@ const UploadRecordForm = forwardRef((props, ref) => {
 
     useImperativeHandle(ref, () => ({
         uploadRecord: () => {
-            uploadVitalsRecord(
-                props.project.ProjectName,
-                (JSON.parse(sessionStorage.getItem('user'))).id,
-                uploadedRecordName.without_ext,
-                uploadedRecords.without_key
-            )
-            .then((res) => {
-                console.log(res);
-            }).catch((err) => {
-                console.log(err);
-            })
-        }
+            if (uploadedRecord.without_key !== null) {
+                uploadVitalsRecord(
+                    props.project.ProjectName,
+                    (JSON.parse(sessionStorage.getItem('user'))).id,
+                    uploadedRecordName.without_ext,
+                    uploadedRecord.without_key
+                )
+                .then((res) => {
+                    console.log(res);
+                }).catch((err) => {
+                    console.log(err);
+                })
+            } else {
+                alert("Please upload record.")
+            }
+        },
+        uploadedRecord: uploadedRecord.without_key,
     }));
 
     async function handleUploadedFile(event) {
@@ -72,7 +77,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
             setMissingField(missing_field);
             setUploadedRecordName({with_ext: null, without_ext: null});
             setColumns(null);
-            setUploadedRecords({with_key: null, without_key: null});
+            setUploadedRecord({with_key: null, without_key: null});
         } else {
             setMissingField(null);
             setUploadedRecordName({
@@ -98,7 +103,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
             for (const i in data_with_key) {
                 data_with_key[i]["key"] = (parseInt(i)+1).toString();
             }
-            setUploadedRecords({with_key: data_with_key, without_key: data});
+            setUploadedRecord({with_key: data_with_key, without_key: data});
         }
     }
 
@@ -144,7 +149,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                             }} />
                 </Button>
                 <label style={{marginLeft: "20px"}}>
-                    {uploadedRecords.with_key ? uploadedRecordName.with_ext : null}
+                    {uploadedRecord.with_key ? uploadedRecordName.with_ext : null}
                 </label>
                 <label id="smaller-label" style={{display: "block", color: "#de5c8e", margin: "8px 0 0 10px"}}>
                     *accepted file type: .xlsx, .csv
@@ -161,7 +166,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     </label>
                     <label>Please upload new file with all required fields.</label>
                 </div>}
-            {uploadedRecords.with_key && 
+            {uploadedRecord.with_key && 
                 <div>
                     <label style={{display: "block"}}>Preview</label>
                     <label>Record name:</label>
@@ -173,10 +178,10 @@ const UploadRecordForm = forwardRef((props, ref) => {
                             setUploadedRecordName({...uploadedRecordName, without_ext: event.target.value});
                         }} />
                 </div>}
-            {uploadedRecords.with_key &&
+            {uploadedRecord.with_key &&
                 <Table 
                     columns={columns} 
-                    dataSource={uploadedRecords.with_key} 
+                    dataSource={uploadedRecord.with_key} 
                     pagination={false} 
                     size="small"
                     className="three-rows-table"
