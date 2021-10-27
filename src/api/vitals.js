@@ -41,3 +41,14 @@ export const downloadTemplate = async (project_name) => {
         throw e
     }
 }
+
+export const deleteRecord = async (record_id) => {
+    try {
+        const response = (
+            await instance.delete("/vitals/records/deletefile/" + record_id)
+        ).data;
+        return response;
+    } catch (e) {
+        throw e;
+    }
+}

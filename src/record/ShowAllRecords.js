@@ -37,6 +37,7 @@ function ShowAllRecords(props) {
                 res.data[0].records[i]["key"] = (parseInt(i)+1).toString();
             }
             setRecords(res.data[0].records);
+            props.setRecordId(res.data[0]._id);
         }).catch((err) => {
             console.log(err);
         })
@@ -66,6 +67,7 @@ function ShowAllRecords(props) {
                 <Button
                     className="primary-btn smaller"
                     style={{float: "right", marginTop: "30px"}}
+                    onClick={props.next}
                     >
                         Delete all records
                 </Button>

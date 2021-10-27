@@ -7,8 +7,7 @@ export default function ConfirmDelete(props) {
     setCfmMessage(e.target.value);
   };
   const deleteAPI = () => {
-    console.log(cfmMessage);
-    // cfmMessage === props.cfmMessage ? props.deleteAPI() : modal delete failed
+    cfmMessage === props.cfmMessage ? props.deleteAPI() : alert("Confirm message not match.");
   };
 
   return (
@@ -18,7 +17,7 @@ export default function ConfirmDelete(props) {
           <p
             style={{ fontSize: "large", marginBottom: "8px", color: "#58595b" }}
           >
-            confirmation <i>delete covid.csv</i> to confirm
+            confirmation (type <i>{props.cfmMessage}</i> to confirm)
           </p>
           <div>
             <Input
