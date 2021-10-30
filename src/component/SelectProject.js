@@ -33,7 +33,7 @@ export default function SelectProject(props) {
     props.setProject(itemList[value]);
   }
   return (
-    <div style={{ minWidth: props.minWidth ?? 450 }}>
+    <div>
       <p className="project-lable" style={{ marginBottom: "8px" }}>
         {" "}
         Project{" "}
@@ -52,7 +52,7 @@ export default function SelectProject(props) {
       {props.Project !== "none" && (
         <Collapse defaultActiveKey={["1"]} expandIconPosition="right" ghost>
           <Panel key="1" header="Project information">
-            <ProjectInfo Project = {props.Project}/>
+            <ProjectInfo Project = {props.Project} width={props.width}/>
           </Panel>
         </Collapse>
       )}

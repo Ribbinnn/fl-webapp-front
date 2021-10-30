@@ -102,7 +102,7 @@ export default function Diagnosis() {
                   style={{ margin: 0 }}
                 >
                   <Panel key="1" header="Project information">
-                    <ProjectInfo Project={Project} />
+                    <ProjectInfo Project={Project} width="200px"/>
                   </Panel>
                 </Collapse>
               </div>
@@ -189,6 +189,7 @@ function SelectHN(props) {
           <SelectProject
             setProject={props.setProject}
             Project={props.Project}
+            width="530px" 
           />
         )}
       </div>
