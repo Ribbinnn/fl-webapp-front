@@ -244,6 +244,7 @@ ol {
 
 .dicomImage-div{
   position: relative;
+  margin:auto
 }
 .loading-dicom{
   position: absolute;
@@ -547,6 +548,10 @@ label.clickable-label:hover {
   text-align: center;
   font-size: large;
   color: #58595b;
+}
+
+.img-modal .ant-modal-body{
+  padding: 0 24px 24px 24px
 }
 
 /* table ------------------------- */
