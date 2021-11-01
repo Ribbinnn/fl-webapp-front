@@ -1,15 +1,141 @@
-import React, { useEffect, useState } from "react";
-import { getAllRecords } from "../api/vitals";
-import { Table, Button } from "antd";
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import React, { useEffect, useState, useRef } from "react";
+import { getAllRecords, deleteRecordRow } from "../api/vitals";
+import { Table, Button, Input, Form, Popconfirm } from "antd";
+import { EditOutlined, DeleteOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 
 function ShowAllRecords(props) {
-    const [records, setRecords] = useState(null);
-    const [columns, setColumns] = useState(null);
+
+    const recordId = useRef("");
+
+    const [form] = Form.useForm();
+    const [data, setData] = useState([]);
+    const currentData = useRef([]);
+    const [editingKey, setEditingKey] = useState("");
+
+    const EditableCell = ({
+        editing,
+        dataIndex,
+        title,
+        record,
+        index,
+        children,
+        ...restProps
+    }) => {
+        return (
+          <td {...restProps}>
+            {editing ? (
+                <Form.Item
+                    name={dataIndex}
+                    style={{margin: 0}}
+                    rules={[
+                        {
+                        required: true,
+                        message: "Please input!",
+                        },
+                    ]}>
+                        <Input className="input-text smaller" />
+                </Form.Item>
+            ) : (
+                children
+            )}
+          </td>
+        );
+    };
+
+    const isEditing = (record) => record.key === editingKey;
+
+    // const [records, setRecords] = useState(null);
+    // const [columns, setColumns] = useState(null);
+    const [mergedColumns, setMergeColumns] = useState([{
+        title: "Action",
+        key: "action",
+        dataIndex: "action",
+        render: (_, record) => {
+            const editable = isEditing(record);
+            return editable ? (
+                <div className="center-div">
+                    <SaveOutlined 
+                        className="clickable-icon"
+                        onClick={() => save(record.key)} />
+                    <CloseOutlined 
+                        className="clickable-icon" 
+                        style={{marginLeft: "8px"}} 
+                        onClick={() => cancel()} />
+                </div>
+            ) : (
+                <div className="center-div">
+                    <EditOutlined 
+                        className="clickable-icon" 
+                        onClick={() => edit(record)} />
+                    <Popconfirm 
+                        title="Delete this row?" 
+                        onConfirm={() => deleteRow(record.key)}
+                        okButtonProps={{className: "primary-btn popconfirm"}}
+                        cancelButtonProps={{style: {display: "none"}}}>
+                            <DeleteOutlined 
+                                className="clickable-icon" 
+                                style={{marginLeft: "8px"}} />
+                    </Popconfirm>
+                </div>
+            );
+        },
+        align: "center",
+    }]);
+    const [columnKey, setColumnKey] = useState(null);
+
+    const edit = (record) => {
+        for (const i in columnKey) {
+            if (columnKey[i] !== "hn" && columnKey[i] !== "entry_id") {
+                form.setFieldsValue({
+                    [columnKey[i]]: "",
+                    ...record,
+                });
+            }
+        }
+        setEditingKey(record.key);
+    };
+    const cancel = () => {
+        setEditingKey("");
+    };
+    const save = async (key) => { // edit
+        try {
+            const row = await form.validateFields(); // new data
+            const newData = [...data];
+            const index = newData.findIndex((item) => key === item.key);
+            if (index > -1) {
+                const item = newData[index];
+                newData.splice(index, 1, { ...item, ...row });
+                setData(newData);
+                setEditingKey("");
+            } else {
+                newData.push(row);
+                setData(newData);
+                setEditingKey("");
+            }
+            /* call update row api */
+        } catch (errInfo) {
+            console.log('Validate Failed:', errInfo);
+        }
+    };
+    const deleteRow = (key) => {
+        const newData = [...currentData.current];
+        const index = newData.findIndex((item) => key === item.key);
+        newData.splice(index, 1);
+        setData(newData);
+        deleteRecordRow(recordId.current, index)
+        .then((res) => {
+            console.log(res);
+        }).catch((err) => {
+            console.log(err);
+        });
+    }
+
     useEffect(() => {
         getAllRecords(props.record.vitals_proj_id)
         .then((res) => {
-            console.log(res);
+            // column key for edit function
+            setColumnKey(Object.keys(res.data[0].records[0]));
+            // create columns
             let column_list = (Object.keys(res.data[0].records[0])).map((column) => ({
                 title: column === "hn" ? 
                     column.toUpperCase() : 
@@ -20,28 +146,44 @@ function ShowAllRecords(props) {
                 ellipsis: {
                     showTitle: true,
                 },
+                editable: column === "hn" || column === "entry_id" ? false : true,
             }));
-            column_list.push({
-                title: "Action",
-                key: "action",
-                render: () => (
-                    <div className="center-div">
-                        <EditOutlined />
-                        <DeleteOutlined style={{marginLeft: "8px"}} />
-                    </div>
-                ),
-                align: "center",
-            })
-            setColumns(column_list);
+            // setColumns(column_list);
+            // create merged columns from columns for editable table
+            const merged_column_list = column_list.map((col) => {
+                if (!col.editable) {
+                    return col;
+                }
+                return {
+                    ...col,
+                    onCell: (record) => ({
+                        record,
+                        dataIndex: col.dataIndex,
+                        title: col.title,
+                        editing: isEditing(record),
+                    }),
+                };
+            });
+            setMergeColumns((prev) => {
+                const new_merged_column = merged_column_list.concat(prev);
+                return new_merged_column;
+            });
+            // add key to each row
             for (const i in res.data[0].records) {
                 res.data[0].records[i]["key"] = (parseInt(i)+1).toString();
             }
-            setRecords(res.data[0].records);
+            // setRecords(res.data[0].records);
+            setData(res.data[0].records);
+            currentData.current = res.data[0].records;
+            // set record_id
             props.setRecordId(res.data[0]._id);
+            recordId.current = res.data[0]._id;
         }).catch((err) => {
             console.log(err);
         })
-    }, []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [editingKey]);
+
     return(
         <div className="show-all-records-content">
             <div className="show-all-records-grid">
@@ -56,14 +198,21 @@ function ShowAllRecords(props) {
                 </label>
             </div>
             <div style={{maxWidth: "800px"}}>
-                <Table 
-                    columns={columns} 
-                    dataSource={records} 
-                    pagination={false} 
-                    size="small"
-                    className="seven-rows-table"
-                    style={{marginTop: "30px"}}
-                />
+                <Form form={form} component={false}>
+                    <Table 
+                        components={{
+                            body: {
+                                cell: EditableCell,
+                            },
+                        }}
+                        columns={mergedColumns} 
+                        dataSource={data} 
+                        pagination={false} 
+                        size="small"
+                        className="seven-rows-table"
+                        style={{marginTop: "30px"}}
+                    />
+                </Form>
                 <Button
                     className="primary-btn smaller"
                     style={{float: "right", marginTop: "30px"}}
