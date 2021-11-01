@@ -1,6 +1,7 @@
 import React from "react";
 import { Form, Input } from "antd";
 import PatientInfo from "../component/PatientInfo";
+import DicomViewOnly from "../component/dicom-viewer/DicomViewOnly";
 
 export default function PreviewEdit(props){
     return(
@@ -38,9 +39,7 @@ export default function PreviewEdit(props){
               
             </Form>
           </div>
-          <div style={{width: "500px", height: "500px", backgroundColor:"gray"}}>
-            CXR image
-          </div>
+          <DicomViewOnly img_url="http://localhost:5000/api/example/0041018.dcm" img_source="wado" height="500px" width="500px"/>
           </div>
     )
 }

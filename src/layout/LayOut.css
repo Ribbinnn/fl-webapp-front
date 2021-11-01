@@ -254,6 +254,19 @@ ol {
   grid-row-gap: 5px;
 }
 
+.dicomImage-div{
+  position: relative;
+  margin:auto
+}
+.loading-dicom{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #de5c8e;
+}
+
+
 /* button --------------------- */
 .primary-btn,
 .primary-btn:hover,
@@ -568,6 +581,10 @@ label.clickable-label:hover {
   color: #58595b;
 }
 
+.img-modal .ant-modal-body{
+  padding: 0 24px 24px 24px
+}
+
 /* popconfirm -------------------- */
 .ant-popover-buttons {
   display: flex;
@@ -653,3 +670,4 @@ td.ant-table-column-sort {
 .ant-table-thead th.ant-table-column-has-sorters:hover {
   background-color:rgba(88, 89, 91, 0.7);
 }
+

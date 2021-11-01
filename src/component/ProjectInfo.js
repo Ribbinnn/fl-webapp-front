@@ -3,7 +3,7 @@ import { Tag } from "antd";
 
 export default function ProjectInfo(props){
     return(
-      <div className="info">
+      <div className="info" style={{ width: props.width ?? "100%" }}>
                 <div>
                   Task : <Tag className="brown">{props.Project.Task}</Tag>
                 </div>
