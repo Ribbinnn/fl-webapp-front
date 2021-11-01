@@ -540,6 +540,7 @@ label.clickable-label:hover {
 .ant-picker-input > input,
 .ant-picker-input > input::placeholder {
   font-size: large;
+  color: #58595b;
 }
 
 .ant-picker-input > input::placeholder {
@@ -560,7 +561,8 @@ label.clickable-label:hover {
   border-bottom: none;
 }
 
-.ant-modal-title {
+.ant-modal-title,
+.ant-modal-body {
   text-align: center;
   font-size: large;
   color: #58595b;

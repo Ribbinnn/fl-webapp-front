@@ -1,5 +1,5 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
-import { Button, Input, Table } from "antd";
+import React, { useState, forwardRef, useImperativeHandle } from "react";
+import { Button, Input, Table, Modal } from "antd";
 import { CloudDownloadOutlined, WarningOutlined } from '@ant-design/icons';
 import XLSX from "xlsx";
 import { uploadVitalsRecord, downloadTemplate } from "../api/vitals";
@@ -22,6 +22,15 @@ const UploadRecordForm = forwardRef((props, ref) => {
         return <label>{string}</label>;
     }
 
+    const [visible,setVisible] = useState(false)
+    const showModal = () => {
+        setVisible(true)
+    };
+
+    const handleCancel = () => {
+        setVisible(false)
+    };
+
     useImperativeHandle(ref, () => ({
         uploadRecord: () => {
             if (uploadedRecord.without_key !== null) {
@@ -37,7 +46,8 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     console.log(err);
                 })
             } else {
-                alert("Please upload record.")
+                // alert("Please upload record.")
+                showModal();
             }
         },
         uploadedRecord: uploadedRecord.without_key,
@@ -186,6 +196,13 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     size="small"
                     className="three-rows-table"
                 />}
+            <Modal
+                visible={visible}
+                title={null}
+                onCancel={handleCancel}
+                footer={null}>
+                    Please upload record.
+            </Modal>
         </div>
     );
 });
