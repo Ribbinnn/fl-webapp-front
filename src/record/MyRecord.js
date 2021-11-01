@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Form, Input, Select, DatePicker } from "antd";
 import {selectProject} from '../api/project'
-import { searchVitlasProject } from "../api/vitals";
+import { searchVitlasProject, deleteRecord } from "../api/vitals";
 import ShowAllRecords from "./ShowAllRecords";
+import ConfirmDelete from "../component/ConfirmDelete";
 
 const { Option } = Select;
 
@@ -23,6 +24,7 @@ function MyRecord () {
     const [uploadedItem, setUploadedItem] = useState([]);
     const [vitalsList, setVitalsList] = useState([])
     const [currentRecord, setCurrentRecord] = useState(null);
+    const [recordId, setRecordId] = useState("");
 
     const columns = [
         {
@@ -174,7 +176,10 @@ function MyRecord () {
                 </div>}
             {current === 1 &&
                 <div style={{height: "100%"}}>
-                    <ShowAllRecords record={currentRecord} />
+                    <ShowAllRecords 
+                        record={currentRecord} 
+                        setRecordId={setRecordId} 
+                        next={next}/>
                     <Button
                         className="primary-btn"
                         onClick={() => {
@@ -184,6 +189,19 @@ function MyRecord () {
                             Back
                     </Button>
                 </div>}
+            {current === 2 &&
+                <ConfirmDelete 
+                    cfmMessage={"delete " + currentRecord.rec_name} 
+                    handleCancel={prev}
+                    deleteAPI = {() => {
+                        deleteRecord(recordId)
+                        .then((res) => {
+                            console.log(res);
+                            window.location.reload();
+                        }).catch((err) => {
+                            console.log(err);
+                        })
+                    }} />}
         </div>
     )
 }

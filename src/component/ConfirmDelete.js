@@ -1,14 +1,25 @@
 import React, { useState } from "react";
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, Modal } from "antd";
 
 export default function ConfirmDelete(props) {
+  const [visible,setVisible] = useState(false)
+  const showModal = () => {
+    setVisible(true)
+  };
+
+  const handleCancel = () => {
+    setVisible(false)
+  };
+  
   const [cfmMessage, setCfmMessage] = useState("");
   const handleOnChangeCfmMessage = (e) => {
     setCfmMessage(e.target.value);
   };
   const deleteAPI = () => {
-    console.log(cfmMessage);
-    // cfmMessage === props.cfmMessage ? props.deleteAPI() : modal delete failed
+    cfmMessage === props.cfmMessage ? 
+      props.deleteAPI() : 
+      // alert("Confirm message not match.");
+      showModal();
   };
 
   return (
@@ -18,7 +29,7 @@ export default function ConfirmDelete(props) {
           <p
             style={{ fontSize: "large", marginBottom: "8px", color: "#58595b" }}
           >
-            confirmation <i>delete covid.csv</i> to confirm
+            confirmation (type <i>{props.cfmMessage}</i> to confirm)
           </p>
           <div>
             <Input
@@ -42,6 +53,13 @@ export default function ConfirmDelete(props) {
           </div>
         </Form.Item>
       </Form>
+      <Modal
+          visible={visible}
+          title={null}
+          onCancel={handleCancel}
+          footer={null}>
+              Confirm message not match.
+      </Modal>
     </div>
   );
 }

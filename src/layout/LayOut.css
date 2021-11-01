@@ -244,7 +244,7 @@ ol {
 
 .show-all-records-content {
   width: 100%;
-  min-height: 92%;
+  min-height: 93%;
   max-height: 100%;
 }
 
@@ -286,6 +286,12 @@ ol {
   height: 38px;
 }
 
+.primary-btn.popconfirm {
+  min-width: 50px;
+  height: 30px;
+  font-size: small;
+}
+
 .btn-column .primary-btn {
   width: 300px;
   margin-top: 10px;
@@ -310,6 +316,12 @@ ol {
   border: 1px solid #58595b;
   border-radius: 8px;
   box-shadow: none;
+}
+
+.input-text.smaller,
+.input-text.smaller:hover,
+.input-text.smaller:focus {
+  font-size: medium;
 }
 
 .input-prev-edit-text,
@@ -390,6 +402,11 @@ label.clickable-label:hover {
 
 #smaller-label {
   font-size: medium;
+}
+
+.clickable-icon:hover {
+  cursor: pointer;
+  color: #de5c8e;
 }
 
 .hr-divider {
@@ -536,6 +553,7 @@ label.clickable-label:hover {
 .ant-picker-input > input,
 .ant-picker-input > input::placeholder {
   font-size: large;
+  color: #58595b;
 }
 
 .ant-picker-input > input::placeholder {
@@ -556,7 +574,8 @@ label.clickable-label:hover {
   border-bottom: none;
 }
 
-.ant-modal-title {
+.ant-modal-title,
+.ant-modal-body {
   text-align: center;
   font-size: large;
   color: #58595b;
@@ -564,6 +583,17 @@ label.clickable-label:hover {
 
 .img-modal .ant-modal-body{
   padding: 0 24px 24px 24px
+}
+
+/* popconfirm -------------------- */
+.ant-popover-buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.ant-popover-message-title {
+  color: #58595b;
+  font-weight: 500;
 }
 
 /* table ------------------------- */
