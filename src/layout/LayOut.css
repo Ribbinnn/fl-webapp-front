@@ -459,10 +459,6 @@ label.clickable-label:hover {
   color: #58595b;
 }
 
-.ant-collapse{
-  margin-top: 20px;
-}
-
 .ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header{
   padding-left: 0;
 }

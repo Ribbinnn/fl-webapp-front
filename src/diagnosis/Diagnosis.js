@@ -92,19 +92,7 @@ export default function Diagnosis() {
                 >
                   Patient's HN: {HN}
                 </label>
-                <label style={{ display: "block" }}>
-                  Project: {Project.ProjectName}
-                </label>
-                <Collapse
-                  defaultActiveKey={["1"]}
-                  expandIconPosition="right"
-                  ghost
-                  style={{ margin: 0 }}
-                >
-                  <Panel key="1" header="Project information">
-                    <ProjectInfo Project={Project} width="200px"/>
-                  </Panel>
-                </Collapse>
+                <SelectProject Project={Project} mode = "view"/>
               </div>
             </Col>
             <Col span={15}>
@@ -189,6 +177,7 @@ function SelectHN(props) {
           <SelectProject
             setProject={props.setProject}
             Project={props.Project}
+            mode = "select"
             width="530px" 
           />
         )}
