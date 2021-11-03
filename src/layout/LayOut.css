@@ -244,14 +244,18 @@ ol {
 
 .dicomImage-div{
   position: relative;
-  margin:auto
+  margin: auto;
 }
-.loading-dicom{
+.loading-dicom, #dicomViewImage{
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   color: #de5c8e;
+}
+
+.report-image-ctn{
+  margin-top: 10px;
 }
 
 
@@ -625,3 +629,10 @@ td.ant-table-column-sort {
   background-color:rgba(88, 89, 91, 0.7);
 }
 
+/* dot ------------- */
+.dot {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
