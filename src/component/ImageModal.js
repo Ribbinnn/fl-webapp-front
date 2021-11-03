@@ -25,7 +25,7 @@ export default function ImageModal (props){
           footer={null}
           width="800px"
         >
-          <DicomViewOnly img_url="http://localhost:5000/api/example/0041018.dcm" img_source="wado" height="530px" width="530px"/>
+          <DicomViewOnly img_url="http://localhost:5000/api/example/0041018.dcm" img_source="wado" size={530}/>
         </Modal>
       </div>
     )
