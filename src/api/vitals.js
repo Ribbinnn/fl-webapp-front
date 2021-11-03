@@ -20,6 +20,17 @@ export const uploadVitalsRecord = async (project_name, user_id, record_name, rec
     }
 }
 
+export const getAllRecords = async (vitals_proj_id) => {
+    try {
+        const response = (
+            await instance.get("/vitals/projects/" + vitals_proj_id + "/medrec")
+        ).data;
+        return response;
+    } catch (e) {
+        throw e
+    }
+}
+
 export const downloadTemplate = async (project_name) => {
     try {
         const response = (
@@ -28,5 +39,27 @@ export const downloadTemplate = async (project_name) => {
         return response;
     } catch (e) {
         throw e
+    }
+}
+
+export const deleteRecord = async (record_id) => {
+    try {
+        const response = (
+            await instance.delete("/vitals/records/deletefile/" + record_id)
+        ).data;
+        return response;
+    } catch (e) {
+        throw e;
+    }
+}
+
+export const deleteRecordRow = async (record_id, record_index) => {
+    try {
+        const response = (
+            await instance.patch("/vitals/records/deleterow/", {record_id, record_index})
+        ).data;
+        return response;
+    } catch (e) {
+        throw e;
     }
 }

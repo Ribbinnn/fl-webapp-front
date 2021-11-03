@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Form, Input, Select, DatePicker } from "antd";
 import {selectProject} from '../api/project'
-import { searchVitlasProject } from "../api/vitals";
-import RecordList from "./RecordList";
+import { searchVitlasProject, deleteRecord } from "../api/vitals";
+import ShowAllRecords from "./ShowAllRecords";
+import ConfirmDelete from "../component/ConfirmDelete";
 
 const { Option } = Select;
 
@@ -23,6 +24,7 @@ function MyRecord () {
     const [uploadedItem, setUploadedItem] = useState([]);
     const [vitalsList, setVitalsList] = useState([])
     const [currentRecord, setCurrentRecord] = useState(null);
+    const [recordId, setRecordId] = useState("");
 
     const columns = [
         {
@@ -46,7 +48,7 @@ function MyRecord () {
                 showTitle: true
             },
             sorter: {
-                compare: (a, b) => a.proj_name.localeCompare(b.proj_name)
+                compare: (a, b) => a.rec_name.localeCompare(b.rec_name)
             },
         },
         {
@@ -115,7 +117,7 @@ function MyRecord () {
     function onClickSearch() {
         let filterList = vitalsList.filter((item, i) => (
             (project.ProjectName==="All"? true: item.proj_name === project.ProjectName) &&
-            (name===""? true: item.rec_name === name) &&
+            (name===""? true: item.rec_name.includes(name)) &&
             (firstDate==="none"? true: new Date(item.updated) >= firstDate) &&
             (lastDate==="none"? true: new Date(item.updated) <= lastDate)
         ))
@@ -162,8 +164,6 @@ function MyRecord () {
                             onRow={(record, rowIndex) => {
                                 return {
                                 onClick: event => {
-                                    /* SHOW ALL RECORD INTERFACE */
-                                    console.log(record);
                                     setCurrentRecord(record);
                                     next();
                                     }, // click row
@@ -175,8 +175,11 @@ function MyRecord () {
                     </div>
                 </div>}
             {current === 1 &&
-                <div>
-                    <RecordList record={currentRecord} />
+                <div style={{height: "100%"}}>
+                    <ShowAllRecords 
+                        record={currentRecord} 
+                        setRecordId={setRecordId} 
+                        next={next}/>
                     <Button
                         className="primary-btn"
                         onClick={() => {
@@ -186,6 +189,19 @@ function MyRecord () {
                             Back
                     </Button>
                 </div>}
+            {current === 2 &&
+                <ConfirmDelete 
+                    cfmMessage={"delete " + currentRecord.rec_name} 
+                    handleCancel={prev}
+                    deleteAPI = {() => {
+                        deleteRecord(recordId)
+                        .then((res) => {
+                            console.log(res);
+                            window.location.reload();
+                        }).catch((err) => {
+                            console.log(err);
+                        })
+                    }} />}
         </div>
     )
 }
