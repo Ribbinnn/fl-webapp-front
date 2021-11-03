@@ -39,7 +39,7 @@ export default function PreviewEdit(props){
               
             </Form>
           </div>
-          <DicomViewOnly img_url="http://localhost:5000/api/example/0041099.dcm" img_source="wado" size={500}/>
+          <DicomViewOnly img_url="http://localhost:5000/api/example/0041018.dcm" img_source="wado" size={500}/>
           </div>
     )
 }
