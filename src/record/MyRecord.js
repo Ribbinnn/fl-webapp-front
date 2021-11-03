@@ -48,7 +48,7 @@ function MyRecord () {
                 showTitle: true
             },
             sorter: {
-                compare: (a, b) => a.proj_name.localeCompare(b.proj_name)
+                compare: (a, b) => a.rec_name.localeCompare(b.rec_name)
             },
         },
         {
@@ -117,7 +117,7 @@ function MyRecord () {
     function onClickSearch() {
         let filterList = vitalsList.filter((item, i) => (
             (project.ProjectName==="All"? true: item.proj_name === project.ProjectName) &&
-            (name===""? true: item.rec_name === name) &&
+            (name===""? true: item.rec_name.includes(name)) &&
             (firstDate==="none"? true: new Date(item.updated) >= firstDate) &&
             (lastDate==="none"? true: new Date(item.updated) <= lastDate)
         ))
