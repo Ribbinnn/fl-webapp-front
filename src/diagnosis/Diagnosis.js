@@ -147,7 +147,7 @@ export default function Diagnosis() {
 function SelectHN(props) {
   const handleSubmit = () => {
     /*check HN in PACS*/
-    props.setHN("1111" /** set valid HN in PACS */);
+    props.setHN(document.getElementById("hn-input").value /** set valid HN in PACS */);
   };
   return (
     <div
@@ -160,8 +160,10 @@ function SelectHN(props) {
         <Form.Item label="Patient's HN">
           <Input
             className="input-text"
+            id="hn-input"
             style={{ width: "300px" }}
             defaultValue={props.HN}
+            onChange={()=>{if (props.HN.length > 0){props.setHN("")}}}
           />
           <Button
             className="primary-btn smaller"
