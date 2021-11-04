@@ -338,6 +338,17 @@ ol {
   box-shadow: none;
 }
 
+.ant-form-item-has-error :not(.ant-input-disabled):not(.ant-input-borderless).ant-input,
+.ant-form-item-has-error :not(.ant-input-disabled):not(.ant-input-borderless).ant-input:hover,
+.ant-form-item-has-error :not(.ant-input-disabled):not(.ant-input-borderless).ant-input:focus {
+  border-color: red;
+  box-shadow: none;
+}
+
+.ant-form-item-explain.ant-form-item-explain-error {
+  color: red;
+}
+
 .checkbox-container {
   cursor: pointer;
   -webkit-user-select: none;
