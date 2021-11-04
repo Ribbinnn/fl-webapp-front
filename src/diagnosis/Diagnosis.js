@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import { Steps, Button, Form, Input, Row, Col, Collapse } from "antd";
+import { Steps, Button, Form, Input, Row, Col } from "antd";
 import "antd/dist/antd.css";
 import SelectProject from "../component/SelectProject";
-import ProjectInfo from "../component/ProjectInfo";
 import Completed from "../component/Completed";
 import PreviewEdit from "./PreviewEdit";
 const { Step } = Steps;
-const { Panel } = Collapse;
 
 const steps = [
   {
