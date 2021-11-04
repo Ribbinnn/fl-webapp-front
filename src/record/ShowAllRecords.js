@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { getAllRecords, deleteRecordRow } from "../api/vitals";
+import { getAllRecords, deleteRecordRow, updateRecordRow } from "../api/vitals";
 import { Table, Button, Input, Form, Popconfirm } from "antd";
 import { EditOutlined, DeleteOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 
@@ -10,6 +10,7 @@ function ShowAllRecords(props) {
     const [form] = Form.useForm();
     const [data, setData] = useState([]);
     const currentData = useRef([]);
+    const [mergedColumns, setMergeColumns] = useState([]);
     const [editingKey, setEditingKey] = useState("");
 
     const EditableCell = ({
@@ -29,8 +30,7 @@ function ShowAllRecords(props) {
                     style={{margin: 0}}
                     rules={[
                         {
-                        required: true,
-                        message: "Please input!",
+                            required: true,
                         },
                     ]}>
                         <Input className="input-text smaller" />
@@ -44,75 +44,29 @@ function ShowAllRecords(props) {
 
     const isEditing = (record) => record.key === editingKey;
 
-    // const [records, setRecords] = useState(null);
-    // const [columns, setColumns] = useState(null);
-    const [mergedColumns, setMergeColumns] = useState([{
-        title: "Action",
-        key: "action",
-        dataIndex: "action",
-        render: (_, record) => {
-            const editable = isEditing(record);
-            return editable ? (
-                <div className="center-div">
-                    <SaveOutlined 
-                        className="clickable-icon"
-                        onClick={() => save(record.key)} />
-                    <CloseOutlined 
-                        className="clickable-icon" 
-                        style={{marginLeft: "8px"}} 
-                        onClick={() => cancel()} />
-                </div>
-            ) : (
-                <div className="center-div">
-                    <EditOutlined 
-                        className="clickable-icon" 
-                        onClick={() => edit(record)} />
-                    <Popconfirm 
-                        title="Delete this row?" 
-                        onConfirm={() => deleteRow(record.key)}
-                        okButtonProps={{className: "primary-btn popconfirm"}}
-                        cancelButtonProps={{style: {display: "none"}}}>
-                            <DeleteOutlined 
-                                className="clickable-icon" 
-                                style={{marginLeft: "8px"}} />
-                    </Popconfirm>
-                </div>
-            );
-        },
-        align: "center",
-    }]);
-    const [columnKey, setColumnKey] = useState(null);
-
     const edit = (record) => {
-        for (const i in columnKey) {
-            if (columnKey[i] !== "hn" && columnKey[i] !== "entry_id") {
-                form.setFieldsValue({
-                    [columnKey[i]]: "",
-                    ...record,
-                });
-            }
-        }
+        form.setFieldsValue(record);
         setEditingKey(record.key);
     };
     const cancel = () => {
         setEditingKey("");
     };
-    const save = async (key) => { // edit
+    const save = async (key) => {
         try {
-            const row = await form.validateFields(); // new data
-            const newData = [...data];
+            const row = await form.validateFields();
+            const newData = [...currentData.current];
             const index = newData.findIndex((item) => key === item.key);
-            if (index > -1) {
-                const item = newData[index];
-                newData.splice(index, 1, { ...item, ...row });
-                setData(newData);
+            newData.splice(index, 1, { ...newData[index], ...row });
+            setData(newData);
+            const update_data = { ...newData[index], ...row };
+            delete update_data["key"];
+            updateRecordRow(recordId.current, [update_data])
+            .then((res) => {
+                console.log(res);
                 setEditingKey("");
-            } else {
-                newData.push(row);
-                setData(newData);
-                setEditingKey("");
-            }
-            /* call update row api */
+            }).catch((err) => {
+                console.log(err);
+            });
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
         }
@@ -133,8 +87,6 @@ function ShowAllRecords(props) {
     useEffect(() => {
         getAllRecords(props.record.vitals_proj_id)
         .then((res) => {
-            // column key for edit function
-            setColumnKey(Object.keys(res.data[0].records[0]));
             // create columns
             let column_list = (Object.keys(res.data[0].records[0])).map((column) => ({
                 title: column === "hn" ? 
@@ -148,7 +100,46 @@ function ShowAllRecords(props) {
                 },
                 editable: column === "hn" || column === "entry_id" ? false : true,
             }));
-            // setColumns(column_list);
+            column_list.push({
+                title: "Action",
+                key: "action",
+                dataIndex: "action",
+                render: (_, record) => {
+                    const editable = isEditing(record);
+                    return editable ? (
+                        <div className="center-div">
+                            <Popconfirm 
+                                title="Save this row?" 
+                                onConfirm={() => save(record.key)}
+                                okButtonProps={{className: "primary-btn popconfirm"}}
+                                cancelButtonProps={{style: {display: "none"}}}>
+                                    <SaveOutlined 
+                                        className="clickable-icon" />
+                            </Popconfirm>
+                            <CloseOutlined 
+                                className="clickable-icon" 
+                                style={{marginLeft: "8px"}} 
+                                onClick={() => cancel()} />
+                        </div>
+                    ) : (
+                        <div className="center-div">
+                            <EditOutlined 
+                                className="clickable-icon" 
+                                onClick={() => edit(record)} />
+                            <Popconfirm 
+                                title="Delete this row?" 
+                                onConfirm={() => deleteRow(record.key)}
+                                okButtonProps={{className: "primary-btn popconfirm"}}
+                                cancelButtonProps={{style: {display: "none"}}}>
+                                    <DeleteOutlined 
+                                        className="clickable-icon" 
+                                        style={{marginLeft: "8px"}} />
+                            </Popconfirm>
+                        </div>
+                    );
+                },
+                align: "center",
+            });
             // create merged columns from columns for editable table
             const merged_column_list = column_list.map((col) => {
                 if (!col.editable) {
@@ -164,15 +155,11 @@ function ShowAllRecords(props) {
                     }),
                 };
             });
-            setMergeColumns((prev) => {
-                const new_merged_column = merged_column_list.concat(prev);
-                return new_merged_column;
-            });
+            setMergeColumns(merged_column_list);
             // add key to each row
             for (const i in res.data[0].records) {
                 res.data[0].records[i]["key"] = (parseInt(i)+1).toString();
             }
-            // setRecords(res.data[0].records);
             setData(res.data[0].records);
             currentData.current = res.data[0].records;
             // set record_id

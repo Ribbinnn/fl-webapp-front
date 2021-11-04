@@ -63,3 +63,14 @@ export const deleteRecordRow = async (record_id, record_index) => {
         throw e;
     }
 }
+
+export const updateRecordRow = async (record_id, update_data) => {
+    try {
+        const response = (
+            await instance.patch("/vitals/records/updaterow/", {record_id, update_data})
+        ).data;
+        return response;
+    } catch (e) {
+        throw e;
+    }
+}
