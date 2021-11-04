@@ -92,19 +92,7 @@ export default function Diagnosis() {
                 >
                   Patient's HN: {HN}
                 </label>
-                <label style={{ display: "block" }}>
-                  Project: {Project.ProjectName}
-                </label>
-                <Collapse
-                  defaultActiveKey={["1"]}
-                  expandIconPosition="right"
-                  ghost
-                  style={{ margin: 0 }}
-                >
-                  <Panel key="1" header="Project information">
-                    <ProjectInfo Project={Project} width="200px"/>
-                  </Panel>
-                </Collapse>
+                <SelectProject Project={Project} mode = "view"/>
               </div>
             </Col>
             <Col span={15}>
@@ -159,7 +147,7 @@ export default function Diagnosis() {
 function SelectHN(props) {
   const handleSubmit = () => {
     /*check HN in PACS*/
-    props.setHN("1111" /** set valid HN in PACS */);
+    props.setHN(document.getElementById("hn-input").value /** set valid HN in PACS */);
   };
   return (
     <div
@@ -172,8 +160,10 @@ function SelectHN(props) {
         <Form.Item label="Patient's HN">
           <Input
             className="input-text"
+            id="hn-input"
             style={{ width: "300px" }}
             defaultValue={props.HN}
+            onChange={()=>{if (props.HN.length > 0){props.setHN("")}}}
           />
           <Button
             className="primary-btn smaller"
@@ -189,6 +179,7 @@ function SelectHN(props) {
           <SelectProject
             setProject={props.setProject}
             Project={props.Project}
+            mode = "select"
             width="530px" 
           />
         )}

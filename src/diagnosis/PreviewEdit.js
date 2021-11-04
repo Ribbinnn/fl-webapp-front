@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, Input } from "antd";
-import PatientInfo from "../component/PatientInfo";
+import Info from "../component/Info";
 import DicomViewOnly from "../component/dicom-viewer/DicomViewOnly";
 
 export default function PreviewEdit(props){
@@ -19,7 +19,7 @@ export default function PreviewEdit(props){
             <label style={{ display: "block", marginBottom: "10px" }}>
               Patient Information
             </label>
-            <PatientInfo Patient={props.Patient} />
+            <Info Data={props.Patient} />
             <label style={{ display: "block", margin: "30px 0px 10px 0px" }}>
               Medical Records
             </label>
@@ -39,7 +39,7 @@ export default function PreviewEdit(props){
               
             </Form>
           </div>
-          <DicomViewOnly img_url="http://localhost:5000/api/example/0041018.dcm" img_source="wado" height="500px" width="500px"/>
+          <DicomViewOnly img_url="http://localhost:5000/api/example/0041018.dcm" img_source="wado" size={500}/>
           </div>
     )
 }

@@ -7,9 +7,10 @@ const { Option } = Select;
 
 export default function SelectProject(props) {
   const [itemList, setItemList] = useState([]);
+  const mode = props.mode
 
   useEffect(() => {
-      selectProject().then((response) => {
+      if (mode === "select"){selectProject().then((response) => {
         console.log(response);
         let res_list = (response.data.projects).map((project)=>{
           return({
@@ -26,15 +27,15 @@ export default function SelectProject(props) {
       })
       .catch((err) => {
         console.error(err);
-      });
+      });}
   }, []);
 
   function handleChange(value) {
     props.setProject(itemList[value]);
   }
   return (
-    <div>
-      <p className="project-lable" style={{ marginBottom: "8px" }}>
+    <div style={mode === "view" ? {width: "250px"}:{width: "530px"}}>
+      {mode === "select" && <div><p className="project-lable" style={{ marginBottom: "8px" }}>
         {" "}
         Project{" "}
       </p>
@@ -42,17 +43,21 @@ export default function SelectProject(props) {
         onChange={handleChange}
         dropdownStyle={{ borderRadius: 8 }}
         defaultValue={props.Project.ProjectName || ""}
+        style = {{marginBottom: "20px"}}
       >
         {itemList.map((item, i) => (
           <Option key={i} value={i}>
             {item.ProjectName}
           </Option>
         ))}
-      </Select>
+      </Select></div>}
+      {mode === "view" && <label style={{ display: "block" }}>
+                  Project: {props.Project.ProjectName}
+                </label>}
       {props.Project !== "none" && (
         <Collapse defaultActiveKey={["1"]} expandIconPosition="right" ghost>
           <Panel key="1" header="Project information">
-            <ProjectInfo Project = {props.Project} width={props.width}/>
+            <ProjectInfo Project = {props.Project} /* width={mode==="view"?"200px":"530px"} *//>
           </Panel>
         </Collapse>
       )}
