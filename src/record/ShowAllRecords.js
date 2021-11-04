@@ -56,8 +56,6 @@ function ShowAllRecords(props) {
             const row = await form.validateFields();
             const newData = [...currentData.current];
             const index = newData.findIndex((item) => key === item.key);
-            newData.splice(index, 1, { ...newData[index], ...row });
-            setData(newData);
             const update_data = { ...newData[index], ...row };
             delete update_data["key"];
             updateRecordRow(recordId.current, [update_data])
@@ -74,11 +72,10 @@ function ShowAllRecords(props) {
     const deleteRow = (key) => {
         const newData = [...currentData.current];
         const index = newData.findIndex((item) => key === item.key);
-        newData.splice(index, 1);
-        setData(newData);
         deleteRecordRow(recordId.current, index)
         .then((res) => {
             console.log(res);
+            setEditingKey("delete");
         }).catch((err) => {
             console.log(err);
         });
