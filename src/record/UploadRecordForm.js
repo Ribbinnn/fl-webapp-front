@@ -1,12 +1,12 @@
 import React, { useState, forwardRef, useImperativeHandle } from "react";
-import { Button, Input, Table, Modal } from "antd";
+import { Button, Input, Table, Modal, Tooltip } from "antd";
 import { CloudDownloadOutlined, WarningOutlined } from '@ant-design/icons';
 import XLSX from "xlsx";
 import { uploadVitalsRecord, downloadTemplate } from "../api/vitals";
 
 const UploadRecordForm = forwardRef((props, ref) => {
 
-    const required_field = ["entry_id", "hn", "gender", "age"]; // required in every project
+    const required_field = ["entry_id", "hn", "gender", "age", "measured_time"]; // required in every project
 
     const [uploadedRecordName, setUploadedRecordName] = useState({with_ext: null, without_ext: null});
     const [uploadedRecord ,setUploadedRecord] = useState({with_key: null, without_key: null});
@@ -102,8 +102,13 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 key: column,
                 align: "center",
                 ellipsis: {
-                    showTitle: true,
+                    showTitle: false,
                 },
+                render: column === "measured_time" ? column => (
+                    <Tooltip placement="topLeft" title={column}>
+                        {column}
+                    </Tooltip>
+                ) : null,
             }));
             setColumns(column_list);
             // convert file to json

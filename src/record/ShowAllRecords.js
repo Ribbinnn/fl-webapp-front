@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { getAllRecords, deleteRecordRow, updateRecordRow } from "../api/vitals";
-import { Table, Button, Input, Form, Popconfirm } from "antd";
+import { Table, Button, Input, Form, Popconfirm, Tooltip } from "antd";
 import { EditOutlined, DeleteOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 
 function ShowAllRecords(props) {
@@ -93,9 +93,14 @@ function ShowAllRecords(props) {
                 key: column,
                 align: "center",
                 ellipsis: {
-                    showTitle: true,
+                    showTitle: false,
                 },
-                editable: column === "hn" || column === "entry_id" ? false : true,
+                render: column === "measured_time" ? column => (
+                    <Tooltip placement="topLeft" title={column}>
+                        {column}
+                    </Tooltip>
+                ) : null,
+                editable: column === "hn" || column === "entry_id" || column === "measured_time" ? false : true,
             }));
             column_list.push({
                 title: "Action",
@@ -181,7 +186,7 @@ function ShowAllRecords(props) {
                     Uploaded Time: {props.record.updated}
                 </label>
             </div>
-            <div style={{maxWidth: "800px"}}>
+            <div style={{maxWidth: "1000px"}}>
                 <Form form={form} component={false}>
                     <Table 
                         components={{
