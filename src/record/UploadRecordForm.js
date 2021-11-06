@@ -22,6 +22,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
         return <label>{string}</label>;
     }
 
+    const [message, setMessage] = useState("");
     const [visible,setVisible] = useState(false)
     const showModal = () => {
         setVisible(true)
@@ -46,7 +47,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     console.log(err);
                 })
             } else {
-                // alert("Please upload record.")
+                setMessage("Please upload record.");
                 showModal();
             }
         },
@@ -90,9 +91,6 @@ const UploadRecordForm = forwardRef((props, ref) => {
             setUploadedRecord({with_key: null, without_key: null});
         } else {
             setMissingField(null);
-            setUploadedRecordName({
-                with_ext: event.target.files[0].name, 
-                without_ext: event.target.files[0].name.split(".")[0]});
             // create columns for table
             let column_list = (uploaded_field).map((column) => ({
                 title: column === "hn" ? 
@@ -110,15 +108,23 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     </Tooltip>
                 ) : null,
             }));
-            setColumns(column_list);
             // convert file to json
             const data = XLSX.utils.sheet_to_json(target_workbook);
-            // add key to each row
-            const data_with_key = JSON.parse(JSON.stringify(data));
-            for (const i in data_with_key) {
-                data_with_key[i]["key"] = (parseInt(i)+1).toString();
+            if (data.length === 0) {
+                setMessage("Record is empty.");
+                showModal();
+            } else {
+                // add key to each row
+                const data_with_key = JSON.parse(JSON.stringify(data));
+                for (const i in data_with_key) {
+                    data_with_key[i]["key"] = (parseInt(i)+1).toString();
+                }
+                setColumns(column_list);
+                setUploadedRecordName({
+                    with_ext: event.target.files[0].name, 
+                    without_ext: event.target.files[0].name.split(".")[0]});
+                setUploadedRecord({with_key: data_with_key, without_key: data});
             }
-            setUploadedRecord({with_key: data_with_key, without_key: data});
         }
     }
 
@@ -206,7 +212,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 title={null}
                 onCancel={handleCancel}
                 footer={null}>
-                    Please upload record.
+                    {message}
             </Modal>
         </div>
     );
