@@ -18,7 +18,6 @@ export default function ConfirmDelete(props) {
   const deleteAPI = () => {
     cfmMessage === props.cfmMessage ? 
       props.deleteAPI() : 
-      // alert("Confirm message not match.");
       showModal();
   };
 
