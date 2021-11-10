@@ -114,10 +114,11 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 setMessage("Record is empty.");
                 showModal();
             } else {
-                // add key to each row
+                // add key to each row & change date-time
                 const data_with_key = JSON.parse(JSON.stringify(data));
                 for (const i in data_with_key) {
                     data_with_key[i]["key"] = (parseInt(i)+1).toString();
+                    data_with_key[i]["measured_time"] = new Date(data_with_key[i]["measured_time"]).toLocaleString();
                 }
                 setColumns(column_list);
                 setUploadedRecordName({

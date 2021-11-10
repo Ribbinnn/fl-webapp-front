@@ -95,12 +95,12 @@ function ShowAllRecords(props) {
                 ellipsis: {
                     showTitle: false,
                 },
-                render: column === "measured_time" ? column => (
+                render: column === "measured_time" || column === "updated_time" ? column => (
                     <Tooltip placement="topLeft" title={column}>
                         {column}
                     </Tooltip>
                 ) : null,
-                editable: column === "hn" || column === "entry_id" || column === "measured_time" ? false : true,
+                editable: column === "hn" || column === "entry_id" || column === "measured_time" || column === "updated_time" ? false : true,
             }));
             column_list.push({
                 title: "Action",
@@ -158,9 +158,11 @@ function ShowAllRecords(props) {
                 };
             });
             setMergeColumns(merged_column_list);
-            // add key to each row
+            // add key to each row & change date-time
             for (const i in res.data[0].records) {
                 res.data[0].records[i]["key"] = (parseInt(i)+1).toString();
+                res.data[0].records[i]["measured_time"] = new Date(res.data[0].records[i]["measured_time"]).toLocaleString();
+                res.data[0].records[i]["updated_time"] = new Date(res.data[0].records[i]["updated_time"]).toLocaleString();
             }
             setData(res.data[0].records);
             currentData.current = res.data[0].records;

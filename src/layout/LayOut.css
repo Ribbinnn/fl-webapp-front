@@ -401,6 +401,33 @@ ol {
   transform: rotate(40deg);
 }
 
+.ant-radio-checked .ant-radio-inner {
+  border-color: #58595b;
+}
+
+.ant-radio-inner,
+.ant-radio-wrapper:hover .ant-radio, 
+.ant-radio:hover .ant-radio-inner, 
+.ant-radio-input:focus + .ant-radio-inner {
+  border-color: #58595b;
+}
+
+.ant-radio-input:focus + .ant-radio-inner {
+  box-shadow: none;
+}
+
+.ant-radio-inner::after {
+  background-color: #de5c8e;
+}
+
+.ant-radio-checked::after {
+  border: none;
+  animation: none;
+  -webkit-animation: none;
+  animation-fill-mode: none;
+  -webkit-animation-fill-mode: none;
+}
+
 /* label ------------------------ */
 a,
 label,
@@ -684,6 +711,11 @@ td.ant-table-column-sort {
 
 .ant-table-thead th.ant-table-column-has-sorters:hover {
   background-color:rgba(88, 89, 91, 0.7);
+}
+
+.ant-table-tbody > tr.ant-table-row-selected > td {
+  background: #f8e1ea;
+  border: none;
 }
 
 /* dot ------------- */
