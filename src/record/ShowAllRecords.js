@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { getAllRecords, deleteRecordRow, updateRecordRow } from "../api/vitals";
-import { Table, Button, Input, Form, Popconfirm } from "antd";
+import { Table, Button, Input, Form, Popconfirm, Tooltip } from "antd";
 import { EditOutlined, DeleteOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 
 function ShowAllRecords(props) {
@@ -56,8 +56,6 @@ function ShowAllRecords(props) {
             const row = await form.validateFields();
             const newData = [...currentData.current];
             const index = newData.findIndex((item) => key === item.key);
-            newData.splice(index, 1, { ...newData[index], ...row });
-            setData(newData);
             const update_data = { ...newData[index], ...row };
             delete update_data["key"];
             updateRecordRow(recordId.current, [update_data])
@@ -74,11 +72,10 @@ function ShowAllRecords(props) {
     const deleteRow = (key) => {
         const newData = [...currentData.current];
         const index = newData.findIndex((item) => key === item.key);
-        newData.splice(index, 1);
-        setData(newData);
         deleteRecordRow(recordId.current, index)
         .then((res) => {
             console.log(res);
+            setEditingKey("delete");
         }).catch((err) => {
             console.log(err);
         });
@@ -96,9 +93,14 @@ function ShowAllRecords(props) {
                 key: column,
                 align: "center",
                 ellipsis: {
-                    showTitle: true,
+                    showTitle: false,
                 },
-                editable: column === "hn" || column === "entry_id" ? false : true,
+                render: column === "measured_time" || column === "updated_time" ? column => (
+                    <Tooltip placement="topLeft" title={column}>
+                        {column}
+                    </Tooltip>
+                ) : null,
+                editable: column === "hn" || column === "entry_id" || column === "measured_time" || column === "updated_time" ? false : true,
             }));
             column_list.push({
                 title: "Action",
@@ -156,9 +158,11 @@ function ShowAllRecords(props) {
                 };
             });
             setMergeColumns(merged_column_list);
-            // add key to each row
+            // add key to each row & change date-time
             for (const i in res.data[0].records) {
                 res.data[0].records[i]["key"] = (parseInt(i)+1).toString();
+                res.data[0].records[i]["measured_time"] = new Date(res.data[0].records[i]["measured_time"]).toLocaleString();
+                res.data[0].records[i]["updated_time"] = new Date(res.data[0].records[i]["updated_time"]).toLocaleString();
             }
             setData(res.data[0].records);
             currentData.current = res.data[0].records;
@@ -184,7 +188,7 @@ function ShowAllRecords(props) {
                     Uploaded Time: {props.record.updated}
                 </label>
             </div>
-            <div style={{maxWidth: "800px"}}>
+            <div style={{maxWidth: "1000px"}}>
                 <Form form={form} component={false}>
                     <Table 
                         components={{

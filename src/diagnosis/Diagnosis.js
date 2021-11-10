@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Steps, Button, Form, Input, Row, Col } from "antd";
+import React, { useState, useRef } from "react";
+import { Steps, Button, Form, Input, Row, Col, Collapse } from "antd";
 import "antd/dist/antd.css";
 import SelectProject from "../component/SelectProject";
+import SelectMedicalRecord from "./SelectMedicalRecord";
 import Completed from "../component/Completed";
 import PreviewEdit from "./PreviewEdit";
 const { Step } = Steps;
@@ -51,9 +52,14 @@ export default function Diagnosis() {
   const [Patient, setPatient] = useState({ Name: "John Doe", Age: 42, Gender: "M" });
   const [MedRec, setMedRec] = useState({"Pulse rate": 77, "Temperature": 37, "Blood pressure": "120/80"});
   const [current, setCurrent] = useState(0);
+  const selectMedicalRecordRef = useRef();
   const next = () => {
     /** add condition for each step to go next step here */
-    setCurrent(current + 1);
+    if (current === 1) {
+      selectMedicalRecordRef.current.setMedicalRecord();
+    } else {
+      setCurrent(current + 1);
+    }
   };
 
   const prev = () => {
@@ -79,7 +85,7 @@ export default function Diagnosis() {
         )}
         {current === 1 && (
           <Row>
-            <Col span={9}>
+            <Col span={7}>
               <div>
                 <label
                   style={{
@@ -93,10 +99,14 @@ export default function Diagnosis() {
                 <SelectProject Project={Project} mode = "view"/>
               </div>
             </Col>
-            <Col span={15}>
-              <div>
-                <label style={{ display: "block" }}>Medical Records</label>
-              </div>
+            <Col span={17}>
+              <SelectMedicalRecord 
+                ref={selectMedicalRecordRef} 
+                HN={HN} 
+                project={Project}
+                current={current}
+                setCurrent={setCurrent}
+                setMedRec={setMedRec} />
             </Col>
           </Row>
         )}

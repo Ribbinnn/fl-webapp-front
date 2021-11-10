@@ -1,12 +1,12 @@
 import React, { useState, forwardRef, useImperativeHandle } from "react";
-import { Button, Input, Table, Modal } from "antd";
+import { Button, Input, Table, Modal, Tooltip } from "antd";
 import { CloudDownloadOutlined, WarningOutlined } from '@ant-design/icons';
 import XLSX from "xlsx";
 import { uploadVitalsRecord, downloadTemplate } from "../api/vitals";
 
 const UploadRecordForm = forwardRef((props, ref) => {
 
-    const required_field = ["entry_id", "hn", "gender", "age"]; // required in every project
+    const required_field = ["entry_id", "hn", "gender", "age", "measured_time"]; // required in every project
 
     const [uploadedRecordName, setUploadedRecordName] = useState({with_ext: null, without_ext: null});
     const [uploadedRecord ,setUploadedRecord] = useState({with_key: null, without_key: null});
@@ -22,6 +22,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
         return <label>{string}</label>;
     }
 
+    const [message, setMessage] = useState("");
     const [visible,setVisible] = useState(false)
     const showModal = () => {
         setVisible(true)
@@ -46,7 +47,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     console.log(err);
                 })
             } else {
-                // alert("Please upload record.")
+                setMessage("Please upload record.");
                 showModal();
             }
         },
@@ -90,9 +91,6 @@ const UploadRecordForm = forwardRef((props, ref) => {
             setUploadedRecord({with_key: null, without_key: null});
         } else {
             setMissingField(null);
-            setUploadedRecordName({
-                with_ext: event.target.files[0].name, 
-                without_ext: event.target.files[0].name.split(".")[0]});
             // create columns for table
             let column_list = (uploaded_field).map((column) => ({
                 title: column === "hn" ? 
@@ -102,18 +100,32 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 key: column,
                 align: "center",
                 ellipsis: {
-                    showTitle: true,
+                    showTitle: false,
                 },
+                render: column === "measured_time" ? column => (
+                    <Tooltip placement="topLeft" title={column}>
+                        {column}
+                    </Tooltip>
+                ) : null,
             }));
-            setColumns(column_list);
             // convert file to json
             const data = XLSX.utils.sheet_to_json(target_workbook);
-            // add key to each row
-            const data_with_key = JSON.parse(JSON.stringify(data));
-            for (const i in data_with_key) {
-                data_with_key[i]["key"] = (parseInt(i)+1).toString();
+            if (data.length === 0) {
+                setMessage("Record is empty.");
+                showModal();
+            } else {
+                // add key to each row & change date-time
+                const data_with_key = JSON.parse(JSON.stringify(data));
+                for (const i in data_with_key) {
+                    data_with_key[i]["key"] = (parseInt(i)+1).toString();
+                    data_with_key[i]["measured_time"] = new Date(data_with_key[i]["measured_time"]).toLocaleString();
+                }
+                setColumns(column_list);
+                setUploadedRecordName({
+                    with_ext: event.target.files[0].name, 
+                    without_ext: event.target.files[0].name.split(".")[0]});
+                setUploadedRecord({with_key: data_with_key, without_key: data});
             }
-            setUploadedRecord({with_key: data_with_key, without_key: data});
         }
     }
 
@@ -201,7 +213,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 title={null}
                 onCancel={handleCancel}
                 footer={null}>
-                    Please upload record.
+                    {message}
             </Modal>
         </div>
     );
