@@ -126,8 +126,10 @@ function HistoryLog(props) {
             onRow={(report, rowIndex) => {
                 return {
                 onClick: event => {
+                    let role = (JSON.parse(sessionStorage.getItem('user'))).role
                     console.log((JSON.parse(sessionStorage.getItem('user'))).role, report)
                     /* SHOW REPORT */
+                    history.push(`/viewhistory/${role === "clinician" ? "view" : "edit"}/${report.pred_result_id}`)
                     }, // click row
                 };
             }}
