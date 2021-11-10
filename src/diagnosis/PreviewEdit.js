@@ -19,7 +19,7 @@ export default function PreviewEdit(props){
             <label style={{ display: "block", marginBottom: "10px" }}>
               Patient Information
             </label>
-            <Info Data={props.Patient} />
+            <Info Data={props.Patient} style={{marginLeft: "30px"}}/>
             <label style={{ display: "block", margin: "30px 0px 10px 0px" }}>
               Medical Records
             </label>

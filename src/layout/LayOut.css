@@ -176,10 +176,14 @@
   padding: 40px;
   margin: 25px;
   margin-left: 205px;
-  width: calc(100vw - 230px);
+  min-width: calc(100vw - 230px);
   min-height: calc(100vh - 100px);
+  overflow: scroll;
 }
 
+.content::after{
+  margin-right: 40px;
+}
 .center-div {
   display: flex;
   align-items: center;
@@ -222,7 +226,7 @@
   display: grid;
   grid-auto-flow: row;
   grid-row-gap: 10px;
-  margin-left: 30px;
+ /*  margin-left: 30px; */
   font-size: medium;
   color: #58595b;
 }
@@ -373,10 +377,37 @@ ol {
   margin-right: 8px;
 }
 
-.checkbox-container input:checked ~ .checkmark {
+.checkbox-container input:checked ~ .checkmark, 
+.ant-checkbox-checked .ant-checkbox-inner, 
+.ant-checkbox-checked .ant-checkbox-inner:hover,
+.ant-checkbox-checked .ant-checkbox-inner:focus{
   background-color: #de5c8e;
-  border: 1px solid #de5c8e;
+  border: 1px solid #de5c8e !important;
   border-radius: 5px;
+}
+
+
+
+.ant-checkbox-checked::after,
+.ant-checkbox .ant-checkbox-inner:hover,
+.ant-checkbox .ant-checkbox-inner:focus{
+  border: 1px solid #de5c8e !important;
+  border-radius: 5px;
+}
+
+.ant-checkbox-indeterminate .ant-checkbox-inner::after{
+  background-color: #de5c8e;
+  border-radius: 1px;
+}
+
+.ant-checkbox .ant-checkbox-inner{
+  border-radius: 5px;
+}
+
+.ant-checkbox-wrapper:hover .ant-checkbox-inner, 
+.ant-checkbox:hover .ant-checkbox-inner, 
+.ant-checkbox-input:focus + .ant-checkbox-inner{
+  border-color: #de5c8e;
 }
 
 .checkmark:after {
@@ -633,6 +664,7 @@ thead, tbody tr {
   font-weight: bold;
   color: white;
   border: unset;
+  text-align: center;
 }
 
 .ant-table-small .ant-table-thead > tr > th {
@@ -659,6 +691,7 @@ thead, tbody tr {
   color: #58595b;
   font-size: medium;
   border: unset;
+  text-align: center;
 }
 
 .ant-table .ant-table-tbody > tr:hover > td {
@@ -668,6 +701,10 @@ thead, tbody tr {
 .clickable-table .ant-table .ant-table-tbody > tr:hover > td {
   background: #f8e1ea;
   cursor: pointer;
+}
+
+.ant-table-tbody > tr.ant-table-row-selected > td{
+  background: #f8e1ea;
 }
 
 td.ant-table-column-sort {
@@ -682,10 +719,37 @@ td.ant-table-column-sort {
   background-color:rgba(88, 89, 91, 0.7);
 }
 
+.report-table tbody{
+  overflow: scroll;
+  max-height: 200px;
+}
+
+table tr th.ant-table-selection-column, 
+table tr td.ant-table-selection-column{
+  width: 10%;
+  min-width: 25px;
+}
+
+.ant-table-thead > tr > th, 
+.ant-table-tbody > tr > td, 
+.ant-table tfoot > tr > th, 
+.ant-table tfoot > tr > td{
+  padding: 10px;
+}
+
+.ant-table-thead th.ant-table-column-sort {
+  background: rgba(88, 89, 91, 0.7);
+}
 /* dot ------------- */
 .dot {
   height: 10px;
   width: 10px;
   border-radius: 50%;
   display: inline-block;
+}
+
+/* popover ------------*/
+.ant-popover-inner-content{
+  padding: 10px;
+  max-width: 500px;
 }
