@@ -411,6 +411,10 @@ label,
   font-size: large;
 }
 
+.ant-form.smaller-form-label label {
+  font-size: medium;
+}
+
 label.clickable-label:hover {
   cursor: pointer;
 }

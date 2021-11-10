@@ -74,3 +74,14 @@ export const updateRecordRow = async (record_id, update_data) => {
         throw e;
     }
 }
+
+export const getAllRecordsByHN = async (HN) => {
+    try {
+        const res = (
+            await instance.get("/vitals/records/HN/" + HN)
+        ).data;
+        return res;
+    } catch (e) {
+        throw e;
+    }
+}
