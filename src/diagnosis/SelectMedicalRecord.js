@@ -83,14 +83,11 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             const index = newData.findIndex((item) => key === item.key);
             const update_data = { ...newData[index], ...row };
             delete update_data["key"];
-            console.log(update_data);
             const record_id = update_data.record_id;
             const remove_field = ["clinician_first_name", "project_id", "record_id", "updatedAt"];
             for (const i in remove_field) {
                 delete update_data[remove_field[i]];
             }
-            console.log(record_id);
-            console.log(update_data);
             updateRecordRow(record_id, [update_data])
             .then((res) => {
                 console.log(res);
@@ -117,7 +114,6 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
     useEffect(() => {
         getAllRecordsByHN(props.HN)
         .then((res) => {
-            console.log(res);
             if (res.data.length !== 0) {
                 setHasRecord(true);
                 // add additional required field of each project
