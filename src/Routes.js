@@ -7,12 +7,12 @@ import Header from "./layout/Header";
 import UploadRecord from "./record/UploadRecord"
 import Diagnosis from "./diagnosis/Diagnosis"
 import MyRecord from "./record/MyRecord";
+import ViewHistory from "./view history/ViewHistory";
 import { updateToken } from "./api";
 
 import "./layout/LayOut.css";
 
 function Routes() {
-  const ViewHistory = () => <div className="content"><h1>This is view history component</h1></div>;
 
   if (localStorage.getItem('auth') === 'true') {
     sessionStorage.setItem("token", localStorage.getItem('token'));
