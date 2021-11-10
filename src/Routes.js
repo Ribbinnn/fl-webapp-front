@@ -7,9 +7,11 @@ import Header from "./layout/Header";
 import UploadRecord from "./record/UploadRecord"
 import Diagnosis from "./diagnosis/Diagnosis"
 import MyRecord from "./record/MyRecord";
+import Report from "./view history/Report";
 import { updateToken } from "./api";
 
 import "./layout/LayOut.css";
+import ProjectInfo from "./component/ProjectInfo";
 
 function Routes() {
   const ViewHistory = () => <div className="content"><h1>This is view history component</h1></div>;
@@ -36,6 +38,7 @@ function Routes() {
             <Route path="/record/myrecord" exact render={()=>(auth?<MyRecord/>:<Redirect to='/login'/>)}/>
             <Route path="/diagnosis" exact render={()=>(auth?<Diagnosis/>:<Redirect to='/login'/>)}/>
             <Route path="/viewhistory" exact render={()=>(auth?<ViewHistory/>:<Redirect to='/login'/>)}/>
+            <Route path="/viewhistory/:mode/:rid" exact render={()=>(auth?<Report/>:<Redirect to='/login'/>)}/>
             <Route path="/login" render={()=>(auth?<Redirect to='/'/>:<Login/>)}/>
           </Switch>
         </div>
