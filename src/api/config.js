@@ -1,1 +1,1 @@
-export const serverURL = "https://flweb-capstone-back.herokuapp.com//api";
+export const serverURL = "https://flweb-capstone-back.herokuapp.com/api";
