@@ -71,7 +71,7 @@ export default function Report(props) {
           <Col xs={24} sm={24} md={24} lg={12} xl={12}>
             <div /* style={{border:"1px solid #58595b"}} */>
               <DicomViewOnly
-                img_url="http://flweb-capstone-back.herokuapp.com/api/example/0041018.dcm"
+                img_url="https://flweb-capstone-back.herokuapp.com/api/example/0041018.dcm"
                 img_source="wado"
                 size={400}
               />
