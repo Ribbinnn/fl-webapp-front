@@ -2,6 +2,7 @@ import React from "react";
 import { Form, Input } from "antd";
 import Info from "../component/Info";
 import DicomViewOnly from "../component/dicom-viewer/DicomViewOnly";
+import { getDicomByAccessionNo } from "../api/image";
 
 export default function PreviewEdit(props){
     return(
@@ -39,7 +40,7 @@ export default function PreviewEdit(props){
               
             </Form>
           </div>
-          <DicomViewOnly img_url="https://flweb-capstone-back.herokuapp.com/api/example/0041018.dcm" img_source="wado" size={500}/>
+          <DicomViewOnly img_url={getDicomByAccessionNo(props.AccessionNo)} img_source="wado" size={500}/>
           </div>
     )
 }
