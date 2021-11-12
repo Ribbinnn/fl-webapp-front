@@ -82,9 +82,8 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             const newData = [...currentData.current];
             const index = newData.findIndex((item) => key === item.key);
             const update_data = { ...newData[index], ...row };
-            delete update_data["key"];
             const record_id = update_data.record_id;
-            const remove_field = ["clinician_first_name", "project_id", "record_id", "updatedAt"];
+            const remove_field = ["key", "clinician_first_name", "project_id", "record_id", "updatedAt"];
             for (const i in remove_field) {
                 delete update_data[remove_field[i]];
             }
@@ -99,16 +98,16 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             console.log('Validate Failed:', errInfo);
         }
     };
-    const deleteRow = (key) => { // wait for editing api
+    const deleteRow = (key) => {
         const newData = [...currentData.current];
         const index = newData.findIndex((item) => key === item.key);
-        // deleteRecordRow(recordId.current, index)
-        // .then((res) => {
-        //     console.log(res);
-        //     setEditingKey("delete");
-        // }).catch((err) => {
-        //     console.log(err);
-        // });
+        deleteRecordRow(newData[index].record_id, newData[index].entry_id)
+        .then((res) => {
+            console.log(res);
+            setEditingKey("delete");
+        }).catch((err) => {
+            console.log(err);
+        });
     }
 
     useEffect(() => {
