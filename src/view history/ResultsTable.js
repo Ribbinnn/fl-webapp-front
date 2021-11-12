@@ -6,24 +6,36 @@ const { TextArea } = Input;
 const GradCamStyle = { fontSize: "x-large" };
 
 export default function Demo(props) {
-  const mode = props.mode ?? "edit";
+  const mode = props.mode;
+  const status = props.status;
   const [columns, setColumn] = useState();
   const [data, setData] = useState();
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
 
   useEffect(() => {
-    console.log(props);
     if (!data) {
-      let temp = props.classes.map((item, i) => {
-        return {
-          key: i,
-          class: item.finding,
-          confidence: item.confidence.toFixed(4),
-          gradCam: props.gradCamList.includes(item.finding),
-        };
-      });
-      temp.sort((a, b) => b.confidence - a.confidence);
-      console.log(temp);
-      setData(temp ?? []);
+      let defaultSelectedRowKeys = [];
+      let filtered_data = props.classes.reduce((config, item, i) => {
+        if (mode === "edit" && status === "finalized" && item.selected) {
+          defaultSelectedRowKeys = [...defaultSelectedRowKeys, i];
+        }
+        if (status === "finalized" && mode === "view" && !item.selected) {
+          return [...config];
+        }
+        return [
+          ...config,
+          {
+            key: i,
+            class: item.finding,
+            confidence: item.confidence.toFixed(4),
+            gradCam: props.gradCamList.includes(item.finding),
+          },
+        ];
+      }, []);
+      filtered_data.sort((a, b) => b.confidence - a.confidence);
+      setData(filtered_data);
+      //console.log((filtered_data.reduce((, item)=>{return item.selected ? [...defaultSelectedRowKeys,item.key]:defaultSelectedRowKeys},[])))
+      setSelectedRowKeys(defaultSelectedRowKeys);
     }
     changeGradcam(props.gradCam);
   }, [props.gradCam]);
@@ -74,12 +86,14 @@ export default function Demo(props) {
 
   const rowSelection = {
     type: "checkbox",
+    selectedRowKeys,
     onChange: (selectedRowKeys, selectedRows) => {
       console.log(
         `selectedRowKeys: ${selectedRowKeys}`,
         "selectedRows: ",
         selectedRows
       );
+      setSelectedRowKeys(selectedRowKeys);
     },
   };
   return (
@@ -133,24 +147,16 @@ export default function Demo(props) {
           autoSize={{ minRows: 2, maxRows: 6 }}
         />
       )}
-      <div style={{display:"flex", justifyContent: "space-between", marginTop:"20px"}}>
-        {mode === "view" && (
-          <Button
-            className="primary-btn"
-          >
-            Back
-          </Button>
-        )}
-        {mode === "edit" && (
-          <Button className="primary-btn">
-            Cancel
-          </Button>
-        )}
-        {mode === "edit" && (
-          <Button className="primary-btn">
-            Save
-          </Button>
-        )}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginTop: "20px",
+        }}
+      >
+        {mode === "view" && <Button className="primary-btn">Back</Button>}
+        {mode === "edit" && <Button className="primary-btn">Cancel</Button>}
+        {mode === "edit" && <Button className="primary-btn">Save</Button>}
       </div>
     </div>
   );
