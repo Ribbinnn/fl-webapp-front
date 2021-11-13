@@ -3,6 +3,7 @@ import { Steps, Button, Form, Input, Row, Col, Collapse } from "antd";
 import "antd/dist/antd.css";
 import SelectProject from "../component/SelectProject";
 import SelectMedicalRecord from "./SelectMedicalRecord";
+import SelectXRayImage from "./SelectXRayImage";
 import Completed from "../component/Completed";
 import PreviewEdit from "./PreviewEdit";
 const { Step } = Steps;
@@ -51,6 +52,7 @@ export default function Diagnosis() {
   const [Project, setProject] = useState("none");
   const [Patient, setPatient] = useState({ Name: "John Doe", Age: 42, Gender: "M" });
   const [MedRec, setMedRec] = useState({"Pulse rate": 77, "Temperature": 37, "Blood pressure": "120/80"});
+  const [XRayImg, setXRayImg] = useState(null);
   const [current, setCurrent] = useState(0);
   const selectMedicalRecordRef = useRef();
   const next = () => {
@@ -121,7 +123,9 @@ export default function Diagnosis() {
             >
               Patient's HN: {HN}
             </label>
-            <label style={{ display: "block" }}>Select X-Ray Image</label>
+            <SelectXRayImage 
+              HN={HN}
+              setXRayImg={setXRayImg} />
           </div>
         )}
         {current === 3 && (
