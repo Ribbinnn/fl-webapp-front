@@ -2,15 +2,17 @@ import React, { useState, useRef } from "react";
 import { Steps, Button, Form, Input, Row, Col, Collapse } from "antd";
 import "antd/dist/antd.css";
 import SelectProject from "../component/SelectProject";
+import ProjectInfo from "../component/ProjectInfo";
 import SelectMedicalRecord from "./SelectMedicalRecord";
 import SelectXRayImage from "./SelectXRayImage";
 import Completed from "../component/Completed";
 import PreviewEdit from "./PreviewEdit";
+import { findPatientOnPACS } from "../api/pacs";
 const { Step } = Steps;
 
 const steps = [
   {
-    title: "Select HN & Project",
+    title: "Select HN",
     content: "First-content",
   },
   {
@@ -50,9 +52,17 @@ const btnList = [
 export default function Diagnosis() {
   const [HN, setHN] = useState("");
   const [Project, setProject] = useState("none");
-  const [Patient, setPatient] = useState({ Name: "John Doe", Age: 42, Gender: "M" });
-  const [MedRec, setMedRec] = useState({"Pulse rate": 77, "Temperature": 37, "Blood pressure": "120/80"});
-  const [XRayImg, setXRayImg] = useState(null);
+  const [Patient, setPatient] = useState({
+    Name: "John Doe",
+    Age: 42,
+    Gender: "M",
+  });
+  const [MedRec, setMedRec] = useState({
+    "Pulse rate": 77,
+    Temperature: 37,
+    "Blood pressure": "120/80",
+  });
+  const [accessionNo, setAccessionNo] = useState("74");
   const [current, setCurrent] = useState(0);
   const selectMedicalRecordRef = useRef();
   const next = () => {
@@ -98,17 +108,18 @@ export default function Diagnosis() {
                 >
                   Patient's HN: {HN}
                 </label>
-                <SelectProject Project={Project} mode = "view"/>
+                <ProjectInfo />
               </div>
             </Col>
             <Col span={17}>
-              <SelectMedicalRecord 
-                ref={selectMedicalRecordRef} 
-                HN={HN} 
+              <SelectMedicalRecord
+                ref={selectMedicalRecordRef}
+                HN={HN}
                 project={Project}
                 current={current}
                 setCurrent={setCurrent}
-                setMedRec={setMedRec} />
+                setMedRec={setMedRec}
+              />
             </Col>
           </Row>
         )}
@@ -125,11 +136,16 @@ export default function Diagnosis() {
             </label>
             <SelectXRayImage 
               HN={HN}
-              setXRayImg={setXRayImg} />
+              setAccessionNo={setAccessionNo} />
           </div>
         )}
         {current === 3 && (
-          <PreviewEdit HN={HN} Patient={Patient} MedRec={MedRec}/>
+          <PreviewEdit
+            HN={HN}
+            Patient={Patient}
+            MedRec={MedRec}
+            AccessionNo={accessionNo}
+          />
         )}
         {current === steps.length - 1 && (
           <Completed btnList={btnList} title="Diagnosis Started" />
@@ -146,7 +162,7 @@ export default function Diagnosis() {
             Back
           </Button>
         )}
-        {HN !== "" && Project !== "none" && current < steps.length - 1 && (
+        {HN !== "" && current < steps.length - 1 && (
           <Button className="primary-btn" onClick={() => next()}>
             Next
           </Button>
@@ -157,45 +173,45 @@ export default function Diagnosis() {
 }
 
 function SelectHN(props) {
+  const [patientName, setPatientName] = useState();
   const handleSubmit = () => {
-    /*check HN in PACS*/
-    props.setHN(document.getElementById("hn-input").value /** set valid HN in PACS */);
+    let input_hn = document.getElementById("hn-input").value;
+    findPatientOnPACS(input_hn).then((res) => {
+      console.log(input_hn);
+      if (res.data) {
+        props.setHN(input_hn);
+        setPatientName(res.data["Patient Name"]);
+      } else setPatientName(false);
+    });
   };
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-      }}
-    >
-      <Form layout="vertical">
-        <Form.Item label="Patient's HN">
-          <Input
-            className="input-text"
-            id="hn-input"
-            style={{ width: "300px" }}
-            defaultValue={props.HN}
-            onChange={()=>{if (props.HN.length > 0){props.setHN("")}}}
-          />
-          <Button
-            className="primary-btn smaller"
-            style={{ marginLeft: "10px" }}
-            onClick={handleSubmit}
-          >
-            Submit
-          </Button>
-        </Form.Item>
-      </Form>
-      <div style={{ paddingLeft: 60 }}>
-        {props.HN && (
-          <SelectProject
-            setProject={props.setProject}
-            Project={props.Project}
-            mode = "select"
-            width="530px" 
-          />
-        )}
-      </div>
-    </div>
+    <Form layout="vertical">
+      <Form.Item label="Patient's HN">
+        <Input
+          className="input-text"
+          id="hn-input"
+          style={{ width: "300px" }}
+          defaultValue={props.HN}
+          onChange={() => {
+            if (props.HN.length > 0 || patientName === false) {
+              props.setHN("");
+              setPatientName(undefined);
+            }
+          }}
+        />
+        <Button
+          className="primary-btn smaller"
+          style={{ marginLeft: "10px" }}
+          onClick={handleSubmit}
+        >
+          Submit
+        </Button>
+      </Form.Item>
+      {patientName !== undefined && (
+        <label id="search-pacs-result">
+          {patientName ? `Patient's Name: ${patientName}` : "No sufficient data from PACS for this patient."}
+        </label>
+      )}
+    </Form>
   );
 }

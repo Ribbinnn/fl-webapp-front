@@ -2,17 +2,17 @@ import { instance } from '.';
 
 export const searchVitlasProject = async (projectId) => {
     try {
-        const response = (await instance.get("/vitals/projects/clinician/" + (JSON.parse(sessionStorage.getItem('user'))).id)).data;
+        const response = (await instance.get("/vitals/?user_id=" + (JSON.parse(sessionStorage.getItem('user'))).id)).data;
         return response
     } catch (e) {
         throw e
     }
 }
 
-export const uploadVitalsRecord = async (project_name, user_id, record_name, records) => {
+export const uploadVitalsRecord = async (project_id, user_id, record_name, records) => {
     try {
         const response = (
-            await instance.post("/vitals/records", {project_name, user_id, record_name, records})
+            await instance.post("/vitals/records", {project_id, user_id, record_name, records})
         ).data;
         return response;
     } catch (e) {

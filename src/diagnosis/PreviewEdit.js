@@ -2,6 +2,7 @@ import React from "react";
 import { Form, Input } from "antd";
 import Info from "../component/Info";
 import DicomViewOnly from "../component/dicom-viewer/DicomViewOnly";
+import { getDicomByAccessionNo } from "../api/image";
 
 export default function PreviewEdit(props){
     return(
@@ -19,7 +20,7 @@ export default function PreviewEdit(props){
             <label style={{ display: "block", marginBottom: "10px" }}>
               Patient Information
             </label>
-            <Info Data={props.Patient} />
+            <Info Data={props.Patient} style={{marginLeft: "30px"}}/>
             <label style={{ display: "block", margin: "30px 0px 10px 0px" }}>
               Medical Records
             </label>
@@ -39,7 +40,7 @@ export default function PreviewEdit(props){
               
             </Form>
           </div>
-          <DicomViewOnly img_url="http://localhost:5000/api/example/0041018.dcm" img_source="wado" size={500}/>
+          <DicomViewOnly img_url={getDicomByAccessionNo(props.AccessionNo)} img_source="wado" size={500}/>
           </div>
     )
 }

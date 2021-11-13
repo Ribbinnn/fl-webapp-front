@@ -15,7 +15,7 @@ function SelectXRayImage(props) {
         type: "radio",
         onChange: (selectedRowKeys, selectedRows) => {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
-            // props.setXRayImg(...);
+            // props.setAccessionNo(...);
         },
     };
 
