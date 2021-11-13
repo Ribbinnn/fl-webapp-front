@@ -10,7 +10,7 @@ import {
 } from "@ant-design/icons";
 import ProjectInfo from "../component/ProjectInfo";
 import ResultsTable from "./ResultsTable";
-import { getGradCam } from "../api/gradCam";
+import { getGradCam, getDicomByAccessionNo } from "../api/image";
 import { getReport } from "../api/report";
 const { Panel } = Collapse;
 
@@ -19,11 +19,17 @@ const LoadingIcon = (
 );
 
 function convertFromStringToDate(responseDate) {
-  let dateComponents = responseDate.split('T');
+  let dateComponents = responseDate.split("T");
   let datePieces = dateComponents[0].split("-");
   let timePieces = dateComponents[1].split(":");
-  return(new Date(datePieces[2], (datePieces[1]), datePieces[0],
-                       timePieces[0], timePieces[1], "00"))
+  return new Date(
+    datePieces[2],
+    datePieces[1],
+    datePieces[0],
+    timePieces[0],
+    timePieces[1],
+    "00"
+  );
 }
 //2021-10-17T17:00:00.000Z
 export default function Report(props) {
@@ -35,8 +41,6 @@ export default function Report(props) {
     getReport(rid).then((res) => {
       console.log(res);
       setInfo(res.data);
-      setGradCam(res.data.gradCam[0]);
-      console.log(res.data.gradCam[0]);
       setLoaded(true);
     });
   }, []);
@@ -69,13 +73,11 @@ export default function Report(props) {
       {loaded && (
         <Row justify="center" align="top">
           <Col xs={24} sm={24} md={24} lg={12} xl={12}>
-            <div /* style={{border:"1px solid #58595b"}} */>
-              <DicomViewOnly
-                img_url="https://flweb-capstone-back.herokuapp.com/api/example/0041018.dcm"
-                img_source="wado"
-                size={400}
-              />
-            </div>
+            <DicomViewOnly
+              img_url={getDicomByAccessionNo(info.image)}
+              img_source="wado"
+              size={400}
+            />
           </Col>
           <Col
             xs={24}
@@ -87,20 +89,32 @@ export default function Report(props) {
           >
             <div
               style={{
-                /* border:"1px solid #58595b",*/ 
                 height: "400px",
-                textAlign: "center"
+                textAlign: "center",
               }}
             >
-              <Image
-                preview={false}
-                height={400}
-                src={getGradCam(rid, gradCam)}
-              />
+              {gradCam ? (
+                <Image
+                  preview={false}
+                  height={400}
+                  src={getGradCam(rid, gradCam)}
+                />
+              ) : (
+                <DicomViewOnly
+                  img_url={getDicomByAccessionNo(info.image)}
+                  img_source="wado"
+                  size={400}
+                  div_id="gradcam"
+                />
+              )}
             </div>
             <Button
               type="link"
-              style={{ color: "#de5c8e", fontSize: "medium", visibility:"hidden" }}
+              style={{
+                color: "#de5c8e",
+                fontSize: "medium",
+                visibility: "hidden",
+              }}
             >
               Download <CloudDownloadOutlined />
             </Button>
