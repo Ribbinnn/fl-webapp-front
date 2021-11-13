@@ -98,7 +98,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
             let column_list = (uploaded_field).map((column) => ({
                 title: column === "hn" ? 
                     column.toUpperCase() : 
-                    column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" ").split("(")[0],
+                    column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" "),
                 dataIndex: column,
                 key: column,
                 align: "center",
