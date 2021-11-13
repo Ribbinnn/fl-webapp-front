@@ -794,3 +794,25 @@ table tr td.ant-table-selection-column{
 .ant-image-img{
   width: auto;
 }
+
+/* card ------------ */
+.ant-card,
+.ant-card:hover{
+  box-shadow: none;
+  border-radius: 8px;
+  border-color: #58595b;
+  color: #58595b;
+}
+
+.ant-card:hover{
+  background-color: #f0f0f0;
+}
+
+.ant-card:focus{
+  background-color: #f8e1ea;
+}
+
+.ant-card-hoverable{
+  transition-delay: 20ms;
+  transition-property: background-color;
+}
