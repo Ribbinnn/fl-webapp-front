@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { Steps, Button, Form, Input, Row, Col, Collapse } from "antd";
 import "antd/dist/antd.css";
 import SelectProject from "../component/SelectProject";
+import ProjectInfo from "../component/ProjectInfo";
 import SelectMedicalRecord from "./SelectMedicalRecord";
 import Completed from "../component/Completed";
 import PreviewEdit from "./PreviewEdit";
@@ -106,7 +107,7 @@ export default function Diagnosis() {
                 >
                   Patient's HN: {HN}
                 </label>
-                <SelectProject Project={Project} mode="view" />
+                <ProjectInfo />
               </div>
             </Col>
             <Col span={17}>
