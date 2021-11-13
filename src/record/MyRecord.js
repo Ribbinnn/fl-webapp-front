@@ -29,6 +29,18 @@ function MyRecord () {
     const columns = [
         {
             title: "Uploaded Time",
+            dataIndex: "uploaded",
+            key: "uploaded",
+            align: "center",
+            ellipsis: {
+                showTitle: true
+            },
+            sorter: {
+                compare: (a, b) => new Date(a.uploaded) - new Date(b.uploaded)
+            }
+        },
+        {
+            title: "Updated Time",
             dataIndex: "updated",
             key: "updated",
             align: "center",
@@ -36,8 +48,8 @@ function MyRecord () {
                 showTitle: true
             },
             sorter: {
-                compare: (a, b) => new Date(a.updated) - new Date(b.updated)
-            }
+                compare: (a, b) => a.updated.localeCompare(b.updated)
+            },
         },
         {
             title: "Record Name",
@@ -51,18 +63,6 @@ function MyRecord () {
                 compare: (a, b) => a.rec_name.localeCompare(b.rec_name)
             },
         },
-        {
-            title: "Project Name",
-            dataIndex: "proj_name",
-            key: "proj_name",
-            align: "center",
-            ellipsis: {
-                showTitle: true
-            },
-            sorter: {
-                compare: (a, b) => a.proj_name.localeCompare(b.proj_name)
-            },
-        }
     ];
 
     useEffect(() => {
@@ -82,10 +82,10 @@ function MyRecord () {
 
         searchVitlasProject().then((response) => {
             let res_list = (response.data).map((project)=>({
-                vitals_proj_id: project._id,
-                updated: (new Date(project.updatedAt)).toLocaleString(),
+                vitals_proj_id: project.project_id,
+                uploaded: (new Date(project.createdAt)).toLocaleString(),
                 rec_name: project.record_name,
-                proj_name: project.name,
+                updated: (new Date(project.updatedAt)).toLocaleString(),
                 key: project._id
             }))
             
