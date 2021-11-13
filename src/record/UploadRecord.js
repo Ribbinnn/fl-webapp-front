@@ -9,16 +9,12 @@ const { Step } = Steps;
 
 const steps = [
   {
-    title: "Select Project",
-    content: "First-content",
-  },
-  {
     title: "Upload File",
-    content: "Second-content",
+    content: "first-content",
   },
   {
     title: "Upload Completed",
-    content: "Last-content",
+    content: "second-content",
   },
 ];
 

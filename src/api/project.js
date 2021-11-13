@@ -9,3 +9,14 @@ export const selectProject = async () => {
     throw e
   }
 }
+
+export const getProjectInfoByID = async (pid) => {
+  try {
+    const response = (await instance.get("/projects/" + pid)).data;
+    console.log(response)
+    return response
+  } catch (e) {
+    // console.log(e.response)
+    throw e
+  }
+}
