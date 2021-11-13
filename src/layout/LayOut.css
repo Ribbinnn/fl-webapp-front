@@ -658,6 +658,41 @@ label.clickable-label:hover {
   padding: 0 24px 24px 24px
 }
 
+.ant-modal-confirm-body > .anticon{
+  font-size: 40px;
+  color: #E9C869 !important;
+}
+
+.ant-modal-confirm .ant-modal-confirm-btns .ant-btn + .ant-btn,
+.ant-modal-confirm .ant-modal-confirm-btns .ant-btn + .ant-btn:hover{
+  background-color: #DE5C8E;
+  border: none;
+  border-radius: 8px;
+  font-size: medium;
+  font-weight: bold;
+}
+
+.ant-modal-confirm .ant-modal-confirm-btns .ant-btn,
+.ant-modal-confirm .ant-modal-confirm-btns .ant-btn:hover{
+  background-color: #C4C4C4;
+  border: none;
+  border-radius: 8px;
+  font-size: medium;
+  font-weight: bold;
+  color: white;
+
+}
+
+.ant-modal-confirm-body .ant-modal-confirm-content{
+  color: #58595b;
+  font-size: medium;
+}
+
+.ant-modal-confirm-body .ant-modal-confirm-title{
+  font-size: large;
+  color: #58595b;
+}
+
 /* popconfirm -------------------- */
 .ant-popover-buttons {
   display: flex;

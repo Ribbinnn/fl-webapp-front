@@ -1,29 +1,49 @@
 import React, { useState, useEffect } from "react";
-import { Table, Input, Button } from "antd";
-import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import { Table, Input, Button, Modal } from "antd";
+import {
+  EyeOutlined,
+  EyeInvisibleOutlined,
+  ExclamationCircleOutlined,
+} from "@ant-design/icons";
 
 const { TextArea } = Input;
 const GradCamStyle = { fontSize: "x-large" };
 
-export default function Demo(props) {
-  const mode = props.mode ?? "edit";
+export default function ResultsTable(props) {
+  const mode = props.mode;
+  const status = props.status;
   const [columns, setColumn] = useState();
   const [data, setData] = useState();
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [defaultRowKeys, setDefaultRowKeys] = useState([]);
+  const [btnGroup, setBtnGroup] = useState("back");
+  const [defaultNote, setDefaultNote] = useState(props.note);
+  const [note, setNote] = useState(props.note);
 
   useEffect(() => {
-    console.log(props);
     if (!data) {
-      let temp = props.classes.map((item, i) => {
-        return {
-          key: i,
-          class: item.finding,
-          confidence: item.confidence.toFixed(4),
-          gradCam: props.gradCamList.includes(item.finding),
-        };
-      });
-      temp.sort((a, b) => b.confidence - a.confidence);
-      console.log(temp);
-      setData(temp ?? []);
+      let defaultSelectedRowKeys = [];
+      let filtered_data = props.classes.reduce((config, item, i) => {
+        if (mode === "edit" && status === "finalized" && item.selected) {
+          defaultSelectedRowKeys = [...defaultSelectedRowKeys, i];
+        }
+        if (status === "finalized" && mode === "view" && !item.selected) {
+          return [...config];
+        }
+        return [
+          ...config,
+          {
+            key: i,
+            class: item.finding,
+            confidence: item.confidence.toFixed(4),
+            gradCam: props.gradCamList.includes(item.finding),
+          },
+        ];
+      }, []);
+      filtered_data.sort((a, b) => b.confidence - a.confidence);
+      setData(filtered_data);
+      setSelectedRowKeys(defaultSelectedRowKeys);
+      setDefaultRowKeys(defaultSelectedRowKeys);
     }
     changeGradcam(props.gradCam);
   }, [props.gradCam]);
@@ -72,16 +92,53 @@ export default function Demo(props) {
     setColumn(col);
   }
 
+  const onSaveReport = () => {
+    /** save report api
+     *
+     *
+     *
+     *
+     *
+     *
+     *
+     */
+    setDefaultRowKeys(selectedRowKeys);
+    setDefaultNote(note);
+    setBtnGroup("back");
+  };
+
+  const onCancelReport = () => {
+    return Modal.confirm({
+      title: "Are you sure you want to cancel?",
+      icon: <ExclamationCircleOutlined />,
+      content: "All changes you made will not be saved.",
+      okText: "Sure",
+      onOk: () => {
+        setSelectedRowKeys(defaultRowKeys);
+        setNote(defaultNote);
+        setBtnGroup("back");
+      },
+      cancelText: "No",
+    });
+  };
+
   const rowSelection = {
     type: "checkbox",
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log(
+    selectedRowKeys,
+    onChange: (selectedKeys, selectedRows) => {
+      /* console.log(
         `selectedRowKeys: ${selectedRowKeys}`,
         "selectedRows: ",
         selectedRows
-      );
+      ); */
+      setSelectedRowKeys(selectedKeys);
+      console.log(selectedKeys.sort(), defaultRowKeys.sort());
+      if (selectedKeys.sort() !== defaultRowKeys.sort()) {
+        setBtnGroup("save");
+      }
     },
   };
+
   return (
     <div>
       {mode === "edit" && (
@@ -122,32 +179,42 @@ export default function Demo(props) {
             fontSize: "medium",
           }}
         >
-          {props.note}
+          {props.note === "" ? "-" : props.note}
         </label>
       )}
       {mode === "edit" && (
         <TextArea
+          id="report-note"
           className="input-text"
-          defaultValue={props.note}
           style={{ width: "600px", fontSize: "medium" }}
           autoSize={{ minRows: 2, maxRows: 6 }}
+          value={note}
+          onChange={(e) => {
+            setNote(e.target.value);
+            e.target.value !== defaultNote && setBtnGroup("save");
+          }}
         />
       )}
-      <div style={{display:"flex", justifyContent: "space-between", marginTop:"20px"}}>
-        {mode === "view" && (
-          <Button
-            className="primary-btn"
-          >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginTop: "20px",
+        }}
+      >
+        {btnGroup === "back" && (
+          <Button className="primary-btn" onClick={() => window.history.back()}>
             Back
           </Button>
         )}
-        {mode === "edit" && (
-          <Button className="primary-btn">
+
+        {btnGroup === "save" && (
+          <Button className="primary-btn" onClick={() => onCancelReport()}>
             Cancel
           </Button>
         )}
-        {mode === "edit" && (
-          <Button className="primary-btn">
+        {btnGroup === "save" && (
+          <Button className="primary-btn" onClick={() => onSaveReport()}>
             Save
           </Button>
         )}

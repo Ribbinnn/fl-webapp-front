@@ -18,7 +18,7 @@ export default function DicomViewOnly(props) {
 
   function displayImage(image) {
     var img_ratio = { height: image.height, width: image.width };
-    var element = document.getElementById("dicomViewImage");
+    var element = document.getElementById(props.div_id ?? "dicomViewImage");
     if (img_ratio.height > img_ratio.width) {
       element.style.width = `${(img_ratio.width / img_ratio.height) * props.size}px`;
       element.style.height = `${props.size}px`;
@@ -49,7 +49,7 @@ export default function DicomViewOnly(props) {
         </div>
       )}
       <div
-        id="dicomViewImage"
+        id={props.div_id ?? "dicomViewImage"}
         className="dicomImage"
         style={{ display: "relative" }}
       />
