@@ -16,7 +16,7 @@ export default function ImageModal (props){
 
   return (
       <div>
-        <Button type="link" onClick={showModal} icon={<EyeOutlined />}/>
+        <Button type="link" onClick={showModal} icon={<EyeOutlined className="clickable-icon" />}/>
         <Modal
           centered
           className="img-modal"

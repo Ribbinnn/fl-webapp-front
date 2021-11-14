@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Table, Tooltip } from "antd";
-import { EyeOutlined } from '@ant-design/icons';
 import { getPatientData } from "../api/pacs"
-// import ImageModal from "../component";
+import ImageModal from "../component/ImageModal";
 
 function SelectXRayImage(props) {
 
@@ -45,9 +44,10 @@ function SelectXRayImage(props) {
                 render: (_, record) => {
                     return(
                         <div className="center-div">
-                            <EyeOutlined
-                                className="clickable-icon"
-                                onClick={() => console.log("preview")} />
+                            <ImageModal
+                                AccessionNo={record["Accession No"]}
+                                ProcDescription={record["Proc Description"]}
+                                StudyDateTime={record["Study Date Time"]} />
                         </div>
                     );
                 },
