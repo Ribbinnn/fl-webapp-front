@@ -57,7 +57,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
         // add additional required field of each project
         for (const i in props.project.Requirement) {
             const field_name = props.project.Requirement[i]["name"] + 
-                (props.project.Requirement[i]["unit"] == 'none' ? "" : "(" + props.project.Requirement[i]["unit"] + ")")
+                (props.project.Requirement[i]["unit"] === 'none' ? "" : "(" + props.project.Requirement[i]["unit"] + ")")
             if (!required_field.includes(field_name)) {
                 required_field.push(field_name);
             }
