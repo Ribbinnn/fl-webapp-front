@@ -4,6 +4,7 @@ import "antd/dist/antd.css";
 import SelectProject from "../component/SelectProject";
 import ProjectInfo from "../component/ProjectInfo";
 import SelectMedicalRecord from "./SelectMedicalRecord";
+import SelectXRayImage from "./SelectXRayImage";
 import Completed from "../component/Completed";
 import PreviewEdit from "./PreviewEdit";
 import { findPatientOnPACS } from "../api/pacs";
@@ -133,7 +134,9 @@ export default function Diagnosis() {
             >
               Patient's HN: {HN}
             </label>
-            <label style={{ display: "block" }}>Select X-Ray Image</label>
+            <SelectXRayImage 
+              HN={HN}
+              setAccessionNo={setAccessionNo} />
           </div>
         )}
         {current === 3 && (
