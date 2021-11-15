@@ -72,7 +72,7 @@ function ShowAllRecords(props) {
     const deleteRow = (key) => {
         const newData = [...currentData.current];
         const index = newData.findIndex((item) => key === item.key);
-        deleteRecordRow(recordId.current, index)
+        deleteRecordRow(recordId.current, newData[index].entry_id)
         .then((res) => {
             console.log(res);
             setEditingKey("delete");

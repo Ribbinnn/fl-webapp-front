@@ -14,8 +14,8 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             try {
                 if (!hasRecord) {
                     const data = await requirementForm.validateFields();
+                    // props.setMedRec(data + hn);
                 }
-                // props.setMedRec(data + other fields?);
                 await props.setCurrent(props.current + 1);
             } catch (errInfo) {
                 console.log('Validate Failed:', errInfo);
@@ -26,7 +26,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
     const [tableForm] = Form.useForm();
     const [data, setData] = useState([]);
     const currentData = useRef([]);
-    const columns = ["measured_time", "updated_time", "age", "gender"];
+    const columns = ["measured_time", "updated_time", "age", "gender"]; // get hn from state
     const [mergedColumns, setMergeColumns] = useState([]);
     const [editingKey, setEditingKey] = useState("");
 
@@ -34,7 +34,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
         type: "radio",
         onChange: (selectedRowKeys, selectedRows) => {
             console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
-            // props.setMedRec(selectedRows[0]);
+            // props.setMedRec(selectedRows[0]); // remove some field
         },
     };
 
@@ -82,9 +82,8 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             const newData = [...currentData.current];
             const index = newData.findIndex((item) => key === item.key);
             const update_data = { ...newData[index], ...row };
-            delete update_data["key"];
             const record_id = update_data.record_id;
-            const remove_field = ["clinician_first_name", "project_id", "record_id", "updatedAt"];
+            const remove_field = ["key", "clinician_first_name", "project_id", "record_id", "updatedAt"];
             for (const i in remove_field) {
                 delete update_data[remove_field[i]];
             }
@@ -99,16 +98,16 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             console.log('Validate Failed:', errInfo);
         }
     };
-    const deleteRow = (key) => { // wait for editing api
+    const deleteRow = (key) => {
         const newData = [...currentData.current];
         const index = newData.findIndex((item) => key === item.key);
-        // deleteRecordRow(recordId.current, index)
-        // .then((res) => {
-        //     console.log(res);
-        //     setEditingKey("delete");
-        // }).catch((err) => {
-        //     console.log(err);
-        // });
+        deleteRecordRow(newData[index].record_id, newData[index].entry_id)
+        .then((res) => {
+            console.log(res);
+            setEditingKey("delete");
+        }).catch((err) => {
+            console.log(err);
+        });
     }
 
     useEffect(() => {
@@ -135,7 +134,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                             {column}
                         </Tooltip>
                     ) : null,
-                    editable: column === "measured_time" || column === "updated_time" || column === "clinician" ? false : true, // check clinician !
+                    editable: column === "measured_time" || column === "updated_time" || column === "clinician" ? false : true,
                 }));
                 column_list.push({
                     title: "Action",
@@ -226,6 +225,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
         }).catch((err) => {
             console.log(err);
         })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [editingKey]);
     
     const [clinician, setClinician] = useState("");
