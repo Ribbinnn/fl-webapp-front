@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Table } from "antd";
+import { Table, Tooltip } from "antd";
 import { DownloadOutlined ,EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import {viewHistory} from "../api/viewHistory"
 import SelectProject from "../component/SelectProject";
@@ -86,6 +86,11 @@ function HistoryLog(props) {
             sorter: {
                 compare: (a, b) => (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
             },
+            render: (date) => (
+                <Tooltip placement="topLeft" title={date}>
+                    {date}
+                </Tooltip>
+            ),
         },
         {
             title: "Last Modified",
@@ -98,6 +103,11 @@ function HistoryLog(props) {
             sorter: {
                 compare: (a, b) => (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt)
             },
+            render: (date) => (
+                <Tooltip placement="topLeft" title={date}>
+                    {date}
+                </Tooltip>
+            ),
         },
         {
             title: "Clinician",
@@ -159,6 +169,12 @@ function HistoryLog(props) {
     useEffect(() => {
         viewHistory(props.project).then((response) => {
             console.log(response);
+            // add key to each row & change date-time
+            for (const i in response.data) {
+                response.data[i]["key"] = (parseInt(i)+1).toString();
+                response.data[i].createdAt = new Date(response.data[i].createdAt).toLocaleString();
+                response.data[i].updatedAt = new Date(response.data[i].updatedAt).toLocaleString();
+            }
             setUploadedItem(response.data)
         })
     }, [])
