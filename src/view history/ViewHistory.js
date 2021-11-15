@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Table } from "antd";
+import { DownloadOutlined ,EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import {viewHistory} from "../api/viewHistory"
 import SelectProject from "../component/SelectProject";
+import ImageModal from "../component/ImageModal";
 import { useHistory } from "react-router-dom";
 
 export default function ViewHistory() {
-    const [project, setProject] = useState('none');
+    const [project, setProject] = useState("619279c10a5029826b6b6fb7");
 
     return (
         <div className="content">
@@ -109,10 +111,54 @@ function HistoryLog(props) {
                 compare: (a, b) => a.clinician_name.localeCompare(b.clinician_name)
             },
         },
+        {
+            title: "Action",
+            key: "action",
+            dataIndex: "action",
+            render: (_, report) => {
+                return(
+                    <div>
+                        {uploadedItem.status === "in_progress" ?
+                            <EditOutlined className="clickable-icon" /> :
+                            <div className="center-div">
+                                <ImageModal
+                                    AccessionNo={report.accession_no}
+                                    ProcDescription=""
+                                    StudyDateTime="" />
+                                <DownloadOutlined
+                                    className="clickable-icon"
+                                    onClick={() => {
+                                        /* download image api */
+                                    }}
+                                />
+                                <EditOutlined
+                                    className="clickable-icon"
+                                    style={{marginLeft: "8px"}}
+                                    onClick={() => {
+                                        let role = (JSON.parse(sessionStorage.getItem('user'))).role
+                                        console.log((JSON.parse(sessionStorage.getItem('user'))).role, report)
+                                        /* SHOW REPORT */
+                                        history.push(`/viewhistory/${role === "clinician" ? "view" : "edit"}/${report.pred_result_id}`)
+                                    }}
+                                />
+                                <DeleteOutlined
+                                    className="clickable-icon"
+                                    style={{marginLeft: "8px"}}
+                                    onClick={() => {
+                                        /* delete report api */
+                                    }}
+                                />
+                            </div>}
+                    </div>
+                );
+            },
+            align: "center",
+        }
     ];
 
     useEffect(() => {
-        viewHistory(props.project.ProjectID).then((response) => {
+        viewHistory(props.project).then((response) => {
+            console.log(response);
             setUploadedItem(response.data)
         })
     }, [])
@@ -123,18 +169,7 @@ function HistoryLog(props) {
             dataSource={uploadedItem} 
             pagination={false} 
             size="small"
-            onRow={(report, rowIndex) => {
-                return {
-                onClick: event => {
-                    let role = (JSON.parse(sessionStorage.getItem('user'))).role
-                    console.log((JSON.parse(sessionStorage.getItem('user'))).role, report)
-                    /* SHOW REPORT */
-                    history.push(`/viewhistory/${role === "clinician" ? "view" : "edit"}/${report.pred_result_id}`)
-                    }, // click row
-                };
-            }}
-            style={{width:"1200px"}}
-            className="clickable-table seven-rows-table"
+            className="seven-rows-table"
         />
     )
 }

@@ -15,7 +15,7 @@ export default function ImageModal (props){
   };
 
   return (
-      <div>
+      <div style={{display: "inline-block"}}>
         <Button type="link" onClick={showModal} icon={<EyeOutlined className="clickable-icon" />}/>
         <Modal
           centered
