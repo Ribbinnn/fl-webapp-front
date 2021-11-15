@@ -851,3 +851,7 @@ table tr td.ant-table-selection-column{
   transition-delay: 20ms;
   transition-property: background-color;
 }
+
+.ant-card-body {
+  padding: 12px;
+}
