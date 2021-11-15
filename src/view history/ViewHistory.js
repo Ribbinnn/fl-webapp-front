@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Table, Tooltip } from "antd";
-import { DownloadOutlined ,EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Table, Tooltip, Form, Input, Button, Select, DatePicker } from "antd";
+import { DownloadOutlined ,EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import {viewHistory} from "../api/viewHistory"
 import SelectProject from "../component/SelectProject";
 import ImageModal from "../component/ImageModal";
 import { useHistory } from "react-router-dom";
+
+const { Option } = Select;
 
 export default function ViewHistory() {
     const [project, setProject] = useState("619279c10a5029826b6b6fb7");
@@ -25,6 +27,8 @@ export default function ViewHistory() {
 function HistoryLog(props) {
     const history = useHistory();
     const [uploadedItem, setUploadedItem] = useState([])
+    const status = ["in_progress", "annotated", "finalized"];
+    const findings = [];
 
     const columns = [
         {
@@ -180,12 +184,64 @@ function HistoryLog(props) {
     }, [])
 
     return (
-        <Table 
-            columns={columns} 
-            dataSource={uploadedItem} 
-            pagination={false} 
-            size="small"
-            className="seven-rows-table"
-        />
+        <div>
+            <div>
+                <Form layout="inline">
+                    <Form.Item label="Patient's HN" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>
+                        <Input className="input-text" onChange="" style={{width:"200px"}} />
+                    </Form.Item>
+                    <Form.Item label="Status" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>                
+                        <Select className="search-component" defaultValue="All" onChange="">
+                            {status.map((status, i) => (
+                            <Option key={i} value={i}>
+                                {status}
+                            </Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item label="Findings" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>                
+                        <Select className="search-component" defaultValue="All" onChange="">
+                            {findings.map((findings, i) => (
+                            <Option key={i} value={i}>
+                                {findings.ProjectName}
+                            </Option>
+                            ))}
+                        </Select>
+                    </Form.Item>
+                    <Form.Item label="Clinician" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>
+                        <Input className="input-text" onChange="" style={{width:"200px"}} />
+                    </Form.Item>
+                </Form>
+            </div>
+            <div>
+                <Form layout="inline">
+                    <Form.Item label="From" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>   
+                        <DatePicker /*onChange={onChangeFirstDate}*/ style={{width:"200px"}} />
+                    </Form.Item>
+                    <Form.Item label="To" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>
+                        <DatePicker /*onChange={onChangeLastDate}*/ style={{width:"200px"}} />
+                    </Form.Item>
+                    <Form.Item style={{marginLeft:"20px"}}>
+                        <Button className="primary-btn smaller" style={{marginTop:"32px"}} onClick="">
+                            Search
+                        </Button>
+                    </Form.Item>
+                </Form>
+            </div>
+            <label
+                className="clickable-label"
+                style={{color: "#de5c8e", display: "flex", alignItems: "center", margin: "30px 0 8px 0"}}
+                onClick="">
+                    <ReloadOutlined style={{marginRight: "5px"}} />
+                    Reload
+            </label>
+            <Table 
+                columns={columns} 
+                dataSource={uploadedItem} 
+                pagination={false} 
+                size="small"
+                className="seven-rows-table"
+            />
+        </div>
     )
 }
