@@ -33,7 +33,7 @@ function HistoryLog(props) {
             key: "status",
             align: "center",
             ellipsis: {
-                showTitle: true
+                showTitle: false
             },
             sorter: {
                 compare: (a, b) => a.status.localeCompare(b.status)
@@ -45,7 +45,7 @@ function HistoryLog(props) {
             key: "hn",
             align: "center",
             ellipsis: {
-                showTitle: true
+                showTitle: false
             },
             sorter: {
                 compare: (a, b) => a.hn.localeCompare(b.hn)
@@ -57,7 +57,7 @@ function HistoryLog(props) {
             key: "patient_name",
             align: "center",
             ellipsis: {
-                showTitle: true
+                showTitle: false
             },
             sorter: {
                 compare: (a, b) => a.patient_name.localeCompare(b.patient_name)
@@ -69,7 +69,7 @@ function HistoryLog(props) {
             key: "finding",
             align: "center",
             ellipsis: {
-                showTitle: true
+                showTitle: false
             },
             sorter: {
                 compare: (a, b) => a.finding.localeCompare(b.finding)
@@ -81,7 +81,7 @@ function HistoryLog(props) {
             key: "createdAt",
             align: "center",
             ellipsis: {
-                showTitle: true
+                showTitle: false
             },
             sorter: {
                 compare: (a, b) => (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
@@ -98,7 +98,7 @@ function HistoryLog(props) {
             key: "updatedAt",
             align: "center",
             ellipsis: {
-                showTitle: true
+                showTitle: false
             },
             sorter: {
                 compare: (a, b) => (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt)
@@ -115,7 +115,7 @@ function HistoryLog(props) {
             key: "clinician_name",
             align: "center",
             ellipsis: {
-                showTitle: true
+                showTitle: false
             },
             sorter: {
                 compare: (a, b) => a.clinician_name.localeCompare(b.clinician_name)

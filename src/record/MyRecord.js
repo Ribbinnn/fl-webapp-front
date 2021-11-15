@@ -33,7 +33,7 @@ function MyRecord () {
             key: "uploaded",
             align: "center",
             ellipsis: {
-                showTitle: true
+                showTitle: false
             },
             sorter: {
                 compare: (a, b) => new Date(a.uploaded) - new Date(b.uploaded)
@@ -45,7 +45,7 @@ function MyRecord () {
             key: "updated",
             align: "center",
             ellipsis: {
-                showTitle: true
+                showTitle: false
             },
             sorter: {
                 compare: (a, b) => a.updated.localeCompare(b.updated)
@@ -57,7 +57,7 @@ function MyRecord () {
             key: "rec_name",
             align: "center",
             ellipsis: {
-                showTitle: true
+                showTitle: false
             },
             sorter: {
                 compare: (a, b) => a.rec_name.localeCompare(b.rec_name)
