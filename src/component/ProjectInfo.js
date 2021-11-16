@@ -10,22 +10,23 @@ export default function ProjectInfo(props) {
 
   useEffect(() => {
     console.log("here")
-      getProjectInfoByID(pid).then((response) => {
-        console.log(response)
-        setPinfo({
-            ProjectID: response.data._id,
-            ProjectName: response.data.name,
-            Description: response.data.description,
-            Requirement: response.data.requirements,
-            Classes: response.data.predClasses,
-            Owner: response.data.users,
-            Task: response.data.task
-          })
+    setPid(props.project_id)
+    getProjectInfoByID(props.project_id).then((response) => {
+      console.log(response)
+      setPinfo({
+          ProjectID: response.data._id,
+          ProjectName: response.data.name,
+          Description: response.data.description,
+          Requirement: response.data.requirements,
+          Classes: response.data.predClasses,
+          Owner: response.data.users,
+          Task: response.data.task
         })
-      .catch((err) => {
-        console.error(err);
-      });
-  }, []);
+      })
+    .catch((err) => {
+      console.error(err);
+    });
+  }, [props]);
 
   return (
     <div>

@@ -2,7 +2,11 @@ import { instance } from '.';
 
 export const searchVitlasProject = async (projectId) => {
     try {
-        const response = (await instance.get("/vitals/?user_id=" + (JSON.parse(sessionStorage.getItem('user'))).id)).data;
+        const response = (await instance.get("/vitals/", {
+            params: {
+                user_id: (JSON.parse(sessionStorage.getItem('user'))).id,
+                project_id: projectId
+            }})).data;
         return response
     } catch (e) {
         throw e

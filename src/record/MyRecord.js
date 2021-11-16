@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Table, Button, Form, Input, Select, DatePicker } from "antd";
-import {selectProject} from '../api/project'
 import { searchVitlasProject, deleteRecord } from "../api/vitals";
 import ShowAllRecords from "./ShowAllRecords";
 import ConfirmDelete from "../component/ConfirmDelete";
+import Contexts from '../utils/Contexts';
 
 const { Option } = Select;
 
 function MyRecord () {
+    const { globalProject, setGlobalProject } = useContext(Contexts.project);
+
     const [current, setCurrent] = useState(0);
     const next = () => {
         setCurrent(current + 1);
@@ -16,8 +18,6 @@ function MyRecord () {
     const prev = () => {
         setCurrent(current - 1);
     };
-    const [project, setProject] = useState({ProjectName:"All"});
-    const [itemList, setItemList] = useState([]);
     const [name, setName] = useState("");
     const [firstDate, setFirstDate] = useState("none");
     const [lastDate, setLastDate] = useState("none");
@@ -66,21 +66,8 @@ function MyRecord () {
     ];
 
     useEffect(() => {
-        selectProject().then((response) => {
-          let res_list = (response.data.projects).map((project)=>{
-            return({
-              ProjectID: project._id,
-              ProjectName: project.name,
-            })
-          })
-          res_list = [{ProjectName:"All"}, ...res_list]
-          setItemList(res_list);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-
-        searchVitlasProject().then((response) => {
+        searchVitlasProject(globalProject.projectId).then((response) => {
+            console.log(response)
             let res_list = (response.data).map((project)=>({
                 vitals_proj_id: project.project_id,
                 uploaded: (new Date(project.createdAt)).toLocaleString(),
@@ -97,10 +84,6 @@ function MyRecord () {
         })
     }, []);
 
-    function handleChangeProject(value) {
-        setProject(itemList[value])
-    }
-
     function onChangeFirstDate(date, dateString) {
         setFirstDate(date? date.startOf('day').toDate(): "none") // Moment Object
         
@@ -116,7 +99,6 @@ function MyRecord () {
 
     function onClickSearch() {
         let filterList = vitalsList.filter((item, i) => (
-            (project.ProjectName==="All"? true: item.proj_name === project.ProjectName) &&
             (name===""? true: item.rec_name.includes(name)) &&
             (firstDate==="none"? true: new Date(item.updated) >= firstDate) &&
             (lastDate==="none"? true: new Date(item.updated) <= lastDate)
@@ -132,15 +114,6 @@ function MyRecord () {
                         <Form layout="inline">
                             <Form.Item label="Record Name" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>
                                 <Input className="input-text" onChange={onChangeName} style={{width:"200px"}} />
-                            </Form.Item>
-                            <Form.Item label="Project" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>                
-                                <Select className="search-component" defaultValue="All" onChange={handleChangeProject}>
-                                    {itemList.map((item, i) => (
-                                    <Option key={i} value={i}>
-                                        {item.ProjectName}
-                                    </Option>
-                                    ))}
-                                </Select>
                             </Form.Item>
                             <Form.Item label="From" style={{display:"flex", flexDirection:"column", alignItems:"flex-start", marginLeft:"20px"}}>   
                                 <DatePicker onChange={onChangeFirstDate} style={{width:"200px"}} />

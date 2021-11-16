@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState, useContext} from "react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import Home from "./Home";
 import Login from "./Login";
@@ -13,8 +13,12 @@ import { updateToken } from "./api";
 
 import "./layout/LayOut.css";
 import ProjectInfo from "./component/ProjectInfo";
+import Contexts from "./utils/Contexts";
 
 function Routes() {
+
+  const [globalProject, setGlobalProject] = useState({"projectId": "", "projectName": "No selected project"})
+  const value = {globalProject, setGlobalProject}
 
   if (localStorage.getItem('auth') === 'true') {
     sessionStorage.setItem("token", localStorage.getItem('token'));
@@ -28,21 +32,23 @@ function Routes() {
   // if already login, redirect to home. if not, show login page
   return (
     <BrowserRouter>
-      <div className={auth ? "layout-ctn" : "layout-ctn-nobg"}>
-        {auth && <Header />}
-        <div style={{ display: "flex", flexDirection: "row", height: "100%"}}>
-          {auth && <NavBar />}
-          <Switch>
-            <Route path="/" exact render={()=>(auth?<Home/>:<Redirect to='/login'/>)}/>
-            <Route path="/record/upload" exact render={()=>(auth?<UploadRecord/>:<Redirect to='/login'/>)}/>
-            <Route path="/record/myrecord" exact render={()=>(auth?<MyRecord/>:<Redirect to='/login'/>)}/>
-            <Route path="/diagnosis" exact render={()=>(auth?<Diagnosis/>:<Redirect to='/login'/>)}/>
-            <Route path="/viewhistory" exact render={()=>(auth?<ViewHistory/>:<Redirect to='/login'/>)}/>
-            <Route path="/viewhistory/:mode/:rid" exact render={()=>(auth?<Report/>:<Redirect to='/login'/>)}/>
-            <Route path="/login" render={()=>(auth?<Redirect to='/'/>:<Login/>)}/>
-          </Switch>
+      <Contexts.project.Provider value={value}>
+        <div className={auth ? "layout-ctn" : "layout-ctn-nobg"}>
+          {auth && <Header />}
+          <div style={{ display: "flex", flexDirection: "row", height: "100%"}}>
+            {auth && <NavBar />}
+            <Switch>
+              <Route path="/" exact render={()=>(auth?<Home/>:<Redirect to='/login'/>)}/>
+              <Route path="/record/upload" exact render={()=>(auth&&globalProject.projectId?<UploadRecord/>: !auth?<Redirect to='/login'/>:<Redirect to='/'/>)}/>
+              <Route path="/record/myrecord" exact render={()=>(auth&&globalProject.projectId?<MyRecord/>:!auth?<Redirect to='/login'/>:<Redirect to='/'/>)}/>
+              <Route path="/diagnosis" exact render={()=>(auth&&globalProject.projectId?<Diagnosis/>:!auth?<Redirect to='/login'/>:<Redirect to='/'/>)}/>
+              <Route path="/viewhistory" exact render={()=>(auth&&globalProject.projectId?<ViewHistory/>:!auth?<Redirect to='/login'/>:<Redirect to='/'/>)}/>
+              <Route path="/viewhistory/:mode/:rid" exact render={()=>(auth&&globalProject.projectId?<Report/>:!auth?<Redirect to='/login'/>:<Redirect to='/'/>)}/>
+              <Route path="/login" render={()=>(auth?<Redirect to='/'/>:<Login/>)}/>
+            </Switch>
+          </div>
         </div>
-      </div>
+      </Contexts.project.Provider>
     </BrowserRouter>
   );
 }
