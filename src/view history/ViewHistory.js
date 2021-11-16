@@ -37,6 +37,7 @@ function HistoryLog(props) {
     const [uploadedItem, setUploadedItem] = useState([])
     const status = ["in_progress", "annotated", "finalized"];
     const findings = [];
+    const [reload, setReload] = useState("");
 
     const columns = [
         {
@@ -198,7 +199,7 @@ function HistoryLog(props) {
             }
             setUploadedItem(filter_data);
         })
-    }, [])
+    }, [reload])
 
     return (
         <div>
@@ -282,7 +283,7 @@ function HistoryLog(props) {
             <label
                 className="clickable-label"
                 style={{color: "#de5c8e", display: "flex", alignItems: "center", margin: "30px 0 8px 0"}}
-                onClick="">
+                onClick={() => reload === "" ? setReload("reload") : setReload("")}>
                     <ReloadOutlined style={{marginRight: "5px"}} />
                     Reload
             </label>
