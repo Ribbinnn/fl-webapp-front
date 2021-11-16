@@ -274,7 +274,8 @@ function HistoryLog(props) {
                         style={{marginTop:"32px"}}
                         onClick={() => {
                             history.push(`/viewhistory/?${queryString}`);
-                            window.location.reload();
+                            // window.location.reload();
+                            reload === "" ? setReload("reload") : setReload("");
                         }}>
                             Search
                     </Button>
