@@ -1,9 +1,11 @@
-import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef } from "react";
+import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef, useContext } from "react";
 import { Input, Form, Table, Popconfirm, Tooltip, Button } from "antd";
 import { EditOutlined, DeleteOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import { getAllRecordsByHN, updateRecordRow, deleteRecordRow } from "../api/vitals"
+import Contexts from '../utils/Contexts';
 
 const SelectMedicalRecord = forwardRef((props, ref) => {
+    const { globalProject, setGlobalProject } = useContext(Contexts.project);
 
     const [hasRecord, setHasRecord] = useState(true);
     const [requirementForm] = Form.useForm();
@@ -111,7 +113,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
     }
 
     useEffect(() => {
-        getAllRecordsByHN(props.HN)
+        getAllRecordsByHN(props.HN, globalProject.projectName)
         .then((res) => {
             if (res.data.length !== 0) {
                 setHasRecord(true);
