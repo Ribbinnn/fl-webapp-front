@@ -35,10 +35,10 @@ export const getAllRecords = async (vitals_proj_id) => {
     }
 }
 
-export const downloadTemplate = async (project_name) => {
+export const downloadTemplate = async (project_id) => {
     try {
         const response = (
-            await instance.get("/vitals/template/" + project_name, { responseType: 'blob' })
+            await instance.get("/vitals/template/" + project_id, { responseType: 'blob' })
         ).data;
         return response;
     } catch (e) {
@@ -79,10 +79,14 @@ export const updateRecordRow = async (record_id, update_data) => {
     }
 }
 
-export const getAllRecordsByHN = async (HN) => {
+export const getAllRecordsByHN = async (HN, projectName) => {
     try {
         const res = (
-            await instance.get("/vitals/records/HN/" + HN)
+            await instance.get("/vitals/records/", {
+                params: {
+                    HN: HN,
+                    project_name: projectName
+                }})
         ).data;
         return res;
     } catch (e) {

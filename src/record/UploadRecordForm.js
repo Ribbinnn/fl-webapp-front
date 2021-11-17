@@ -139,7 +139,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 style={{color: "#de5c8e", display: "flex", alignItems: "center"}}
                 className="clickable-label"
                 onClick={() => {
-                    downloadTemplate(props.project.ProjectName).then((res) => {
+                    downloadTemplate(props.project.ProjectId).then((res) => {
                         const url = window.URL.createObjectURL(res)
                         const link = document.createElement('a');
 
