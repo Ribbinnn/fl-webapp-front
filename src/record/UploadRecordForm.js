@@ -5,7 +5,8 @@ import XLSX from "xlsx";
 import { uploadVitalsRecord, downloadTemplate } from "../api/vitals";
 
 const UploadRecordForm = forwardRef((props, ref) => {
-    const required_field = ["entry_id", "hn", "gender(male/female)", "age(year)", "measured_time(yyyy-MM-ddTHH:mm:ssZ)"]; // required in every project
+    // const required_field = ["entry_id", "hn", "gender(male/female)", "age(year)", "measured_time(yyyy-MM-ddTHH:mm:ssZ)"]; // required in every project
+    const required_field = ["entry_id", "hn", "gender", "age", "measured_time"];
 
     const [uploadedRecordName, setUploadedRecordName] = useState({with_ext: null, without_ext: null});
     const [uploadedRecord ,setUploadedRecord] = useState({with_key: null, without_key: null});
@@ -35,7 +36,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
         uploadRecord: () => {
             if (uploadedRecord.without_key !== null) {
                 uploadVitalsRecord(
-                    props.project.ProjectID,
+                    props.project.projectId,
                     (JSON.parse(sessionStorage.getItem('user'))).id,
                     uploadedRecordName.without_ext,
                     uploadedRecord.without_key
@@ -55,9 +56,9 @@ const UploadRecordForm = forwardRef((props, ref) => {
 
     async function handleUploadedFile(event) {
         // add additional required field of each project
-        for (const i in props.project.Requirement) {
-            const field_name = props.project.Requirement[i]["name"] + 
-                (props.project.Requirement[i]["unit"] === 'none' ? "" : "(" + props.project.Requirement[i]["unit"] + ")")
+        for (const i in props.project.projectReq) {
+            const field_name = props.project.projectReq[i]["name"] + 
+                (props.project.projectReq[i]["unit"] === 'none' ? "" : "(" + props.project.projectReq[i]["unit"] + ")")
             if (!required_field.includes(field_name)) {
                 required_field.push(field_name);
             }
@@ -76,7 +77,8 @@ const UploadRecordForm = forwardRef((props, ref) => {
             var column_name = target_workbook[String.fromCharCode(current_char) + "1"];
             let tmp = column_name[change_field].split("(")
             tmp[0] = tmp[0].split(" ").join("_").toLowerCase()
-            column_name[change_field] = tmp.join('(');
+            // column_name[change_field] = tmp.join('(');
+            column_name[change_field] = tmp[0];
             uploaded_field.push(column_name[change_field]);
             current_char++;
         }
@@ -139,7 +141,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 style={{color: "#de5c8e", display: "flex", alignItems: "center"}}
                 className="clickable-label"
                 onClick={() => {
-                    downloadTemplate(props.project.ProjectId).then((res) => {
+                    downloadTemplate(props.project.projectId).then((res) => {
                         const url = window.URL.createObjectURL(res)
                         const link = document.createElement('a');
 
