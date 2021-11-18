@@ -59,7 +59,7 @@ export default function Report(props) {
       )}
       {loaded && (
         <Row justify="center" align="top">
-          <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+          <Col xs={24} sm={24} md={24} lg={12} xl={12} align="middle">
             <DicomViewOnly
               img_url={getDicomByAccessionNo(info.image)}
               img_source="wado"
