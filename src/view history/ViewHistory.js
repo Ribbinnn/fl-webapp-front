@@ -35,7 +35,7 @@ function HistoryLog(props) {
     const history = useHistory();
     const queryString = useQuery();
     const [uploadedItem, setUploadedItem] = useState([])
-    const status = ["in_progress", "annotated", "finalized"];
+    const status = ["all", "in_progress", "annotated", "finalized"];
     const findings = [];
     const [reload, setReload] = useState("");
 
@@ -216,9 +216,9 @@ function HistoryLog(props) {
                 <Form.Item name="status" label="Status" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>                
                     <Select
                         className="search-component"
-                        defaultValue={queryString.get("status") === null ? "All" : queryString.get("status")}
+                        defaultValue={queryString.get("status") === null ? "all" : queryString.get("status")}
                         onChange={(value) => {
-                            queryString.set("status", status[value]);
+                            status[value] === "all" ? queryString.delete("status") : queryString.set("status", status[value]);
                         }}>
                             {status.map((status, i) => (
                             <Option key={i} value={i}>
@@ -230,9 +230,9 @@ function HistoryLog(props) {
                 <Form.Item name="findings" label="Findings" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>                
                     <Select
                         className="search-component"
-                        defaultValue={queryString.get("findings") === null ? "All" : queryString.get("findings")}
+                        defaultValue={queryString.get("findings") === null ? "all" : queryString.get("findings")}
                         onChange={(value) => {
-                            queryString.set("findings", findings[value]);
+                            findings[value] === "all" ? queryString.delete("findings") : queryString.set("findings", findings[value]);
                         }}>
                             {findings.map((findings, i) => (
                             <Option key={i} value={i}>
