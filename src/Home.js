@@ -33,6 +33,7 @@ function Home() {
                                 onClick={() => {
                                     setProjectId(item._id)
                                     setGlobalProject({"projectId": item._id, "projectName": item.name})
+                                    sessionStorage.setItem("project", JSON.stringify({"projectId": item._id, "projectName": item.name}));
                                 }}
                             >
                                 <label style={{ display: "block", fontWeight: "bold" }}>

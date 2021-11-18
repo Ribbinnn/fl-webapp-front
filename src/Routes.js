@@ -17,7 +17,10 @@ import Contexts from "./utils/Contexts";
 
 function Routes() {
 
-  const [globalProject, setGlobalProject] = useState({"projectId": "", "projectName": "No selected project"})
+  const [globalProject, setGlobalProject] = useState({
+    "projectId": JSON.parse(sessionStorage.getItem('project'))?(JSON.parse(sessionStorage.getItem('project'))).projectId:"", 
+    "projectName": JSON.parse(sessionStorage.getItem('project'))?JSON.parse(sessionStorage.getItem('project')).projectName:"No selected project"
+  })
   const value = {globalProject, setGlobalProject}
 
   if (localStorage.getItem('auth') === 'true') {
