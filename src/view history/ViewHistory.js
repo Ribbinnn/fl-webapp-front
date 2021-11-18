@@ -61,7 +61,7 @@ function HistoryLog(props) {
                 showTitle: false
             },
             sorter: {
-                compare: (a, b) => a.hn.localeCompare(b.hn)
+                compare: (a, b) => a.hn.toString().localeCompare(b.hn.toString())
             },
         },
         {
@@ -97,7 +97,7 @@ function HistoryLog(props) {
                 showTitle: false
             },
             sorter: {
-                compare: (a, b) => (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+                compare: (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
             },
             render: (date) => (
                 <Tooltip placement="topLeft" title={date}>
@@ -114,7 +114,7 @@ function HistoryLog(props) {
                 showTitle: false
             },
             sorter: {
-                compare: (a, b) => (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt)
+                compare: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt)
             },
             render: (date) => (
                 <Tooltip placement="topLeft" title={date}>
