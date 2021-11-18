@@ -1,10 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useContext } from "react";
 import { Steps, Button, Row, Col } from "antd";
 import "antd/dist/antd.css";
 import Completed from "../component/Completed"
 import UploadRecordForm from "./UploadRecordForm";
-// import SelectProject from "../component/SelectProject";
 import ProjectInfo from "../component/ProjectInfo";
+import Contexts from "../utils/Contexts";
 
 const { Step } = Steps;
 
@@ -38,8 +38,7 @@ export default function UploadRecord() {
   const uploadRecordFormRef = useRef();
   
   const [current, setCurrent] = useState(0);
-  // const [project, setProject] = useState('none');
-  const project = JSON.parse(sessionStorage.getItem('project'));
+  const { globalProject, setGlobalProject } = useContext(Contexts.project);
   const next = () => {
     setCurrent(current + 1);
   };
@@ -59,11 +58,10 @@ export default function UploadRecord() {
         <div className="steps-content-upload">
           <Row style={{marginBottom:"30px"}}>
             <Col span={7}>
-              {/* <SelectProject mode={current === 1?"view":"select"} setProject={setProject} Project={project}/> */}
-              <ProjectInfo project_id={project.projectId} />
+              <ProjectInfo project_id={globalProject.projectId} />
             </Col>
             <Col span={17}>
-              <UploadRecordForm ref={uploadRecordFormRef} project={project} />
+              <UploadRecordForm ref={uploadRecordFormRef} project={globalProject} />
             </Col>
           </Row>
         </div>}
@@ -77,7 +75,7 @@ export default function UploadRecord() {
           >
             Back
           </Button>}
-          {project!== "none" && current < steps.length -1 && 
+          {globalProject!== "none" && current < steps.length -1 && 
             <Button 
               className="primary-btn" 
               onClick={() => {

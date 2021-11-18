@@ -5,8 +5,8 @@ import XLSX from "xlsx";
 import { uploadVitalsRecord, downloadTemplate } from "../api/vitals";
 
 const UploadRecordForm = forwardRef((props, ref) => {
-    // const required_field = ["entry_id", "hn", "gender(male/female)", "age(year)", "measured_time(yyyy-MM-ddTHH:mm:ssZ)"]; // required in every project
-    const required_field = ["entry_id", "hn", "gender", "age", "measured_time"];
+    const required_field = ["entry_id", "hn", "gender(male/female)", "age(year)", "measured_time(yyyy-MM-ddTHH:mm:ssZ)"]; // required in every project
+    // const required_field = ["entry_id", "hn", "gender", "age", "measured_time"];
 
     const [uploadedRecordName, setUploadedRecordName] = useState({with_ext: null, without_ext: null});
     const [uploadedRecord ,setUploadedRecord] = useState({with_key: null, without_key: null});
@@ -44,7 +44,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 .then((res) => {
                     console.log(res);
                 }).catch((err) => {
-                    console.log(err);
+                    console.log(err.response);
                 })
             } else {
                 setMessage("Please upload record.");
@@ -77,8 +77,8 @@ const UploadRecordForm = forwardRef((props, ref) => {
             var column_name = target_workbook[String.fromCharCode(current_char) + "1"];
             let tmp = column_name[change_field].split("(")
             tmp[0] = tmp[0].split(" ").join("_").toLowerCase()
-            // column_name[change_field] = tmp.join('(');
-            column_name[change_field] = tmp[0];
+            column_name[change_field] = tmp.join('(');
+            // column_name[change_field] = tmp[0];
             uploaded_field.push(column_name[change_field]);
             current_char++;
         }
