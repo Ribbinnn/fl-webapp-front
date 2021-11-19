@@ -8,6 +8,7 @@ import {
   CloudDownloadOutlined,
   LoadingOutlined,
 } from "@ant-design/icons";
+import AnnotationModal from "./annotate/AnnotationModal";
 import ProjectInfo from "../component/ProjectInfo";
 import ResultsTable from "./ResultsTable";
 import { getGradCam, getDicomByAccessionNo } from "../api/image";
@@ -18,20 +19,6 @@ const LoadingIcon = (
   <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
 );
 
-function convertFromStringToDate(responseDate) {
-  let dateComponents = responseDate.split("T");
-  let datePieces = dateComponents[0].split("-");
-  let timePieces = dateComponents[1].split(":");
-  return new Date(
-    datePieces[2],
-    datePieces[1],
-    datePieces[0],
-    timePieces[0],
-    timePieces[1],
-    "00"
-  );
-}
-//2021-10-17T17:00:00.000Z
 export default function Report(props) {
   const { mode, rid } = useParams();
   const [loaded, setLoaded] = useState(false);
@@ -72,12 +59,13 @@ export default function Report(props) {
       )}
       {loaded && (
         <Row justify="center" align="top">
-          <Col xs={24} sm={24} md={24} lg={12} xl={12}>
+          <Col xs={24} sm={24} md={24} lg={12} xl={12} align="middle">
             <DicomViewOnly
               img_url={getDicomByAccessionNo(info.image)}
               img_source="wado"
               size={400}
             />
+            {mode === "edit" && <AnnotationModal accession_no={info.image}/>}
           </Col>
           <Col
             xs={24}

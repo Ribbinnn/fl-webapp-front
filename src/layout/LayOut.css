@@ -315,6 +315,66 @@ ol {
 .ant-btn-link:focus{
   color: #58595b;
 }
+
+.zoom-btn, .zoom-btn:focus{
+  background-color: #c4c4c4;
+  color: #58595b;
+  border: none;
+  border-radius: 8px;
+}
+
+.zoom-btn:hover{
+  background-color: #DE5C8E;
+  color: white;
+  border: none;
+  border-radius: 8px;
+} 
+
+.add-layer-btn, .add-layer-btn:focus{
+  background-color: none;
+  color: #58595b;
+  border: none;
+}
+
+.add-layer-btn > .anticon{
+  font-weight: bold;
+}
+
+.add-layer-btn:hover{
+  background-color: none;
+  color: #DE5C8E;
+  border: none;
+}
+
+.annotate-tool-btn,
+.annotate-tool-btn:hover {
+  background-color: #c4c4c4;
+  font-size: medium;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  width: 100%;
+  font-weight: bold;
+  height: 40px;
+}
+
+.selected-tool,
+.annotate-tool-btn:focus{
+  background-color: #DE5C8E !important;
+  color: white;
+}
+
+.annotate-tool-btn-ctn{
+  padding: 3px 3px;
+}
+
+.annotate-tool-btn > span + .anticon {
+  position: relative;
+  top: -3px;
+  stroke-width: 30;
+  stroke: white
+}
+
 /* input ----------------------- */
 .input-text,
 .input-text:hover,
@@ -432,6 +492,12 @@ ol {
   transform: rotate(40deg);
 }
 
+.ant-checkbox-wrapper{
+  color: #58595b;
+  font-size: medium;
+  font-weight: bold;
+}
+
 .ant-radio-checked .ant-radio-inner {
   border-color: #58595b;
 }
@@ -459,6 +525,34 @@ ol {
   -webkit-animation-fill-mode: none;
 }
 
+/* switch ----------------------- */
+.ant-switch-checked:focus,
+.ant-switch:focus,
+.ant-switch{
+  box-shadow: none;
+}
+
+.ant-switch-checked{
+  background-color: #DE5C8E;
+}
+
+.ant-switch{
+  min-width: 25px;
+  height: 18px;
+}
+
+.ant-switch-handle::before {
+  width: 14px;
+  height: 14px;
+}
+
+.ant-switch-handle {
+  border-radius: 7px;
+}
+
+.ant-switch-checked .ant-switch-handle {
+  left: calc(100% - 14px - 2px);
+}
 /* label ------------------------ */
 a,
 label,
@@ -506,6 +600,11 @@ label.clickable-label:hover {
 
 .hr-divider:not(:empty)::after {
   margin-left: 10px;
+}
+
+.annotate-tool-label{
+  font-weight: bold;
+  font-size: medium;
 }
 
 /* select dropdown ------------- */
@@ -811,6 +910,31 @@ table tr td.ant-table-selection-column{
   border: none;
 }
 
+.annotate-table tbody{
+    overflow: scroll;
+    height: 230px;
+    background-color: rgb(229 229 229);
+}
+
+.annotate-table .ant-table-tbody > tr > td{
+  padding: 4px 4px !important;
+}
+.annotate-table .ant-table-tbody > tr > td:nth-child(even) {
+  width: 100px;
+}
+.annotate-table .ant-table-tbody > tr > td:nth-child(odd) {
+  text-align: left;
+  padding: 0 15px !important;
+}
+
+.annotate-table .ant-table-empty .ant-table-tbody > tr.ant-table-placeholder{
+  height: 230px;
+}
+
+.selected-layer{
+  background: #f8e1ea !important;
+}
+
 /* dot ------------- */
 .dot {
   height: 10px;
@@ -855,3 +979,23 @@ table tr td.ant-table-selection-column{
 .ant-card-body {
   padding: 12px;
 }
+
+/* slider ----------------- */
+.ant-slider-handle{
+  border: none;
+  background-color: #DE5C8E;
+}
+
+.ant-slider-handle:focus{
+  box-shadow: none;
+}
+
+.ant-slider:hover .ant-slider-rail,
+.ant-slider-rail {
+    background-color: #c4c4c4;
+}
+.ant-slider-track,
+.ant-slider:hover .ant-slider-track {
+  background-color: #DE5C8E;
+}
+/* checkbox ------- */
