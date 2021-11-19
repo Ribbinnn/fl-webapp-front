@@ -52,11 +52,7 @@ const btnList = [
 export default function Diagnosis() {
   const { globalProject, setGlobalProject } = useContext(Contexts.project);
   const [HN, setHN] = useState("");
-  const [Patient, setPatient] = useState({
-    Name: "John Doe",
-    Age: 42,
-    Gender: "M",
-  });
+  const [Patient, setPatient] = useState();
   // const [MedRec, setMedRec] = useState({
   //   "Pulse rate": 77,
   //   Temperature: 37,
@@ -107,6 +103,8 @@ export default function Diagnosis() {
           <SelectHN
             HN={HN}
             setHN={setHN}
+            Patient={Patient}
+            setPatient={setPatient}
           />
         )}
         {current === 1 && (
@@ -199,15 +197,15 @@ export default function Diagnosis() {
 }
 
 function SelectHN(props) {
-  const [patientName, setPatientName] = useState();
+  //const [patientName, setPatientName] = useState();
   const handleSubmit = () => {
     let input_hn = document.getElementById("hn-input").value;
     findPatientOnPACS(input_hn).then((res) => {
       console.log(input_hn);
       if (res.data) {
         props.setHN(input_hn);
-        setPatientName(res.data["Patient Name"]);
-      } else setPatientName(false);
+        props.setPatient({Name: res.data["Patient Name"]});
+      } else props.setPatient(false);
     });
   };
   return (
@@ -219,9 +217,9 @@ function SelectHN(props) {
           style={{ width: "300px" }}
           defaultValue={props.HN}
           onChange={() => {
-            if (props.HN.length > 0 || patientName === false) {
+            if (props.HN.length > 0 || props.Patient === false) {
               props.setHN("");
-              setPatientName(undefined);
+              props.setPatient(undefined);
             }
           }}
         />
@@ -233,9 +231,9 @@ function SelectHN(props) {
           Submit
         </Button>
       </Form.Item>
-      {patientName !== undefined && (
+      {props.Patient !== undefined && (
         <label id="search-pacs-result">
-          {patientName ? `Patient's Name: ${patientName}` : "No sufficient data from PACS for this patient."}
+          {props.Patient ? `Patient's Name: ${props.Patient.Name}` : "No sufficient data from PACS for this patient."}
         </label>
       )}
     </Form>
