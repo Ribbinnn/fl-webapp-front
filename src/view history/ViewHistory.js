@@ -60,13 +60,15 @@ function HistoryLog(props) {
             },
             render: (status) => {
                 var color = ""
-                if (status === "in_progress") {
-                    color = "blue"
+                if (status === "canceled") {
+                    color = "red"
+                } else if (status === "finalized") {
+                    color = "green"
                 } else if (status === "annotated") {
                     color = "gold"
                     status = "AI-Annotated"
                 } else {
-                    color = "green"
+                    color = "blue"
                 }
                 return(
                     <Tag color={color}  style={{width: "100%"}}>
@@ -343,7 +345,7 @@ function HistoryLog(props) {
                     dataSource={uploadedItem} 
                     pagination={false} 
                     size="small"
-                    className="seven-rows-table"
+                    className="seven-rows-table with-tag"
                 />}
         </div>
     )
