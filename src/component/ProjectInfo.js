@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Tag, Collapse } from "antd";
+import { Tag, Collapse, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import { getProjectInfoByID } from '../api/project'
+
+const LoadingIcon = (
+  <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
+);
 const { Panel } = Collapse;
 
 export default function ProjectInfo(props) {
+  const [loaded, setLoaded] = useState(false);
   const palette = ["magenta","red","volcano","orange","gold","green","cyan","blue","geekblue","purple"]
   const [pid, setPid] = useState(props.project_id ?? "618e4a72d1207ca05475ac2c"); // <------ set project id to display here
   const [pinfo, setPinfo] = useState();
@@ -22,6 +28,7 @@ export default function ProjectInfo(props) {
           Owner: response.data.users,
           Task: response.data.task
         })
+      setLoaded(true);
       })
     .catch((err) => {
       console.error(err);
@@ -30,32 +37,42 @@ export default function ProjectInfo(props) {
 
   return (
     <div>
-    <label style={{ display: "block" }}>
+      <label style={{ display: "block" }}>
         Project: {pinfo && pinfo.ProjectName}
       </label>
-    { pinfo&& <Collapse defaultActiveKey={["1"]} expandIconPosition="right" ghost>
-          <Panel key="1" header="Project information">
-          <div className="info" style={{ width: props.width ?? "100%" }}>
-      <div>
-        Task : <Tag className="brown">{pinfo.Task}</Tag>
+      {!loaded && (
+          <div style={{ textAlign: "center", marginTop: "20%" }}>
+          <Spin indicator={LoadingIcon} />
+          <br />
+          <br />
+          <span style={{ fontSize: "medium", color: "#de5c8e" }}>
+              Loading ...
+          </span>
+          </div>
+      )}
+      {loaded && pinfo && <Collapse defaultActiveKey={["1"]} expandIconPosition="right" ghost>
+            <Panel key="1" header="Project information">
+            <div className="info" style={{ width: props.width ?? "100%" }}>
+        <div>
+          Task : <Tag className="brown">{pinfo.Task}</Tag>
+        </div>
+        <div>
+          Classes :{" "}
+          {pinfo.Classes.map((item, i) => (
+            <Tag key={i} color={palette[(item.charCodeAt(0))%palette.length]}>
+              {item}
+            </Tag>
+          ))}
+        </div>
+        <div>Description: {pinfo.Description}</div>
+        <div>
+          Requirement :
+          {pinfo.Requirement.map((item, i) => (
+            <ol key={i}>{item.name}</ol>
+          ))}
+        </div>
       </div>
-      <div>
-        Classes :{" "}
-        {pinfo.Classes.map((item, i) => (
-          <Tag key={i} color={palette[(item.charCodeAt(0))%palette.length]}>
-            {item}
-          </Tag>
-        ))}
-      </div>
-      <div>Description: {pinfo.Description}</div>
-      <div>
-        Requirement :
-        {pinfo.Requirement.map((item, i) => (
-          <ol key={i}>{item.name}</ol>
-        ))}
-      </div>
-    </div>
-          </Panel>
-    </Collapse>}
+            </Panel>
+      </Collapse>}
     </div>)
 }

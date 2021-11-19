@@ -1,12 +1,16 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Table, Tooltip, Form, Input, Button, Select, DatePicker, Tag } from "antd";
-import { DownloadOutlined ,EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Table, Tooltip, Form, Input, Button, Select, DatePicker, Tag, Spin } from "antd";
+import { DownloadOutlined ,EditOutlined, DeleteOutlined, ReloadOutlined, LoadingOutlined } from '@ant-design/icons';
 import {viewHistory} from "../api/viewHistory"
 import SelectProject from "../component/SelectProject";
 import ImageModal from "../component/ImageModal";
 import { useHistory, useLocation } from "react-router-dom";
 import * as moment from 'moment';
 import Contexts from '../utils/Contexts';
+
+const LoadingIcon = (
+    <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
+);
 
 const { Option } = Select;
 
@@ -27,6 +31,8 @@ export default function ViewHistory() {
 }
 
 function HistoryLog(props) {
+
+    const [loaded, setLoaded] = useState(false);
 
     function useQuery() {
         const { search } = useLocation();
@@ -225,6 +231,7 @@ function HistoryLog(props) {
             setUploadedItem(filter_data);
             setStatus(status);
             setFindings(findings);
+            setLoaded(true);
         }).catch((err) => console.log(err.response));
     }, [reload])
 
@@ -303,25 +310,41 @@ function HistoryLog(props) {
                             history.push(`/viewhistory/?${queryString}`);
                             // window.location.reload();
                             reload === "" ? setReload("reload") : setReload("");
+                            setLoaded(false);
                         }}>
                             Search
                     </Button>
                 </Form.Item>
             </Form>
-            <label
-                className="clickable-label"
-                style={{color: "#de5c8e", display: "flex", alignItems: "center", margin: "30px 0 8px 0"}}
-                onClick={() => reload === "" ? setReload("reload") : setReload("")}>
-                    <ReloadOutlined style={{marginRight: "5px"}} />
-                    Reload
-            </label>
-            <Table 
-                columns={columns} 
-                dataSource={uploadedItem} 
-                pagination={false} 
-                size="small"
-                className="seven-rows-table"
-            />
+            {!loaded && (
+                <div style={{ textAlign: "center", marginTop: "20%" }}>
+                <Spin indicator={LoadingIcon} />
+                <br />
+                <br />
+                <span style={{ fontSize: "medium", color: "#de5c8e" }}>
+                    Loading ...
+                </span>
+                </div>
+            )}
+            {loaded &&
+                <label
+                    className="clickable-label"
+                    style={{color: "#de5c8e", display: "flex", alignItems: "center", margin: "30px 0 8px 0"}}
+                    onClick={() => {
+                        reload === "" ? setReload("reload") : setReload("")
+                        setLoaded(false);
+                    }}>
+                        <ReloadOutlined style={{marginRight: "5px"}} />
+                        Reload
+                </label>}
+            {loaded &&
+                <Table 
+                    columns={columns} 
+                    dataSource={uploadedItem} 
+                    pagination={false} 
+                    size="small"
+                    className="seven-rows-table"
+                />}
         </div>
     )
 }
