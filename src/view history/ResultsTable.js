@@ -5,6 +5,7 @@ import {
   EyeInvisibleOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
+import { updateReport } from "../api/report";
 
 const { TextArea } = Input;
 const GradCamStyle = { fontSize: "x-large" };
@@ -14,6 +15,7 @@ export default function ResultsTable(props) {
   const status = props.status;
   const [columns, setColumn] = useState();
   const [data, setData] = useState();
+  const [selectedRows, setSelectedRows] = useState();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [defaultRowKeys, setDefaultRowKeys] = useState([]);
   const [btnGroup, setBtnGroup] = useState("back");
@@ -93,18 +95,19 @@ export default function ResultsTable(props) {
   }
 
   const onSaveReport = () => {
-    /** save report api
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     */
-    setDefaultRowKeys(selectedRowKeys);
-    setDefaultNote(note);
-    setBtnGroup("back");
+    /* save report api */
+    let selected_class = [];
+    for (const i in selectedRows) {
+      selected_class.push(selectedRows[i].class)
+    }
+    updateReport(props.rid, note, (JSON.parse(sessionStorage.getItem('user'))).id, {finding: selected_class})
+    .then((res) => {
+      console.log(res)
+      setDefaultRowKeys(selectedRowKeys);
+      setDefaultNote(note);
+      setBtnGroup("back");
+    })
+    .catch((err) => console.log(err.response));
   };
 
   const onCancelReport = () => {
@@ -131,6 +134,7 @@ export default function ResultsTable(props) {
         "selectedRows: ",
         selectedRows
       ); */
+      setSelectedRows(selectedRows);
       setSelectedRowKeys(selectedKeys);
       console.log(selectedKeys.sort(), defaultRowKeys.sort());
       if (selectedKeys.sort() !== defaultRowKeys.sort()) {

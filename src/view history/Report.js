@@ -123,6 +123,7 @@ export default function Report(props) {
       )}
       {loaded && (
         <ResultsTable
+          rid={rid}
           gradCam={gradCam}
           setGradCam={setGradCam}
           classes={info.classes}
