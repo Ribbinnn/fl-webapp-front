@@ -48,8 +48,9 @@ export const downloadTemplate = async (project_id) => {
 
 export const deleteRecord = async (record_id) => {
     try {
+        const entry_id = 0; // not used
         const response = (
-            await instance.delete("/vitals/records/deletefile/" + record_id)
+            await instance.patch("/vitals/records/deletefile/" + record_id, {entry_id})
         ).data;
         return response;
     } catch (e) {

@@ -17,7 +17,10 @@ function MyRecord () {
 
     const prev = () => {
         setCurrent(current - 1);
+        reload === "" ? setReload("reload") : setReload("");
     };
+    const [reload, setReload] = useState("");
+
     const [name, setName] = useState("");
     const [firstDate, setFirstDate] = useState("none");
     const [lastDate, setLastDate] = useState("none");
@@ -73,7 +76,7 @@ function MyRecord () {
                 uploaded: (new Date(project.createdAt)).toLocaleString(),
                 rec_name: project.record_name,
                 updated: (new Date(project.updatedAt)).toLocaleString(),
-                key: project._id
+                key: response.data.indexOf(project),
             }))
             
             setUploadedItem(res_list)
@@ -82,7 +85,7 @@ function MyRecord () {
         .catch((err)=>{
             console.log(err)
         })
-    }, []);
+    }, [reload]);
 
     function onChangeFirstDate(date, dateString) {
         setFirstDate(date? date.startOf('day').toDate(): "none") // Moment Object
@@ -151,7 +154,8 @@ function MyRecord () {
                 <div style={{height: "100%"}}>
                     <ShowAllRecords 
                         record={currentRecord} 
-                        setRecordId={setRecordId} 
+                        setRecordId={setRecordId}
+                        project={globalProject}
                         next={next}/>
                     <Button
                         className="primary-btn"

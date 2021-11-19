@@ -28,7 +28,7 @@ export default function PreviewEdit(props){
             {Object.keys(props.MedRec).map((item, i) => (
               <Form.Item key={i} style={{marginLeft: "30px", marginBottom:"10px"}}>
                 <label id="smaller-label" style={{width: "180px"}}>
-                {`${item}:`}
+                {`${item.charAt(0).toUpperCase() + item.slice(1).split("_").join(" ")}:`}
                   </label>
               <Input
                 className="input-prev-edit-text"

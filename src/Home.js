@@ -29,11 +29,11 @@ function Home() {
                             <Card
                                 style={{ width: 400, marginBottom: '22px' }}
                                 hoverable={true}
-                                tabindex={i}
+                                tabIndex={i}
                                 onClick={() => {
                                     setProjectId(item._id)
-                                    setGlobalProject({"projectId": item._id, "projectName": item.name})
-                                    sessionStorage.setItem("project", JSON.stringify({"projectId": item._id, "projectName": item.name}));
+                                    setGlobalProject({"projectId": item._id, "projectName": item.name, "projectReq": item.requirements})
+                                    sessionStorage.setItem("project", JSON.stringify({"projectId": item._id, "projectName": item.name, "projectReq": item.requirements}));
                                 }}
                             >
                                 <label style={{ display: "block", fontWeight: "bold" }}>

@@ -58,6 +58,9 @@ function ShowAllRecords(props) {
             const index = newData.findIndex((item) => key === item.key);
             const update_data = { ...newData[index], ...row };
             delete update_data["key"];
+            update_data["measured_time"] = new Date(update_data["measured_time"]);
+            update_data["updated_time"] = new Date(update_data["updated_time"]);
+            update_data["age"] = parseInt(update_data["age"]); // check other number field !
             updateRecordRow(recordId.current, [update_data])
             .then((res) => {
                 console.log(res);
@@ -84,6 +87,7 @@ function ShowAllRecords(props) {
     useEffect(() => {
         getAllRecords(props.record.vitals_proj_id)
         .then((res) => {
+            console.log(res);
             // create columns
             let column_list = (Object.keys(res.data[0].records[0])).map((column) => ({
                 title: column === "hn" ? 
@@ -182,13 +186,13 @@ function ShowAllRecords(props) {
                     Record Name: {props.record.rec_name}
                 </label>
                 <label style={{display: "block"}}>
-                    Project: {props.record.proj_name}
+                    Project: {props.project.projectName}
                 </label>
                 <label>
                     Uploaded Time: {props.record.updated}
                 </label>
             </div>
-            <div style={{maxWidth: "1000px"}}>
+            <div style={{maxWidth: "100%"}}>
                 <Form form={form} component={false}>
                     <Table 
                         components={{

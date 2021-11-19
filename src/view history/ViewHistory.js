@@ -1,26 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { Table, Tooltip, Form, Input, Button, Select, DatePicker } from "antd";
+import React, { useEffect, useState, useContext } from "react";
+import { Table, Tooltip, Form, Input, Button, Select, DatePicker, Tag } from "antd";
 import { DownloadOutlined ,EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import {viewHistory} from "../api/viewHistory"
 import SelectProject from "../component/SelectProject";
 import ImageModal from "../component/ImageModal";
 import { useHistory, useLocation } from "react-router-dom";
 import * as moment from 'moment';
+import Contexts from '../utils/Contexts';
 
 const { Option } = Select;
 
 export default function ViewHistory() {
-    const [project, setProject] = useState("619279c10a5029826b6b6fb7");
+    const { globalProject, setGlobalProject } = useContext(Contexts.project);
 
     return (
         <div className="content">
-            {project!=='none' && <HistoryLog project={project} />}
-            {project==='none' && <SelectProject
-                setProject={setProject}
+            {globalProject!=='none' && <HistoryLog project={globalProject} />}
+            {/* {globalProject==='none' && <SelectProject
+                // setProject={setProject}
                 Project={project}
                 mode = "select"
                 width="530px" 
-            />}
+            />} */}
         </div>
     )
 }
@@ -35,8 +36,8 @@ function HistoryLog(props) {
     const history = useHistory();
     const queryString = useQuery();
     const [uploadedItem, setUploadedItem] = useState([])
-    const status = ["in_progress", "annotated", "finalized"];
-    const findings = [];
+    const [status, setStatus] = useState([]);
+    const [findings, setFindings] = useState([]);
     const [reload, setReload] = useState("");
 
     const columns = [
@@ -50,6 +51,22 @@ function HistoryLog(props) {
             },
             sorter: {
                 compare: (a, b) => a.status.localeCompare(b.status)
+            },
+            render: (status) => {
+                var color = ""
+                if (status === "in_progress") {
+                    color = "blue"
+                } else if (status === "annotated") {
+                    color = "gold"
+                    status = "AI-Annotated"
+                } else {
+                    color = "green"
+                }
+                return(
+                    <Tag color={color}  style={{width: "100%"}}>
+                        {status.charAt(0).toUpperCase() + status.slice(1).split("_").join(" ")}
+                    </Tag>
+                );
             }
         },
         {
@@ -61,7 +78,7 @@ function HistoryLog(props) {
                 showTitle: false
             },
             sorter: {
-                compare: (a, b) => a.hn.localeCompare(b.hn)
+                compare: (a, b) => a.hn.toString().localeCompare(b.hn.toString())
             },
         },
         {
@@ -97,7 +114,7 @@ function HistoryLog(props) {
                 showTitle: false
             },
             sorter: {
-                compare: (a, b) => (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+                compare: (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
             },
             render: (date) => (
                 <Tooltip placement="topLeft" title={date}>
@@ -114,7 +131,7 @@ function HistoryLog(props) {
                 showTitle: false
             },
             sorter: {
-                compare: (a, b) => (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt)
+                compare: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt)
             },
             render: (date) => (
                 <Tooltip placement="topLeft" title={date}>
@@ -148,15 +165,15 @@ function HistoryLog(props) {
                                     AccessionNo={report.accession_no}
                                     ProcDescription=""
                                     StudyDateTime="" />
-                                <DownloadOutlined
+                                {/* <DownloadOutlined
                                     className="clickable-icon"
                                     onClick={() => {
-                                        /* download image api */
+                                        // download image api
                                     }}
-                                />
+                                /> */}
                                 <EditOutlined
                                     className="clickable-icon"
-                                    style={{marginLeft: "8px"}}
+                                    // style={{marginLeft: "8px"}}
                                     onClick={() => {
                                         let role = (JSON.parse(sessionStorage.getItem('user'))).role
                                         console.log((JSON.parse(sessionStorage.getItem('user'))).role, report)
@@ -180,7 +197,7 @@ function HistoryLog(props) {
     ];
 
     useEffect(() => {
-        viewHistory(props.project).then((response) => {
+        viewHistory(props.project.projectId).then((response) => {
             console.log(response);
             // filter data by search query params
             let filter_data = response.data.filter((item, i) => (
@@ -191,14 +208,24 @@ function HistoryLog(props) {
                 (queryString.get("from") === null ? true : new Date(item.createdAt) >= new Date(queryString.get("from"))) &&
                 (queryString.get("to") === null ? true : new Date(item.createdAt) <= new Date(queryString.get("to")))
             ))
-            // add key to each row & change date-time
+            // add key to each row & change date-time & add status, findings list
+            const status = ["all"];
+            const findings = ["all"];
             for (const i in filter_data) {
                 filter_data[i]["key"] = (parseInt(i)+1).toString();
                 filter_data[i].createdAt = new Date(filter_data[i].createdAt).toLocaleString();
                 filter_data[i].updatedAt = new Date(filter_data[i].updatedAt).toLocaleString();
+                if (!status.includes(filter_data[i]["status"])) {
+                    status.push(filter_data[i]["status"]);
+                }
+                if (!findings.includes(filter_data[i]["finding"])) {
+                    findings.push(filter_data[i]["finding"]);
+                }
             }
             setUploadedItem(filter_data);
-        })
+            setStatus(status);
+            setFindings(findings);
+        }).catch((err) => console.log(err.response));
     }, [reload])
 
     return (
@@ -218,12 +245,12 @@ function HistoryLog(props) {
                         className="search-component"
                         defaultValue={queryString.get("status") === null ? "All" : queryString.get("status")}
                         onChange={(value) => {
-                            queryString.set("status", status[value]);
+                            status[value] === "all" ? queryString.delete("status") : queryString.set("status", status[value]);
                         }}>
                             {status.map((status, i) => (
-                            <Option key={i} value={i}>
-                                {status}
-                            </Option>
+                                <Option key={i} value={i}>
+                                    {status.charAt(0).toUpperCase() + status.slice(1).split("_").join(" ")}
+                                </Option>
                             ))}
                     </Select>
                 </Form.Item>
@@ -232,12 +259,12 @@ function HistoryLog(props) {
                         className="search-component"
                         defaultValue={queryString.get("findings") === null ? "All" : queryString.get("findings")}
                         onChange={(value) => {
-                            queryString.set("findings", findings[value]);
+                            findings[value] === "all" ? queryString.delete("findings") : queryString.set("findings", findings[value]);
                         }}>
-                            {findings.map((findings, i) => (
-                            <Option key={i} value={i}>
-                                {findings.ProjectName}
-                            </Option>
+                            {findings.map((finding, i) => (
+                                <Option key={i} value={i}>
+                                    {finding.charAt(0).toUpperCase() + finding.slice(1).split("_").join(" ")}
+                                </Option>
                             ))}
                     </Select>
                 </Form.Item>
