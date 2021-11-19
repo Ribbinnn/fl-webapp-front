@@ -181,6 +181,10 @@
   overflow: scroll;
 }
 
+.content.loading {
+  cursor: progress;
+}
+
 .content::after{
   margin-right: 40px;
 }
@@ -811,6 +815,10 @@ tbody {
 
 .seven-rows-table tbody {
   max-height: 287px; /* 7 rows */
+}
+
+.seven-rows-table.with-tag tbody {
+  max-height: 288px; /* 7 rows */
 }
 
 .three-rows-table tbody {

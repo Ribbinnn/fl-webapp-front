@@ -26,6 +26,7 @@ export default function PreviewEdit(props){
             </label>
             <Form layout="vertical">
             {Object.keys(props.MedRec).map((item, i) => (
+              item === "entry_id" || item === "hn" || item === "measured_time" ? null :
               <Form.Item key={i} style={{marginLeft: "30px", marginBottom:"10px"}}>
                 <label id="smaller-label" style={{width: "180px"}}>
                 {`${item.charAt(0).toUpperCase() + item.slice(1).split("_").join(" ")}:`}

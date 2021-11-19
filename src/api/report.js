@@ -17,3 +17,12 @@ export const updateReport = async (report_id, note, user_id, label) => {
         throw e
     }
 }
+
+export const infer = async (accession_no, project_id, record, clinician_id) => {
+    try {
+        const res = (await instance.post("/infer", {accession_no, project_id, record, clinician_id}))
+        return res.data;
+    } catch (e) {
+        throw e
+    }
+}

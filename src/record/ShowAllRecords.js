@@ -1,11 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
 import { getAllRecords, deleteRecordRow, updateRecordRow } from "../api/vitals";
-import { Table, Button, Input, Form, Popconfirm, Tooltip } from "antd";
-import { EditOutlined, DeleteOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
+import { Table, Button, Input, Form, Popconfirm, Tooltip, Spin } from "antd";
+import { EditOutlined, DeleteOutlined, SaveOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
+
+const LoadingIcon = (
+    <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
+);
 
 function ShowAllRecords(props) {
 
     const recordId = useRef("");
+    const [loaded, setLoaded] = useState(false);
 
     const [form] = Form.useForm();
     const [data, setData] = useState([]);
@@ -173,6 +178,7 @@ function ShowAllRecords(props) {
             // set record_id
             props.setRecordId(res.data[0]._id);
             recordId.current = res.data[0]._id;
+            setLoaded(true);
         }).catch((err) => {
             console.log(err);
         })
@@ -192,30 +198,41 @@ function ShowAllRecords(props) {
                     Uploaded Time: {props.record.updated}
                 </label>
             </div>
-            <div style={{maxWidth: "100%"}}>
-                <Form form={form} component={false}>
-                    <Table 
-                        components={{
-                            body: {
-                                cell: EditableCell,
-                            },
-                        }}
-                        columns={mergedColumns} 
-                        dataSource={data} 
-                        pagination={false} 
-                        size="small"
-                        className="seven-rows-table"
-                        style={{marginTop: "30px"}}
-                    />
-                </Form>
-                <Button
-                    className="primary-btn smaller"
-                    style={{float: "right", marginTop: "30px"}}
-                    onClick={props.next}
-                    >
-                        Delete all records
-                </Button>
-            </div>
+            {!loaded && (
+                <div style={{ textAlign: "center", marginTop: "20%" }}>
+                <Spin indicator={LoadingIcon} />
+                <br />
+                <br />
+                <span style={{ fontSize: "medium", color: "#de5c8e" }}>
+                    Loading ...
+                </span>
+                </div>
+            )}
+            {loaded && (
+                <div style={{maxWidth: "100%"}}>
+                    <Form form={form} component={false}>
+                        <Table 
+                            components={{
+                                body: {
+                                    cell: EditableCell,
+                                },
+                            }}
+                            columns={mergedColumns} 
+                            dataSource={data} 
+                            pagination={false} 
+                            size="small"
+                            className="seven-rows-table"
+                            style={{marginTop: "30px"}}
+                        />
+                    </Form>
+                    <Button
+                        className="primary-btn smaller"
+                        style={{float: "right", marginTop: "30px"}}
+                        onClick={props.next}
+                        >
+                            Delete all records
+                    </Button>
+                </div>)}
         </div>
     );
 }

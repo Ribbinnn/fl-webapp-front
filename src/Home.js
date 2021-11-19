@@ -1,11 +1,17 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Card, Tag, Row, Col } from 'antd';
+import { Card, Tag, Row, Col, Spin } from 'antd';
+import { LoadingOutlined } from "@ant-design/icons";
 import { selectProject } from './api/project';
 import ProjectInfo from './component/ProjectInfo'
 import Contexts from './utils/Contexts'
 
+const LoadingIcon = (
+    <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
+);
+
 function Home() {
     const { globalProject, setGlobalProject } = useContext(Contexts.project);
+    const [loaded, setLoaded] = useState(false);
     
     const [projectList, setProjectList] = useState([]);
     const [projectId, setProjectId] = useState()
@@ -14,6 +20,7 @@ function Home() {
         selectProject().then((response) => {
             console.log(response.data.projects)
             setProjectList(response.data.projects)
+            setLoaded(true);
         })
             .catch((e) => {
                 console.log(e)
@@ -22,7 +29,17 @@ function Home() {
 
     return (
         <div className="content">
-            {projectList &&
+            {!loaded && (
+                <div style={{ textAlign: "center", marginTop: "20%" }}>
+                <Spin indicator={LoadingIcon} />
+                <br />
+                <br />
+                <span style={{ fontSize: "medium", color: "#de5c8e" }}>
+                    Loading ...
+                </span>
+                </div>
+            )}
+            {loaded && projectList &&
                 <Row>
                     <Col span={12}>
                         {projectList.map((item, i) => (

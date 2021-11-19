@@ -1,11 +1,16 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef, useContext } from "react";
-import { Input, Form, Table, Popconfirm, Tooltip, Button, Modal } from "antd";
-import { EditOutlined, DeleteOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
+import { Input, Form, Table, Popconfirm, Tooltip, Button, Modal, Spin } from "antd";
+import { EditOutlined, DeleteOutlined, SaveOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { getAllRecordsByHN, updateRecordRow, deleteRecordRow } from "../api/vitals"
 import Contexts from '../utils/Contexts';
 
+const LoadingIcon = (
+    <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
+);
+
 const SelectMedicalRecord = forwardRef((props, ref) => {
     const { globalProject, setGlobalProject } = useContext(Contexts.project);
+    const [loaded, setLoaded] = useState(false);
 
     const [visible,setVisible] = useState(false)
     const showModal = () => {
@@ -51,8 +56,8 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
         onChange: (selectedRowKeys, selectedRows) => {
             // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
             const selected_data = {...selectedRows[0]};
-            const remove_field = ["hn", "key", "clinician_first_name", "project_id", "project_name", 
-                "record_id", "entry_id", "updatedAt", "measured_time", "updated_time"];
+            const remove_field = ["key", "clinician_first_name", "project_id", "project_name", 
+                "record_id", "updatedAt", "updated_time"];
             for (const i in remove_field) {
                 delete selected_data[remove_field[i]];
             }
@@ -230,6 +235,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                 }
                 setData(res.data);
                 currentData.current = res.data;
+                setLoaded(true);
             } else {
                 setHasRecord(false);
                 const fields = ["age", "gender"];
@@ -255,6 +261,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                     </Form.Item>
                 );
                 setRequirementInput(requirement_input);
+                setLoaded(true);
             }
         }).catch((err) => {
             console.log(err);
@@ -276,7 +283,17 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
     return(
         <div>
             <label style={{marginBottom: "10px"}}>Medical Records</label>
-            {hasRecord ?
+            {!loaded && (
+                <div style={{ textAlign: "center", marginTop: "20%" }}>
+                <Spin indicator={LoadingIcon} />
+                <br />
+                <br />
+                <span style={{ fontSize: "medium", color: "#de5c8e" }}>
+                    Loading ...
+                </span>
+                </div>
+            )}
+            {loaded && hasRecord &&
                 <div>
                     <Form layout="vertical" style={{margin: "8px 0 5px 0"}}>
                         <label style={{display: "block", marginBottom: "8px"}}>Clinician</label>
@@ -304,7 +321,8 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                             className="seven-rows-table"
                         />
                     </Form>
-                </div> :
+                </div>}
+            {loaded && !hasRecord &&
                 <div style={{marginLeft: "40px"}}>
                     <label style={{marginBottom: "12px"}}>No record found. Please fill in the boxes below.</label>
                     <Form 
