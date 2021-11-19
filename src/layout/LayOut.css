@@ -181,6 +181,10 @@
   overflow: scroll;
 }
 
+.content.loading {
+  cursor: progress;
+}
+
 .content::after{
   margin-right: 40px;
 }

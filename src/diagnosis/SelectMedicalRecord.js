@@ -56,8 +56,8 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
         onChange: (selectedRowKeys, selectedRows) => {
             // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
             const selected_data = {...selectedRows[0]};
-            const remove_field = ["hn", "key", "clinician_first_name", "project_id", "project_name", 
-                "record_id", "entry_id", "updatedAt", "measured_time", "updated_time"];
+            const remove_field = ["key", "clinician_first_name", "project_id", "project_name", 
+                "record_id", "updatedAt", "updated_time"];
             for (const i in remove_field) {
                 delete selected_data[remove_field[i]];
             }

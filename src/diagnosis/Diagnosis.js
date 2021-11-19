@@ -7,6 +7,7 @@ import SelectXRayImage from "./SelectXRayImage";
 import Completed from "../component/Completed";
 import PreviewEdit from "./PreviewEdit";
 import { findPatientOnPACS } from "../api/pacs";
+import { infer } from "../api/report";
 import Contexts from '../utils/Contexts';
 const { Step } = Steps;
 
@@ -51,6 +52,7 @@ const btnList = [
 
 export default function Diagnosis() {
   const { globalProject, setGlobalProject } = useContext(Contexts.project);
+  const [loading, setLoading] = useState(false);
   const [HN, setHN] = useState("");
   const [Patient, setPatient] = useState({
     Name: "John Doe",
@@ -86,7 +88,17 @@ export default function Diagnosis() {
     } else if (current === 2 && accessionNo === null) {
         showModal();
     } else {
-      setCurrent(current + 1);
+      if (current === 3) {
+        setLoading(true);
+        infer(accessionNo, globalProject.projectId, MedRec, (JSON.parse(sessionStorage.getItem('user'))).id)
+        .then((res) => {
+          console.log(res);
+          setCurrent(current + 1);
+          setLoading(false);
+        }).catch((err) => console.log(err.response));
+      } else {
+        setCurrent(current + 1);
+      }  
     }
   };
 
@@ -95,7 +107,7 @@ export default function Diagnosis() {
   };
 
   return (
-    <div className="content">
+    <div className={loading ? "content loading" : "content"}>
       <Steps progressDot current={current}>
         {steps.map((item) => (
           <Step key={item.title} title={item.title} />
