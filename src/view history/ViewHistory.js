@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Table, Tooltip, Form, Input, Button, Select, DatePicker, Tag } from "antd";
 import { DownloadOutlined ,EditOutlined, DeleteOutlined, ReloadOutlined } from '@ant-design/icons';
 import {viewHistory} from "../api/viewHistory"
@@ -6,22 +6,22 @@ import SelectProject from "../component/SelectProject";
 import ImageModal from "../component/ImageModal";
 import { useHistory, useLocation } from "react-router-dom";
 import * as moment from 'moment';
+import Contexts from '../utils/Contexts';
 
 const { Option } = Select;
 
 export default function ViewHistory() {
-    // const [project, setProject] = useState("619279c10a5029826b6b6fb7");
-    const project = JSON.parse(sessionStorage.getItem('project')).projectId;
+    const { globalProject, setGlobalProject } = useContext(Contexts.project);
 
     return (
         <div className="content">
-            {project!=='none' && <HistoryLog project={project} />}
-            {project==='none' && <SelectProject
+            {globalProject!=='none' && <HistoryLog project={globalProject} />}
+            {/* {globalProject==='none' && <SelectProject
                 // setProject={setProject}
                 Project={project}
                 mode = "select"
                 width="530px" 
-            />}
+            />} */}
         </div>
     )
 }
@@ -165,15 +165,15 @@ function HistoryLog(props) {
                                     AccessionNo={report.accession_no}
                                     ProcDescription=""
                                     StudyDateTime="" />
-                                <DownloadOutlined
+                                {/* <DownloadOutlined
                                     className="clickable-icon"
                                     onClick={() => {
-                                        /* download image api */
+                                        // download image api
                                     }}
-                                />
+                                /> */}
                                 <EditOutlined
                                     className="clickable-icon"
-                                    style={{marginLeft: "8px"}}
+                                    // style={{marginLeft: "8px"}}
                                     onClick={() => {
                                         let role = (JSON.parse(sessionStorage.getItem('user'))).role
                                         console.log((JSON.parse(sessionStorage.getItem('user'))).role, report)
@@ -197,7 +197,7 @@ function HistoryLog(props) {
     ];
 
     useEffect(() => {
-        viewHistory(props.project).then((response) => {
+        viewHistory(props.project.projectId).then((response) => {
             console.log(response);
             // filter data by search query params
             let filter_data = response.data.filter((item, i) => (
