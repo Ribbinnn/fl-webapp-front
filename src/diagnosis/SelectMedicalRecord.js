@@ -1,11 +1,20 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef, useContext } from "react";
-import { Input, Form, Table, Popconfirm, Tooltip, Button } from "antd";
+import { Input, Form, Table, Popconfirm, Tooltip, Button, Modal } from "antd";
 import { EditOutlined, DeleteOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
 import { getAllRecordsByHN, updateRecordRow, deleteRecordRow } from "../api/vitals"
 import Contexts from '../utils/Contexts';
 
 const SelectMedicalRecord = forwardRef((props, ref) => {
     const { globalProject, setGlobalProject } = useContext(Contexts.project);
+
+    const [visible,setVisible] = useState(false)
+    const showModal = () => {
+        setVisible(true)
+    };
+
+    const handleCancel = () => {
+        setVisible(false)
+    };
 
     const [hasRecord, setHasRecord] = useState(true);
     const [requirementForm] = Form.useForm();
@@ -15,10 +24,14 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
         setMedicalRecord: async () => {
             try {
                 if (!hasRecord) {
-                    const data = await requirementForm.validateFields();
-                    // props.setMedRec(data + hn);
+                    const data = await requirementForm.validateFields(); // not working
+                    props.setMedRec(data); // not working
                 }
-                await props.setCurrent(props.current + 1);
+                if (props.MedRec === null) {
+                    showModal();
+                } else {
+                    await props.setCurrent(props.current + 1);
+                }
             } catch (errInfo) {
                 console.log('Validate Failed:', errInfo);
             }
@@ -28,15 +41,23 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
     const [tableForm] = Form.useForm();
     const [data, setData] = useState([]);
     const currentData = useRef([]);
-    const columns = ["measured_time", "updated_time", "age", "gender"]; // get hn from state
+    const columns = ["measured_time", "updated_time", "age", "gender"];
     const [mergedColumns, setMergeColumns] = useState([]);
     const [editingKey, setEditingKey] = useState("");
 
     const rowSelection = {
         type: "radio",
+        selectedRowKeys: props.MedRecIndex,
         onChange: (selectedRowKeys, selectedRows) => {
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
-            // props.setMedRec(selectedRows[0]); // remove some field
+            // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
+            const selected_data = {...selectedRows[0]};
+            const remove_field = ["hn", "key", "clinician_first_name", "project_id", "project_name", 
+                "record_id", "entry_id", "updatedAt", "measured_time", "updated_time"];
+            for (const i in remove_field) {
+                delete selected_data[remove_field[i]];
+            }
+            props.setMedRecIndex(selectedRowKeys);
+            props.setMedRec(selected_data);
         },
     };
 
@@ -89,6 +110,9 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             for (const i in remove_field) {
                 delete update_data[remove_field[i]];
             }
+            update_data["measured_time"] = new Date(update_data["measured_time"]);
+            update_data["updated_time"] = new Date(update_data["updated_time"]);
+            update_data["age"] = parseInt(update_data["age"]); // check other number field !
             updateRecordRow(record_id, [update_data])
             .then((res) => {
                 console.log(res);
@@ -118,8 +142,8 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             if (res.data.length !== 0) {
                 setHasRecord(true);
                 // add additional required field of each project
-                for (const i in props.project.Requirement) {
-                    columns.push(props.project.Requirement[i]["name"]);
+                for (const i in globalProject.projectReq) {
+                    columns.push(globalProject.projectReq[i]["name"]);
                 }
                 columns.push("clinician");
                 // create columns
@@ -208,18 +232,26 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                 currentData.current = res.data;
             } else {
                 setHasRecord(false);
-                let requirement_input = (props.project.Requirement).map((field) => 
+                const fields = ["age", "gender"];
+                // add additional required field of each project
+                for (const i in globalProject.projectReq) {
+                    fields.push(globalProject.projectReq[i]["name"]);
+                }
+                let requirement_input = (fields).map((field) => 
                     <Form.Item
-                        name={field.name}
-                        key={field.name}
-                        label={field.name.charAt(0).toUpperCase() + field.name.slice(1).split("_").join(" ")}
+                        name={field}
+                        key={field}
+                        label={field.charAt(0).toUpperCase() + field.slice(1).split("_").join(" ")}
                         style={{marginBottom: "5px"}}
                         rules={[
                             {
                                 required: true,
                             },
                         ]}>
-                            <Input className="input-text" style={{width: "300px"}} />
+                            <Input
+                                className="input-text"
+                                defaultValue={props.MedRec === null ? null : props.MedRec[field]} // not working
+                                style={{width: "300px"}} />
                     </Form.Item>
                 );
                 setRequirementInput(requirement_input);
@@ -283,6 +315,13 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                             {requirementInput}
                     </Form>
                 </div>}
+                <Modal
+                    visible={visible}
+                    title={null}
+                    onCancel={handleCancel}
+                    footer={null}>
+                        Please select Medical Record, or fill in the boxes below.
+                </Modal>
         </div>
     );
 });

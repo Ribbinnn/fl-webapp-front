@@ -1,13 +1,13 @@
-import React, { useState, useRef } from "react";
-import { Steps, Button, Form, Input, Row, Col, Collapse } from "antd";
+import React, { useState, useRef, useContext } from "react";
+import { Steps, Button, Form, Input, Row, Col, Modal } from "antd";
 import "antd/dist/antd.css";
-import SelectProject from "../component/SelectProject";
 import ProjectInfo from "../component/ProjectInfo";
 import SelectMedicalRecord from "./SelectMedicalRecord";
 import SelectXRayImage from "./SelectXRayImage";
 import Completed from "../component/Completed";
 import PreviewEdit from "./PreviewEdit";
 import { findPatientOnPACS } from "../api/pacs";
+import Contexts from '../utils/Contexts';
 const { Step } = Steps;
 
 const steps = [
@@ -50,25 +50,41 @@ const btnList = [
 ];
 
 export default function Diagnosis() {
+  const { globalProject, setGlobalProject } = useContext(Contexts.project);
   const [HN, setHN] = useState("");
-  const [Project, setProject] = useState("none");
   const [Patient, setPatient] = useState({
     Name: "John Doe",
     Age: 42,
     Gender: "M",
   });
-  const [MedRec, setMedRec] = useState({
-    "Pulse rate": 77,
-    Temperature: 37,
-    "Blood pressure": "120/80",
-  });
-  const [accessionNo, setAccessionNo] = useState("74");
+  // const [MedRec, setMedRec] = useState({
+  //   "Pulse rate": 77,
+  //   Temperature: 37,
+  //   "Blood pressure": "120/80",
+  // });
+  const [MedRec, setMedRec] = useState(null);
+  const [MedRecIndex, setMedRecIndex] = useState([]);
+  // const [accessionNo, setAccessionNo] = useState("74");
+  const [accessionNo, setAccessionNo] = useState(null);
+  const [accessionNoIndex, setAccessionNoIndex] = useState([]);
   const [current, setCurrent] = useState(0);
   const selectMedicalRecordRef = useRef();
+
+  const [visible,setVisible] = useState(false)
+  const showModal = () => {
+      setVisible(true)
+  };
+
+  const handleCancel = () => {
+      setVisible(false)
+  };
+
   const next = () => {
     /** add condition for each step to go next step here */
     if (current === 1) {
       selectMedicalRecordRef.current.setMedicalRecord();
+    } else if (current === 2 && accessionNo === null) {
+        showModal();
     } else {
       setCurrent(current + 1);
     }
@@ -91,8 +107,6 @@ export default function Diagnosis() {
           <SelectHN
             HN={HN}
             setHN={setHN}
-            Project={Project}
-            setProject={setProject}
           />
         )}
         {current === 1 && (
@@ -108,17 +122,19 @@ export default function Diagnosis() {
                 >
                   Patient's HN: {HN}
                 </label>
-                <ProjectInfo />
+                <ProjectInfo project_id={globalProject.projectId} />
               </div>
             </Col>
             <Col span={17}>
               <SelectMedicalRecord
                 ref={selectMedicalRecordRef}
                 HN={HN}
-                project={Project}
                 current={current}
                 setCurrent={setCurrent}
+                MedRec={MedRec}
                 setMedRec={setMedRec}
+                MedRecIndex={MedRecIndex}
+                setMedRecIndex={setMedRecIndex}
               />
             </Col>
           </Row>
@@ -136,7 +152,10 @@ export default function Diagnosis() {
             </label>
             <SelectXRayImage 
               HN={HN}
-              setAccessionNo={setAccessionNo} />
+              setAccessionNo={setAccessionNo}
+              accessionNoIndex={accessionNoIndex}
+              setAccessionNoIndex={setAccessionNoIndex}
+            />
           </div>
         )}
         {current === 3 && (
@@ -168,6 +187,13 @@ export default function Diagnosis() {
           </Button>
         )}
       </div>
+      <Modal
+          visible={visible}
+          title={null}
+          onCancel={handleCancel}
+          footer={null}>
+              Please select X-Ray Image.
+      </Modal>
     </div>
   );
 }

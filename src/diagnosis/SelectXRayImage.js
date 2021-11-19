@@ -12,9 +12,11 @@ function SelectXRayImage(props) {
 
     const rowSelection = {
         type: "radio",
+        selectedRowKeys: props.accessionNoIndex,
         onChange: (selectedRowKeys, selectedRows) => {
-            console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
-            // props.setAccessionNo(...);
+            // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
+            props.setAccessionNoIndex(selectedRowKeys);
+            props.setAccessionNo(selectedRows[0]["Accession No"]);
         },
     };
 
