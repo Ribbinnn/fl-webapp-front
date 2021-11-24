@@ -107,7 +107,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 ellipsis: {
                     showTitle: false,
                 },
-                render: column === "measured_time" ? column => (
+                render: column === "measured_time(yyyy-MM-ddTHH:mm:ssZ)" ? column => (
                     <Tooltip placement="topLeft" title={column}>
                         {column}
                     </Tooltip>
@@ -123,7 +123,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 const data_with_key = JSON.parse(JSON.stringify(data));
                 for (const i in data_with_key) {
                     data_with_key[i]["key"] = (parseInt(i)+1).toString();
-                    data_with_key[i]["measured_time"] = new Date(data_with_key[i]["measured_time"]).toLocaleString();
+                    data_with_key[i]["measured_time(yyyy-MM-ddTHH:mm:ssZ)"] = new Date(data_with_key[i]["measured_time(yyyy-MM-ddTHH:mm:ssZ)"]).toLocaleString();
                 }
                 setColumns(column_list);
                 setUploadedRecordName({
