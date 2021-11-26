@@ -29,10 +29,14 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
         setMedicalRecord: async () => {
             try {
                 if (!hasRecord) {
-                    const data = await requirementForm.validateFields(); // not working
-                    props.setMedRec(data); // not working
+                    const data = await requirementForm.validateFields();
+                    data["hn"] = parseInt(props.HN); // add HN
+                    data["entry_id"] = parseInt(data["entry_id"]);
+                    data["age"] = parseInt(data["age"]); // check other number field !
+                    data["measured_time"] = new Date(data["measured_time"]);
+                    props.setMedRec(data);
                 }
-                if (props.MedRec === null) {
+                if (hasRecord && props.MedRec === null) {
                     showModal();
                 } else {
                     await props.setCurrent(props.current + 1);
@@ -238,16 +242,20 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                 setLoaded(true);
             } else {
                 setHasRecord(false);
-                const fields = ["age", "gender"];
+                const fields = ["entry_id", "measured_time", "age", "gender"];
+                const fieldsLabel = {entry_id: "Entry id", measured_time: "Measured time (yyyy-MM-ddTHH:mm:ssZ)", age: "Age (year)", gender: "Gender (male/female)"};
                 // add additional required field of each project
                 for (const i in globalProject.projectReq) {
-                    fields.push(globalProject.projectReq[i]["name"]);
+                    const field = globalProject.projectReq[i]["name"];
+                    fields.push(field);
+                    fieldsLabel[field] = field.charAt(0).toUpperCase() + field.slice(1).split("_").join(" ");
                 }
                 let requirement_input = (fields).map((field) => 
                     <Form.Item
                         name={field}
                         key={field}
-                        label={field.charAt(0).toUpperCase() + field.slice(1).split("_").join(" ")}
+                        label={fieldsLabel[field]}
+                        initialValue={props.MedRec === null ? null : props.MedRec[field]}
                         style={{marginBottom: "5px"}}
                         rules={[
                             {
@@ -256,7 +264,6 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                         ]}>
                             <Input
                                 className="input-text"
-                                defaultValue={props.MedRec === null ? null : props.MedRec[field]} // not working
                                 style={{width: "300px"}} />
                     </Form.Item>
                 );
@@ -329,7 +336,9 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                         form={requirementForm} 
                         layout="vertical" 
                         requiredMark={false}
-                        className="smaller-form-label">
+                        className="smaller-form-label"
+                        // style={{maxHeight: "310px", overflow: "scroll", marginTop: "10px"}}
+                    >
                             {requirementInput}
                     </Form>
                 </div>}
@@ -338,7 +347,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                     title={null}
                     onCancel={handleCancel}
                     footer={null}>
-                        Please select Medical Record, or fill in the boxes below.
+                        Please select Medical Record.
                 </Modal>
         </div>
     );
