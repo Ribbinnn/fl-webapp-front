@@ -656,6 +656,21 @@ label.clickable-label:hover {
   color: #de5c8e !important;
 }
 
+.select-header.ant-select:not(.ant-select-customize-input) .ant-select-selector,
+.select-header.ant-select-focused:not(.ant-select-disabled) .ant-select:not(.ant-select-customize-input) .ant-select-selector{
+  background-color: transparent;
+  color: white;
+  border: transparent !important;
+  width: 250px;
+  height: 50px;
+  align-items: center;
+}
+
+.select-header .ant-select-arrow {
+  color: #ffffff;
+  padding-top: 2px;
+}
+
 /* collapse ------------------*/
 
 .ant-collapse-icon-position-right > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow{

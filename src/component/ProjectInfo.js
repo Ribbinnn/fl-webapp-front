@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Tag, Collapse, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { getProjectInfoByID } from '../api/project'
+import Contexts from '../utils/Contexts';
 
 const LoadingIcon = (
   <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
@@ -9,15 +10,16 @@ const LoadingIcon = (
 const { Panel } = Collapse;
 
 export default function ProjectInfo(props) {
+  const { globalProject, setGlobalProject } = useContext(Contexts.project);
   const [loaded, setLoaded] = useState(false);
   const palette = ["magenta","red","volcano","orange","gold","green","cyan","blue","geekblue","purple"]
-  const [pid, setPid] = useState(props.project_id ?? "618e4a72d1207ca05475ac2c"); // <------ set project id to display here
+  const [pid, setPid] = useState(globalProject.projectId ?? "618e4a72d1207ca05475ac2c"); // <------ set project id to display here
   const [pinfo, setPinfo] = useState();
 
   useEffect(() => {
     console.log("here")
-    setPid(props.project_id)
-    getProjectInfoByID(props.project_id).then((response) => {
+    setPid(globalProject.projectId)
+    getProjectInfoByID(globalProject.projectId).then((response) => {
       console.log(response)
       setPinfo({
           ProjectID: response.data._id,
@@ -33,7 +35,7 @@ export default function ProjectInfo(props) {
     .catch((err) => {
       console.error(err);
     });
-  }, [props]);
+  }, [globalProject]);
 
   return (
     <div>

@@ -6,6 +6,7 @@ import {
   } from "@ant-design/icons";
 import { logout } from '../api/logout';
 import Contexts from '../utils/Contexts';
+import SelectProject from '../component/SelectProject';
 
 export default function Header(){
     const { globalProject, setGlobalProject } = useContext(Contexts.project);
@@ -20,8 +21,8 @@ export default function Header(){
 
     return(
             <div id="header">
-                <div style={{color: '#ffffff', textAlign:'center', marginLeft: 10, fontSize: 'large', width: "180px", textAlign:'left'}}>
-                    {globalProject.projectName}
+                <div style={{marginLeft: 10, height: 50}}>
+                    <SelectProject Project={globalProject} Class="select-header"/>
                 </div>
                 <div id="logo" style={{height: 25, width:200, backgroundColor:'#E5E5E5', textAlign:'center'}}>
                     Temp Logo Image
