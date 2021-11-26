@@ -19,7 +19,8 @@ function Routes() {
 
   const [globalProject, setGlobalProject] = useState({
     "projectId": JSON.parse(sessionStorage.getItem('project'))?(JSON.parse(sessionStorage.getItem('project'))).projectId:"", 
-    "projectName": JSON.parse(sessionStorage.getItem('project'))?JSON.parse(sessionStorage.getItem('project')).projectName:"No selected project"
+    "projectName": JSON.parse(sessionStorage.getItem('project'))?JSON.parse(sessionStorage.getItem('project')).projectName:"No selected project",
+    "projectReq": JSON.parse(sessionStorage.getItem('project'))?JSON.parse(sessionStorage.getItem('project')).projectReq:[]
   })
   const value = {globalProject, setGlobalProject}
 

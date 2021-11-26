@@ -117,6 +117,10 @@ export default function Diagnosis() {
             setHN={setHN}
             Patient={Patient}
             setPatient={setPatient}
+            setMedRec={setMedRec}
+            setMedRecIndex={setMedRecIndex}
+            setAccessionNo={setAccessionNo}
+            setAccessionNoIndex={setAccessionNoIndex}
           />
         )}
         {current === 1 && (
@@ -217,6 +221,10 @@ function SelectHN(props) {
       if (res.data) {
         props.setHN(input_hn);
         props.setPatient({Name: res.data["Patient Name"]});
+        props.setMedRec(null);
+        props.setMedRecIndex([]);
+        props.setAccessionNo(null);
+        props.setAccessionNoIndex([]);
       } else props.setPatient(false);
     });
   };
