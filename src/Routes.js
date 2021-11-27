@@ -9,6 +9,7 @@ import Diagnosis from "./diagnosis/Diagnosis"
 import MyRecord from "./record/MyRecord";
 import Report from "./view history/Report";
 import ViewHistory from "./view history/ViewHistory";
+import Auth from "./Auth";
 import { updateToken } from "./api";
 
 import "./layout/LayOut.css";
@@ -49,6 +50,7 @@ function Routes() {
               <Route path="/viewhistory" exact render={()=>(auth&&globalProject.projectId?<ViewHistory/>:!auth?<Redirect to='/login'/>:<Redirect to='/'/>)}/>
               <Route path="/viewhistory/:mode/:rid" exact render={()=>(auth&&globalProject.projectId?<Report/>:!auth?<Redirect to='/login'/>:<Redirect to='/'/>)}/>
               <Route path="/login" render={()=>(auth?<Redirect to='/'/>:<Login/>)}/>
+              <Route path="/auth" render={()=>(<Auth />)}/>
             </Switch>
           </div>
         </div>
