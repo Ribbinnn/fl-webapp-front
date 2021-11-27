@@ -1,14 +1,20 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Table, Button, Form, Input, Select, DatePicker } from "antd";
+import { Table, Button, Form, Input, Select, DatePicker, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import { searchVitlasProject, deleteRecord } from "../api/vitals";
 import ShowAllRecords from "./ShowAllRecords";
 import ConfirmDelete from "../component/ConfirmDelete";
 import Contexts from '../utils/Contexts';
 
+const LoadingIcon = (
+    <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
+);
+
 const { Option } = Select;
 
 function MyRecord () {
     const { globalProject, setGlobalProject } = useContext(Contexts.project);
+    const [loaded, setLoaded] = useState(false);
 
     const [current, setCurrent] = useState(0);
     const next = () => {
@@ -81,6 +87,7 @@ function MyRecord () {
             
             setUploadedItem(res_list)
             setVitalsList(res_list)
+            setLoaded(true);
         })
         .catch((err)=>{
             console.log(err)
@@ -111,7 +118,17 @@ function MyRecord () {
 
     return (
         <div className="content">
-            {current === 0 &&
+            {!loaded && (
+                <div style={{ textAlign: "center", marginTop: "20%" }}>
+                <Spin indicator={LoadingIcon} />
+                <br />
+                <br />
+                <span style={{ fontSize: "medium", color: "#de5c8e" }}>
+                    Loading ...
+                </span>
+                </div>
+            )}
+            {loaded && current === 0 &&
                 <div>
                     <div>
                         <Form layout="inline">
@@ -150,7 +167,7 @@ function MyRecord () {
                         />
                     </div>
                 </div>}
-            {current === 1 &&
+            {loaded && current === 1 &&
                 <div style={{height: "100%"}}>
                     <ShowAllRecords 
                         record={currentRecord} 
@@ -166,7 +183,7 @@ function MyRecord () {
                             Back
                     </Button>
                 </div>}
-            {current === 2 &&
+            {loaded && current === 2 &&
                 <ConfirmDelete 
                     cfmMessage={"delete " + currentRecord.rec_name} 
                     handleCancel={prev}

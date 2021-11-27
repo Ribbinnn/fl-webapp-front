@@ -1,11 +1,16 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef, useContext } from "react";
-import { Input, Form, Table, Popconfirm, Tooltip, Button, Modal } from "antd";
-import { EditOutlined, DeleteOutlined, SaveOutlined, CloseOutlined } from '@ant-design/icons';
+import { Input, Form, Table, Popconfirm, Tooltip, Button, Modal, Spin } from "antd";
+import { EditOutlined, DeleteOutlined, SaveOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { getAllRecordsByHN, updateRecordRow, deleteRecordRow } from "../api/vitals"
 import Contexts from '../utils/Contexts';
 
+const LoadingIcon = (
+    <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
+);
+
 const SelectMedicalRecord = forwardRef((props, ref) => {
     const { globalProject, setGlobalProject } = useContext(Contexts.project);
+    const [loaded, setLoaded] = useState(false);
 
     const [visible,setVisible] = useState(false)
     const showModal = () => {
@@ -24,10 +29,14 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
         setMedicalRecord: async () => {
             try {
                 if (!hasRecord) {
-                    const data = await requirementForm.validateFields(); // not working
-                    props.setMedRec(data); // not working
+                    const data = await requirementForm.validateFields();
+                    data["hn"] = parseInt(props.HN); // add HN
+                    data["entry_id"] = parseInt(data["entry_id"]);
+                    data["age"] = parseInt(data["age"]); // check other number field !
+                    data["measured_time"] = new Date(data["measured_time"]);
+                    props.setMedRec(data);
                 }
-                if (props.MedRec === null) {
+                if (hasRecord && props.MedRec === null) {
                     showModal();
                 } else {
                     await props.setCurrent(props.current + 1);
@@ -51,8 +60,8 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
         onChange: (selectedRowKeys, selectedRows) => {
             // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
             const selected_data = {...selectedRows[0]};
-            const remove_field = ["hn", "key", "clinician_first_name", "project_id", "project_name", 
-                "record_id", "entry_id", "updatedAt", "measured_time", "updated_time"];
+            const remove_field = ["key", "clinician_first_name", "project_id", "project_name", 
+                "record_id", "updatedAt", "updated_time"];
             for (const i in remove_field) {
                 delete selected_data[remove_field[i]];
             }
@@ -230,18 +239,23 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                 }
                 setData(res.data);
                 currentData.current = res.data;
+                setLoaded(true);
             } else {
                 setHasRecord(false);
-                const fields = ["age", "gender"];
+                const fields = ["entry_id", "measured_time", "age", "gender"];
+                const fieldsLabel = {entry_id: "Entry id", measured_time: "Measured time (yyyy-MM-ddTHH:mm:ssZ)", age: "Age (year)", gender: "Gender (male/female)"};
                 // add additional required field of each project
                 for (const i in globalProject.projectReq) {
-                    fields.push(globalProject.projectReq[i]["name"]);
+                    const field = globalProject.projectReq[i]["name"];
+                    fields.push(field);
+                    fieldsLabel[field] = field.charAt(0).toUpperCase() + field.slice(1).split("_").join(" ");
                 }
                 let requirement_input = (fields).map((field) => 
                     <Form.Item
                         name={field}
                         key={field}
-                        label={field.charAt(0).toUpperCase() + field.slice(1).split("_").join(" ")}
+                        label={fieldsLabel[field]}
+                        initialValue={props.MedRec === null ? null : props.MedRec[field]}
                         style={{marginBottom: "5px"}}
                         rules={[
                             {
@@ -250,11 +264,11 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                         ]}>
                             <Input
                                 className="input-text"
-                                defaultValue={props.MedRec === null ? null : props.MedRec[field]} // not working
                                 style={{width: "300px"}} />
                     </Form.Item>
                 );
                 setRequirementInput(requirement_input);
+                setLoaded(true);
             }
         }).catch((err) => {
             console.log(err);
@@ -276,7 +290,17 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
     return(
         <div>
             <label style={{marginBottom: "10px"}}>Medical Records</label>
-            {hasRecord ?
+            {!loaded && (
+                <div style={{ textAlign: "center", marginTop: "20%" }}>
+                <Spin indicator={LoadingIcon} />
+                <br />
+                <br />
+                <span style={{ fontSize: "medium", color: "#de5c8e" }}>
+                    Loading ...
+                </span>
+                </div>
+            )}
+            {loaded && hasRecord &&
                 <div>
                     <Form layout="vertical" style={{margin: "8px 0 5px 0"}}>
                         <label style={{display: "block", marginBottom: "8px"}}>Clinician</label>
@@ -304,14 +328,17 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                             className="seven-rows-table"
                         />
                     </Form>
-                </div> :
+                </div>}
+            {loaded && !hasRecord &&
                 <div style={{marginLeft: "40px"}}>
                     <label style={{marginBottom: "12px"}}>No record found. Please fill in the boxes below.</label>
                     <Form 
                         form={requirementForm} 
                         layout="vertical" 
                         requiredMark={false}
-                        className="smaller-form-label">
+                        className="smaller-form-label"
+                        // style={{maxHeight: "310px", overflow: "scroll", marginTop: "10px"}}
+                    >
                             {requirementInput}
                     </Form>
                 </div>}
@@ -320,7 +347,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                     title={null}
                     onCancel={handleCancel}
                     footer={null}>
-                        Please select Medical Record, or fill in the boxes below.
+                        Please select Medical Record.
                 </Modal>
         </div>
     );

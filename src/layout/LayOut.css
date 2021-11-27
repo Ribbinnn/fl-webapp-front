@@ -181,7 +181,11 @@
   overflow: scroll;
 }
 
-.content::after {
+.content.loading {
+  cursor: progress;
+}
+
+.content::after{
   margin-right: 40px;
 }
 .center-div {
@@ -199,7 +203,7 @@
 
 .steps-content-diagnosis {
   width: 100%;
-  min-height: 78%;
+  min-height: 76%;
   max-height: 100%;
   padding: 30px;
 }
@@ -895,6 +899,10 @@ tbody {
 
 .seven-rows-table tbody {
   max-height: 287px; /* 7 rows */
+}
+
+.seven-rows-table.with-tag tbody {
+  max-height: 288px; /* 7 rows */
 }
 
 .three-rows-table tbody {

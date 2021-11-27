@@ -1,9 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Table, Tooltip } from "antd";
+import { Table, Tooltip, Spin } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
 import { getPatientData } from "../api/pacs"
 import ImageModal from "../component/ImageModal";
 
+const LoadingIcon = (
+    <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
+);
+
 function SelectXRayImage(props) {
+
+    const [loaded, setLoaded] = useState(false);
 
     const fields = ["Patient Name", "Accession No", "Patient ID", "Proc Description", 
         "Modality", "Study Date Time", "Image Count", "Procedure Code", "Primary location"];
@@ -62,6 +69,7 @@ function SelectXRayImage(props) {
                 res.data[i]["Study Date Time"] = new Date(res.data[i]["Study Date Time"]).toLocaleString();
             }
             setData(res.data);
+            setLoaded(true);
         }).catch((err) => {
             console.log(err);
         })
@@ -71,14 +79,25 @@ function SelectXRayImage(props) {
     return(
         <div>
             <label style={{marginBottom: "8px"}}>Select X-Ray Image</label>
-            <Table 
-                columns={columns} 
-                dataSource={data} 
-                pagination={false} 
-                rowSelection={rowSelection}
-                size="small"
-                className="seven-rows-table"
-            />
+            {!loaded && (
+                <div style={{ textAlign: "center", marginTop: "20%" }}>
+                <Spin indicator={LoadingIcon} />
+                <br />
+                <br />
+                <span style={{ fontSize: "medium", color: "#de5c8e" }}>
+                    Loading ...
+                </span>
+                </div>
+            )}
+            {loaded && 
+                <Table 
+                    columns={columns} 
+                    dataSource={data} 
+                    pagination={false} 
+                    rowSelection={rowSelection}
+                    size="small"
+                    className="seven-rows-table"
+                />}
         </div>
     );
 }
