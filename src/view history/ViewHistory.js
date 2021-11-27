@@ -65,14 +65,14 @@ function HistoryLog(props) {
             render: (status) => {
                 var color = ""
                 if (status === "canceled") {
-                    color = "red"
+                    color = "error"
                 } else if (status === "finalized") {
-                    color = "green"
+                    color = "success"
                 } else if (status === "annotated") {
-                    color = "gold"
+                    color = "warning"
                     status = "AI-Annotated"
                 } else {
-                    color = "blue"
+                    color = "processing"
                 }
                 return(
                     <Tag color={color}  style={{width: "100%"}}>
