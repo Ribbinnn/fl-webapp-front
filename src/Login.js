@@ -80,8 +80,10 @@ function Login() {
                             <div className="hr-divider">
                                 <label id="smaller-label">OR</label>
                             </div>
-                            <div className="center-div" style={{margin: "auto", width: "300px", height: "80px", backgroundColor: "rgb(229,229,229)"}}>
-                                <label>Connect with ChulaSSO</label>
+                            <div className="center-div">
+                                <a href="https://account.it.chula.ac.th/login?service=http://localhost:3000/auth">
+                                    <img src="https://account.it.chula.ac.th/images/ConnectWithChulaSSO.png" width="300"/>
+                                </a>
                             </div>
                         </Form>
                     </div>
