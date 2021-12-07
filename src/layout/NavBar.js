@@ -80,6 +80,7 @@ export default function NavBar() {
           className="menuitem"
           icon={<ControlOutlined />}
           style={{ marginTop: 40 }}
+          onClick={() => history.push("/admin")}
         >
           Admin
         </Menu.Item>
