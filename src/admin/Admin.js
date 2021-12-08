@@ -2,19 +2,20 @@ import React, { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Menu } from "antd";
 import { UserOutlined, SettingOutlined } from '@ant-design/icons';
+import UserForm from "./UserForm";
 
 const { SubMenu } = Menu;
 
-function Admin() { // check admin role
+function Admin() {
     const history = useHistory();
     const { mode } = useParams();
-    const [current, setCurrent] = useState("");
+    const [current, setCurrent] = useState(mode ? mode : "");
     const renderComponent = () => {
         switch(mode) {
             case "createuser":
-                return <label>create user</label>;
+                return <UserForm mode={mode} />;
             case "edituser":
-                return <label>edit user</label>;
+                return <UserForm mode={mode} />;
             case "deleteuser":
                 return <label>delete user</label>;
             case "createproject":
@@ -43,7 +44,13 @@ function Admin() { // check admin role
                 >
                     <Menu.Item key="createuser" onClick={() => history.push("/admin/createuser")}>Create User</Menu.Item>
                     <Menu.Item key="edituser" onClick={() => history.push("/admin/edituser")}>Edit User</Menu.Item>
-                    <Menu.Item key="deleteuser" onClick={() => history.push("/admin/deleteuser")}>Delete User</Menu.Item>
+                    <Menu.Item 
+                        key="deleteuser" 
+                        style={{color: "#E9C869", fontWeight: "bold"}} 
+                        onClick={() => history.push("/admin/deleteuser")}
+                    >
+                        Delete User
+                    </Menu.Item>
                 </SubMenu>
                 <SubMenu
                     key="project"
@@ -53,10 +60,16 @@ function Admin() { // check admin role
                     <Menu.Item key="createproject" onClick={() => history.push("/admin/createproject")}>Create Project</Menu.Item>
                     <Menu.Item key="editproject" onClick={() => history.push("/admin/editproject")}>Edit Project</Menu.Item>
                     <Menu.Item key="manageuser" onClick={() => history.push("/admin/manageuser")}>Manage User</Menu.Item>
-                    <Menu.Item key="deleteproject" onClick={() => history.push("/admin/deleteproject")}>Delete Project</Menu.Item>
+                    <Menu.Item 
+                        key="deleteproject" 
+                        style={{color: "#E9C869", fontWeight: "bold"}} 
+                        onClick={() => history.push("/admin/deleteproject")}
+                    >
+                        Delete Project
+                    </Menu.Item>
                 </SubMenu>
             </Menu>
-            <div style={{padding: "25px 20px 20px 20px"}}>
+            <div style={{padding: "30px 20px"}}>
                 {renderComponent()}
             </div>
         </div>
