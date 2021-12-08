@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Form, Input, Select, Button, Modal } from "antd";
+import { createUser } from "../api/admin";
 
 const { Option } = Select;
 
@@ -13,6 +14,7 @@ function UserForm(props) {
     const handleCancel = () => {
         setVisible(false)
     };
+    const [message, setMessage] = useState("");
     return(
         <div>
             <label style={{fontWeight: "bold"}}>
@@ -42,6 +44,7 @@ function UserForm(props) {
                         rules={[
                             {
                                 required: true,
+                                type: "email"
                             },
                         ]}
                         style={{display: "inline-block"}}
@@ -87,8 +90,8 @@ function UserForm(props) {
                 </div>
                 <div>
                     <Form.Item
-                        name="firstname"
-                        key="firstname"
+                        name="first_name"
+                        key="first_name"
                         label="First Name"
                         rules={[
                             {
@@ -102,8 +105,8 @@ function UserForm(props) {
                             defaultValue="" />
                     </Form.Item>
                     <Form.Item
-                        name="lastname"
-                        key="lastname"
+                        name="last_name"
+                        key="last_name"
                         label="Last Name"
                         rules={[
                             {
@@ -140,8 +143,6 @@ function UserForm(props) {
                     </Select>
                 </Form.Item>
                 <Form.Item
-                    name="submit"
-                    key="submit"
                     style={{marginTop: "30px"}}
                 >
                     <Button
@@ -150,9 +151,20 @@ function UserForm(props) {
                             try {
                                 const data = await form.validateFields();
                                 if (data.password !== data.confirm) {
+                                    setMessage("Confirm Password does not match.")
+                                    showModal();
+                                } else if (data.password.length < 8 || data.password.length > 32) {
+                                    setMessage("Password length must be 8-32.")
                                     showModal();
                                 } else {
-                                    console.log(data);
+                                    createUser(data.username, data.password, data.first_name, data.last_name, data.role, data.email)
+                                    .then((res) => {
+                                        console.log(res);
+                                        setMessage("Create user success.");
+                                        showModal();
+                                    }).catch((err) => {
+                                        console.log(err.response)
+                                    })
                                 }
                             } catch (errInfo) {
                                 console.log('Validate Failed:', errInfo);
@@ -168,7 +180,7 @@ function UserForm(props) {
                 title={null}
                 onCancel={handleCancel}
                 footer={null}>
-                    Confirm Password does not match.
+                    {message}
             </Modal>
         </div>
     );
