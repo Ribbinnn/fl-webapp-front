@@ -111,7 +111,7 @@ export default function AnnotationPanel(props) {
                 type="link"
                 icon={<EditOutlined />}
                 onClick={() => {
-                  Modal.info({
+                  Modal.confirm({
                     title: "Choose label",
                     content: (
                       <Label
