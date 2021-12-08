@@ -43,7 +43,13 @@ function Admin() { // check admin role
                 >
                     <Menu.Item key="createuser" onClick={() => history.push("/admin/createuser")}>Create User</Menu.Item>
                     <Menu.Item key="edituser" onClick={() => history.push("/admin/edituser")}>Edit User</Menu.Item>
-                    <Menu.Item key="deleteuser" onClick={() => history.push("/admin/deleteuser")}>Delete User</Menu.Item>
+                    <Menu.Item 
+                        key="deleteuser" 
+                        style={{color: "#E9C869", fontWeight: "bold"}} 
+                        onClick={() => history.push("/admin/deleteuser")}
+                    >
+                        Delete User
+                    </Menu.Item>
                 </SubMenu>
                 <SubMenu
                     key="project"
@@ -53,7 +59,13 @@ function Admin() { // check admin role
                     <Menu.Item key="createproject" onClick={() => history.push("/admin/createproject")}>Create Project</Menu.Item>
                     <Menu.Item key="editproject" onClick={() => history.push("/admin/editproject")}>Edit Project</Menu.Item>
                     <Menu.Item key="manageuser" onClick={() => history.push("/admin/manageuser")}>Manage User</Menu.Item>
-                    <Menu.Item key="deleteproject" onClick={() => history.push("/admin/deleteproject")}>Delete Project</Menu.Item>
+                    <Menu.Item 
+                        key="deleteproject" 
+                        style={{color: "#E9C869", fontWeight: "bold"}} 
+                        onClick={() => history.push("/admin/deleteproject")}
+                    >
+                        Delete Project
+                    </Menu.Item>
                 </SubMenu>
             </Menu>
             <div style={{padding: "25px 20px 20px 20px"}}>
