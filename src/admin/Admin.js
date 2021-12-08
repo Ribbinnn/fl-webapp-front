@@ -2,19 +2,20 @@ import React, { useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { Menu } from "antd";
 import { UserOutlined, SettingOutlined } from '@ant-design/icons';
+import UserForm from "./UserForm";
 
 const { SubMenu } = Menu;
 
 function Admin() { // check admin role
     const history = useHistory();
     const { mode } = useParams();
-    const [current, setCurrent] = useState("");
+    const [current, setCurrent] = useState(mode ? mode : "");
     const renderComponent = () => {
         switch(mode) {
             case "createuser":
-                return <label>create user</label>;
+                return <UserForm mode={mode} />;
             case "edituser":
-                return <label>edit user</label>;
+                return <UserForm mode={mode} />;
             case "deleteuser":
                 return <label>delete user</label>;
             case "createproject":
@@ -68,7 +69,7 @@ function Admin() { // check admin role
                     </Menu.Item>
                 </SubMenu>
             </Menu>
-            <div style={{padding: "25px 20px 20px 20px"}}>
+            <div style={{padding: "30px 20px"}}>
                 {renderComponent()}
             </div>
         </div>
