@@ -6,7 +6,7 @@ import UserForm from "./UserForm";
 
 const { SubMenu } = Menu;
 
-function Admin() { // check admin role
+function Admin() {
     const history = useHistory();
     const { mode } = useParams();
     const [current, setCurrent] = useState(mode ? mode : "");

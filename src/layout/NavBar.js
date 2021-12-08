@@ -75,15 +75,16 @@ export default function NavBar() {
         <Menu.Item key="aboutus" className="menuitem" icon={<UserOutlined />}>
           About Us
         </Menu.Item>
-        <Menu.Item
-          key="admin"
-          className="menuitem"
-          icon={<ControlOutlined />}
-          style={{ marginTop: 40 }}
-          onClick={() => history.push("/admin")}
-        >
-          Admin
-        </Menu.Item>
+        {JSON.parse(sessionStorage.getItem("user")).role === "admin" &&
+          <Menu.Item
+            key="admin"
+            className="menuitem"
+            icon={<ControlOutlined />}
+            style={{ marginTop: 40 }}
+            onClick={() => history.push("/admin")}
+          >
+            Admin
+          </Menu.Item>}
       </Menu>
     </div>
   );
