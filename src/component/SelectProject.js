@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Select } from "antd";
+import React, { useEffect, useState, useContext } from "react";
+import { useLocation } from "react-router-dom";
+import { Select, Modal } from "antd";
 import { selectProject } from '../api/project'
+import Contexts from '../utils/Contexts'
 const { Option } = Select;
 
 export default function SelectProject(props) {
   const [itemList, setItemList] = useState([]);
+  const { globalProject, setGlobalProject } = useContext(Contexts.project);
+  const { pathname } = useLocation()
 
   useEffect(() => {
       selectProject().then((response) => {
@@ -13,11 +17,11 @@ export default function SelectProject(props) {
           return({
             ProjectID: project._id,
             ProjectName: project.name,
-            /* Description: project.description,
+            // Description: project.description,
             Requirement: project.requirements,
-            Classes: project.predClasses,
-            Owner: project.users,
-            Task: project.task */
+            // Classes: project.predClasses,
+            // Owner: project.users,
+            // Task: project.task 
           })
         })
         setItemList(res_list);
@@ -26,24 +30,34 @@ export default function SelectProject(props) {
         console.error(err);
       });
   }, []);
-
+  
+  // handle change for select project dropdown in header
   function handleChange(value) {
-    /**
-     * 
-     * 
-     * handle change when select project
-     * 
-     * 
-     * 
-     */
-    console.log("Project ID: ",value)
+    const project = itemList.filter(item => item.ProjectID===value)
+    setGlobalProject({"projectId": project[0].ProjectID, "projectName": project[0].ProjectName, "projectReq": project[0].Requirement})
+    sessionStorage.setItem("project", JSON.stringify({"projectId": project[0].ProjectID, "projectName": project[0].ProjectName, "projectReq": project[0].Requirement}));
+    if (pathname.includes('/diagnosis')){
+      return Modal.confirm({
+        title: "Are you sure you want to change the project?",
+        content: "All changes will not be saved and you will be redirected to the first step of Diagnosis",
+        okText: "Sure",
+        width: 500,
+        onOk: () => {
+          window.location.reload()
+        },
+        cancelText: "No",
+      });
+    }
   }
+  
   return (
       <Select
         onChange={handleChange}
         dropdownStyle={{ borderRadius: 8 }}
-        defaultValue={props.Project.ProjectName || ""}
+        // defaultValue={props.Project.ProjectName?? "No Selected Project"}
         style = {{marginBottom: "20px"}}
+        className = {props.Class}
+        value={globalProject.projectName?? "No Selected Project"}
       >
         {itemList.map((item, i) => (
           <Option key={i} value={item.ProjectID}>

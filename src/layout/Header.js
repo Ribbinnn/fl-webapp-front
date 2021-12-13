@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useContext} from 'react';
 import { Button } from "antd";
 import "antd/dist/antd.css";
 import {
@@ -6,22 +6,17 @@ import {
   } from "@ant-design/icons";
 import { logout } from '../api/logout';
 import Contexts from '../utils/Contexts';
+import SelectProject from '../component/SelectProject';
 
 export default function Header(){
     const { globalProject, setGlobalProject } = useContext(Contexts.project);
 
     const username = JSON.parse(sessionStorage.getItem("user")).username
-    const [projectName, setProjectName] = useState(sessionStorage.getItem('project_name'))
-
-    useEffect(()=>{
-        console.log(projectName)
-        setProjectName(sessionStorage.getItem('project_name'))
-    }, [projectName])
 
     return(
             <div id="header">
-                <div style={{color: '#ffffff', textAlign:'center', marginLeft: 10, fontSize: 'large', width: "180px", textAlign:'left'}}>
-                    {globalProject.projectName}
+                <div style={{marginLeft: 10, height: 50}}>
+                    <SelectProject Project={globalProject} Class="select-header"/>
                 </div>
                 <div id="logo" style={{height: 25, width:200, backgroundColor:'#E5E5E5', textAlign:'center'}}>
                     Temp Logo Image
