@@ -3,13 +3,14 @@ import {
   Button,
   Row,
   Col,
-  Tooltip,
   Slider,
-  Switch,
+  message,
   Input,
   Checkbox,
   Spin,
   Table,
+  Modal,
+  Popconfirm,
 } from "antd";
 import {
   ZoomInOutlined,
@@ -19,11 +20,18 @@ import {
   BorderOutlined,
   StarOutlined,
   LoadingOutlined,
-  PlusCircleOutlined,
+  RedoOutlined,
+  SelectOutlined,
   DeleteOutlined,
+  VerticalAlignBottomOutlined,
+  ExclamationCircleOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
+import { useParams } from "react-router-dom";
 import { getDicomByAccessionNo } from "../../api/image";
 import { loadDicom } from "../../component/dicom-viewer/dicomLoader";
+import Label from "./Label";
+import { insertBBox, getBBox } from "../../api/masks";
 
 const cornerstone = window.cornerstone;
 const cornerstoneTools = window.cornerstoneTools;
@@ -38,27 +46,33 @@ export default function AnnotationPanel(props) {
   const [dicomElement, setDicomElement] = useState();
   const [columns, setColumns] = useState([
     {
-      title: "Finding",
-      dataIndex: "finding",
-      key: "finding",
+      title: "Label",
+      dataIndex: "label",
+      key: "label",
     },
     {
       title: "Action",
       key: "action",
       render: (text, record) => (
-        <Button type="link" icon={<DeleteOutlined />} onClick={() => deleteLayer(record.key)}/>
+        <Button type="link" icon={<DeleteOutlined />} />
       ),
     },
   ]);
-  const [layer, setLayer] = useState([]);
-  const [currentLayer, setCurrentLayer] = useState();
+  const { mode, rid } = useParams();
+  const [labels, setLabels] = useState([]);
+  const [labelList, setLabelList] = useState([]);
+  const [selectedLabel, setSelectedLabel] = useState();
+  const [labelBuffer, setLabelBuffer] = useState();
   const [viewerState, setViewerState] = useState({
     windowWidth: 0,
     windowLevel: 0,
     zoom: 1,
     invert: false,
     showInfo: true,
+    defaultWindowWidth: 0,
+    defaultWindowLevel: 0,
   });
+  const [btnMode, setBtnMode] = useState("close");
 
   useEffect(() => {
     loadDicom(
@@ -66,17 +80,128 @@ export default function AnnotationPanel(props) {
       "wado",
       displayImage
     );
-    addNewLayer();
+    //cornerstoneTools.toolColors.setToolColor('#4ad578');
+    // Set color for active tools
+    //cornerstoneTools.toolColors.setActiveColor('#58595b');
   }, []);
 
+  useEffect(() => {
+    console.log(labels);
+    setColumns([
+      {
+        title: "Label",
+        dataIndex: "label",
+        key: "label",
+        render: (text, record) => (
+          <span className="label-tag">
+            {(record.tool === "length" && <ColumnHeightOutlined />) ||
+              (record.tool === "rectangleRoi" && <BorderOutlined />) ||
+              (record.tool === "freehand" && <StarOutlined />)}
+            {record.label}
+          </span>
+        ),
+      },
+      {
+        title: "Action",
+        key: "action",
+        render: (text, record) => (
+          <span style={{ textAlign: "right" }}>
+            {record.tool !== "length" && (
+              <Button
+                type="link"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  Modal.confirm({
+                    title: "Choose label",
+                    content: (
+                      <Label
+                        setSelectedLabel={setSelectedLabel}
+                        labelList={labelList}
+                        setLabelList={setLabelList}
+                        defaultLabel={record.label}
+                      />
+                    ),
+                    keyboard: false,
+                    className: "label-selector-modal",
+                    okText: "Submit",
+                    cancelText: "Cancel",
+                    onOk: () => {
+                      setLabelBuffer({
+                        key: record.key,
+                      });
+                    },
+                    okButtonProps: {
+                      style: {
+                        boxShadow: "none",
+                        backgroundColor: "#de5c8e",
+                      },
+                    },
+                  });
+                }}
+              />
+            )}
+            <Popconfirm
+              title="Delete this label?"
+              onConfirm={() => {
+                let update = labels;
+                let ind = update.findIndex((item) => item.key === record.key);
+                let target = cornerstoneTools.getToolState(
+                  dicomElement,
+                  record.tool
+                ).data[record.index];
+                cornerstoneTools.removeToolState(
+                  dicomElement,
+                  record.tool,
+                  target
+                );
+                cornerstone.updateImage(dicomElement);
+                update.splice(ind, 1);
+                update = update.reduce((current, item) => {
+                  if (item.tool === record.tool && item.index > record.index) {
+                    return [...current, { ...item, index: item.index - 1 }];
+                  }
+                  return [...current, item];
+                }, []);
+                setLabels(update);
+                if (btnMode === "close") setBtnMode("save-cancel");
+              }}
+              okButtonProps={{ className: "primary-btn popconfirm" }}
+              cancelButtonProps={{ style: { display: "none" } }}
+            >
+              <Button type="link" icon={<DeleteOutlined />} />
+            </Popconfirm>
+          </span>
+        ),
+      },
+    ]);
+  }, [labels]);
+
+  useEffect(() => {
+    if (labelBuffer) {
+      console.log(labelBuffer)
+      if (labelBuffer.key <= labels.length) {
+        let edittedLabels = labels.map((item) => {
+          console.log(item)
+          if (item.key === labelBuffer.key) {
+            return { ...item, label: selectedLabel };
+          } else return item;
+        });
+        console.log(edittedLabels)
+        setLabels(edittedLabels);
+      } else {
+        let newLabel = {
+          ...labelBuffer,
+          label: labelBuffer.label ?? selectedLabel,
+        };
+        setLabels([...labels, newLabel]);
+      }
+      setLabelBuffer();
+      setSelectedLabel();
+    }
+  }, [labelBuffer]);
+
   function displayImage(image) {
-    // var img_ratio = { height: image.height, width: image.width };
     var element = document.getElementById("annotate-dicom-image");
-    /* if (img_ratio.height / img_ratio.width > 640 / 750) {
-      element.style.width = `${(img_ratio.width / img_ratio.height) * 640}px`;
-    } else if (img_ratio.height / img_ratio.width < 640 / 750) {
-      element.style.height = `${(img_ratio.height / img_ratio.width) * 750}px`;
-    } */
     cornerstone.enable(element);
     var viewport = cornerstone.getDefaultViewportForImage(element, image);
     console.log(viewport);
@@ -90,141 +215,181 @@ export default function AnnotationPanel(props) {
       defaultZoom: viewport.scale,
     });
     cornerstoneTools.mouseInput.enable(element);
+    cornerstoneTools.mouseWheelInput.enable(element);
+    // // Enable all tools we want to use with this element
+    cornerstoneTools.wwwc.activate(element, 1); // ww/wc is the default tool for left mouse button
+    cornerstoneTools.pan.activate(element, 2); // pan is the default tool for middle mouse button
+    cornerstoneTools.zoom.activate(element, 4); // zoom is the default tool for right mouse button
+    cornerstoneTools.zoomWheel.activate(element); // zoom is the default tool for middle mouse wheel
     cornerstoneTools.freehand.enable(element);
     cornerstoneTools.length.enable(element);
     cornerstoneTools.rectangleRoi.enable(element);
     cornerstoneTools.pan.enable(element);
-    console.log(cornerstoneTools);
+
+    setTool("mouse");
     setDicomElement(element);
+    removeAnnotations(element);
+    //getBBox
+    getBBox(rid).then((res) => {
+      if (res.data) {
+        let temp = res.data.data.reduce(
+          (current, item, i) => {
+            cornerstoneTools.addToolState(element, item.tool, {
+              ...item.data,
+              color: "#F76E8A",
+            });
+            console.log({
+              key: current.rectangleRoi + current.freehand + 1,
+              tool: item.tool,
+              index: current[item.tool],
+              label: item.label,
+            });
+            return {
+              ...current,
+              initial_lb: [
+                ...current.initial_lb,
+                {
+                  key: current.rectangleRoi + current.freehand + 1,
+                  tool: item.tool,
+                  index: current[item.tool],
+                  label: item.label,
+                },
+              ],
+              [item.tool]: current[item.tool] + 1,
+              initial_ll: current.initial_ll.includes(item.label)
+                ? current.initial_ll
+                : [...current.initial_ll, item.label],
+            };
+          },
+          { initial_lb: [], rectangleRoi: 0, freehand: 0, initial_ll: [] }
+        );
+        console.log(temp);
+        cornerstone.updateImage(element);
+        setLabels(temp.initial_lb);
+        setLabelList(temp.initial_ll);
+      }
+    });
+
     setImgLoaded(true);
   }
 
   function selectTool(prop) {
+    /**
+     * check if current is ratio and not complete yet -> remove
+     */
     deactivateTools();
-    cornerstoneTools[prop].activate(dicomElement, 1);
     setTool(prop);
+    if (prop === "mouse") prop = "wwwc";
+    else if (prop === "ratio") {
+    }
+    cornerstoneTools[prop].activate(dicomElement, 1);
   }
 
   function deactivateTools() {
-    cornerstoneTools.pan.deactivate(dicomElement, 1);
+    cornerstoneTools.wwwc.disable(dicomElement);
+    cornerstoneTools.pan.activate(dicomElement, 2); // 2 is middle mouse button
+    cornerstoneTools.zoom.activate(dicomElement, 4); // 4 is right mouse button
     cornerstoneTools.length.deactivate(dicomElement, 1);
     cornerstoneTools.rectangleRoi.deactivate(dicomElement, 1);
     cornerstoneTools.freehand.deactivate(dicomElement, 1);
   }
 
+  //onclose
+  function removeAnnotations(element) {
+    var toolStateManager = cornerstoneTools.getElementToolStateManager(element);
+    toolStateManager.clear(element);
+    cornerstone.updateImage(element);
+  }
+
+  const resetViewPort = () => {
+    let viewport = cornerstone.getViewport(dicomElement);
+    viewport.invert = false;
+    viewport.voi["windowCenter"] = viewerState.defaultWindowLevel;
+    viewport.voi["windowWidth"] = viewerState.defaultWindowWidth;
+    viewport.scale = viewerState.defaultZoom;
+    viewport.translation = { x: 0, y: 0 };
+    cornerstone.setViewport(dicomElement, viewport);
+    setViewerState({
+      ...viewerState,
+      windowLevel: viewerState.defaultWindowLevel,
+      windowWidth: viewerState.defaultWindowWidth,
+      zoom: 1,
+      invert: false,
+    });
+  };
+
   const imageOnClick = () => {
-    if (!tool || tool === "pan") return;
-    var lengthToolData = cornerstoneTools.getToolState(dicomElement, "length");
-    var rectangleRoiToolData = cornerstoneTools.getToolState(
-      dicomElement,
-      "rectangleRoi"
+    console.log(labels);
+    console.log(
+      cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState()
     );
-    var freehandToolData = cornerstoneTools.getToolState(
-      dicomElement,
-      "freehand"
+
+    if (tool === "ratio") {
+      return;
+    }
+    if (tool === "pan") {
+      return;
+    }
+    if (tool === "mouse") {
+      let viewport = cornerstone.getViewport(dicomElement);
+      setViewerState({
+        ...viewerState,
+        windowLevel: viewport.voi["windowCenter"],
+        windowWidth: viewport.voi["windowWidth"],
+      });
+      return;
+    }
+    let count = labels.reduce(
+      (counter, item) => {
+        counter[item.tool] = counter[item.tool] + 1;
+        return counter;
+      },
+      { rectangleRoi: 0, length: 0, freehand: 0 }
     );
-    let currentToolData = cornerstoneTools.getToolState(dicomElement, tool);
-    console.log(tool);
-    console.log(lengthToolData);
-    console.log(rectangleRoiToolData);
-    console.log(freehandToolData);
-    console.log(layer);
-    if (
-      tool !== "length" &&
-      lengthToolData &&
-      lengthToolData.data.length > 0 &&
-      currentToolData
-    ) {
-      updateLayer(currentLayer, tool, lengthToolData.data[0]);
-      addNewLayer();
-      cornerstoneTools.removeToolState(
-        dicomElement,
-        "length",
-        lengthToolData.data[0]
-      );
-      cornerstone.updateImage(dicomElement);
-      return;
-    }
-    if (
-      tool !== "rectangleRoi" &&
-      rectangleRoiToolData &&
-      rectangleRoiToolData.data.length > 0 &&
-      currentToolData
-    ) {
-      updateLayer(currentLayer, tool, rectangleRoiToolData.data[0]);
-      addNewLayer();
-      cornerstoneTools.removeToolState(
-        dicomElement,
-        "rectangleRoi",
-        rectangleRoiToolData.data[0]
-      );
-      cornerstone.updateImage(dicomElement);
-      return;
-    }
-    if (
-      tool !== "freehand" &&
-      freehandToolData &&
-      freehandToolData.data.length > 0 &&
-      currentToolData
-    ) {
-      updateLayer(currentLayer, tool, freehandToolData.data[0]);
-      addNewLayer();
-      cornerstoneTools.removeToolState(
-        dicomElement,
-        "freehand",
-        freehandToolData.data[0]
-      );
-      cornerstone.updateImage(dicomElement);
-      return;
-    }
-    if (currentToolData && currentToolData.data.length > 1) {
-      if (tool === "freehand" && currentToolData.data[1].active) {
+    let toolState = cornerstoneTools.getToolState(dicomElement, tool);
+    console.log(toolState);
+    if (toolState.data && toolState.data.length > count[tool]) {
+      if (toolState.data[toolState.data.length - 1].active) {
         return;
       }
-
-      currentToolData.data[0].visible = true;
-      updateLayer(currentLayer, tool, currentToolData.data[0]);
-      addNewLayer();
-      cornerstoneTools.removeToolState(
-        dicomElement,
+      addNewLabel(
         tool,
-        currentToolData.data[0]
+        toolState.data.length - 1,
+        toolState.data[toolState.data.length - 1]["length"] ?? undefined
       );
+      (tool === "freehand" || tool === "rectangleRoi") &&
+        setBtnMode("save-cancel");
+    }
+  };
 
-      cornerstone.updateImage(dicomElement);
-      return;
-    }
-    if (
-      tool === "freehand" &&
-      currentToolData.data.length === 1 &&
-      !currentToolData.data[0].active
-    ) {
-      updateLayer(currentLayer, tool, currentToolData.data[0]);
-    }
-    if (tool !== "freehand" && currentToolData.data.length === 1) {
-      updateLayer(currentLayer, tool, currentToolData.data[0]);
-    }
+  const imageOnScroll = () => {
+    console.log("zoom change");
+  };
+
+  const imageOnMoseDown = () => {
+    console.log("wwwc change");
   };
 
   const onViewerChange = (prop, value) => (e) => {
     let viewport = cornerstone.getViewport(dicomElement);
     console.log(viewport);
     if (prop === "zoomin") {
-      if (viewerState.zoom >= 3) return;
-      value = viewerState.zoom + 0.25;
+      if (viewerState.zoom >= 30) return;
+      value = viewport.scale / viewerState.defaultZoom + 0.25;
       viewport.scale = value * viewerState.defaultZoom;
       cornerstone.setViewport(dicomElement, viewport);
       prop = "zoom";
     }
     if (prop === "zoomout") {
       if (viewerState.zoom <= 0.25) return;
-      value = viewerState.zoom - 0.25;
+      value = viewport.scale / viewerState.defaultZoom - 0.25;
       viewport.scale = value * viewerState.defaultZoom;
       cornerstone.setViewport(dicomElement, viewport);
       prop = "zoom";
     }
     if (prop === "invert") {
       e = e.target.checked;
+      console.log(e);
       viewport.invert = e;
       cornerstone.setViewport(dicomElement, viewport);
     }
@@ -245,74 +410,95 @@ export default function AnnotationPanel(props) {
     console.log(`${checked ? "Show" : "Hide"} Bounding Box Info`);
   };
 
-  const addNewLayer = () => {
-    let key = layer.length > 0 ? layer[layer.length-1].key + 1 : 1;
-    let timeStamp = new Date();
-    let user = JSON.parse(sessionStorage.getItem("user")).id;
-    let newLayer = {
-      finding: `New Finding ${key}`,
-      key: key,
-      createdAt: timeStamp,
-      createdBy: user,
-      updatedAt: timeStamp,
-      updatedBy: user,
-    };
-    setLayer([...layer, newLayer]);
-    setCurrentLayer(newLayer.key);
-    console.log(newLayer);
-  };
-
-  const deleteLayer = key => {
-    // let decreased_layer = layer.filter((item) => {
-    //     return item.key !== key
-    //   });
-    // if (decreased_layer.length === 0) {
-    //     addNewLayer();
-    //     return
-    // }
-    // if (currentLayer === key) {
-    //     layerOnSelect(decreased_layer[0].key);
-    // }
-    // setLayer(decreased_layer);
-  }
-
-  const updateLayer = (key, tool, data) => {
-    let updated_layer = layer.map((item) => {
-      return item.key === key ? { ...item, data: data, updatedAt: new Date(), tool: tool } : item;
+  const addNewLabel = (tool, index, len) => {
+    let key = labels.length > 0 ? labels[labels.length - 1].key + 1 : 1;
+    if (len) {
+      setLabelBuffer({
+        key: key,
+        tool: tool,
+        index: index,
+        label: `${len.toFixed(2)} mm`,
+      });
+      return;
+    }
+    Modal.info({
+      title: "Choose label",
+      content: (
+        <Label
+          setSelectedLabel={setSelectedLabel}
+          labelList={labelList}
+          setLabelList={setLabelList}
+        />
+      ),
+      keyboard: false,
+      className: "label-selector-modal",
+      okText: "Submit",
+      onOk: () => {
+        setLabelBuffer({
+          key: key,
+          tool: tool,
+          index: index,
+        });
+      },
+      okButtonProps: {
+        style: {
+          boxShadow: "none",
+          backgroundColor: "#de5c8e",
+        },
+      },
     });
-    setLayer(updated_layer);
   };
 
-  const layerOnSelect = key => {
-      console.log(layer)
-      let selected_layer = layer.filter((item) => {
-        return item.key === key
-      })[0];
-      console.log(selected_layer)
-      let current_layer = layer.filter((item) => {
-        return item.key === currentLayer
-      })[0];
-      console.log(current_layer)
-      if (!current_layer.data){
-        let currentToolData = cornerstoneTools.getToolState(dicomElement, tool);
-        updateLayer(currentLayer, tool, currentToolData.data[0]);
-        current_layer["tool"] = tool;
-        current_layer["data"] = currentToolData.data[0];
-      }
+  const saveAnnotations = () => {
+    let rectangleRoiState = cornerstoneTools.getToolState(
+      dicomElement,
+      "rectangleRoi"
+    );
+    let freehandState = cornerstoneTools.getToolState(dicomElement, "freehand");
+    let user = JSON.parse(sessionStorage.getItem("user")).id;
+    let bbox_data = labels.reduce((current, item, i) => {
+      if (item.tool === "length") return current;
+      return [
+        ...current,
+        {
+          label: item.label,
+          tool: item.tool,
+          updated_by: user,
+          data:
+            item.tool === "freehand"
+              ? freehandState.data[item.index]
+              : rectangleRoiState.data[item.index],
+        },
+      ];
+    }, []);
+    console.log(bbox_data);
+    insertBBox(rid, bbox_data).then((res) => {
+      console.log(res);
+      if (res.success) {
+        message.success("Bounding boxes successfully saved.", 5);
+        setBtnMode("close");
+      } else
+        message.error("Cannot save bounding boxes, please try again later.", 5);
+    });
+  };
 
-      cornerstoneTools.removeToolState(
-        dicomElement,
-        current_layer.tool,
-        current_layer.data
-      );
-      cornerstoneTools.addToolState(
-        dicomElement,
-        selected_layer.tool,
-        selected_layer.data
-      );
-      cornerstone.updateImage(dicomElement);
-      setCurrentLayer(key)
-  }
+  const onCancelAnnotations = () => {
+    return Modal.confirm({
+      title: "Are you sure you want to cancel?",
+      icon: <ExclamationCircleOutlined />,
+      content: "All changes you made will not be saved.",
+      okText: "Sure",
+      onOk: () => {
+        loadDicom(
+          getDicomByAccessionNo(props.accession_no ?? "74"),
+          "wado",
+          displayImage
+        );
+        setBtnMode("close");
+      },
+      cancelText: "No",
+    });
+  };
 
   return (
     <div>
@@ -335,6 +521,8 @@ export default function AnnotationPanel(props) {
             id="annotate-dicom-image"
             className="dicomImage"
             onClick={imageOnClick}
+            onScroll={imageOnScroll}
+            onMouseDown={imageOnMoseDown}
             style={{ display: "relative", width: "750px", height: "640px" }}
           />
         </Col>
@@ -398,15 +586,20 @@ export default function AnnotationPanel(props) {
             justify="space-between"
             style={{ marginTop: "10px" }}
           >
-            <Col span={6} justify="center" align="start">
-              <Checkbox onChange={onViewerChange("invert")}>Invert</Checkbox>
+            <Col span={4} justify="center" align="start">
+              <Checkbox
+                onChange={onViewerChange("invert")}
+                checked={viewerState.invert}
+              >
+                Invert
+              </Checkbox>
             </Col>
-            <Col span={12}>
+            <Col span={8}>
               <div
                 style={{
                   display: "flex",
                   flexDirection: "row",
-                  justifyContent: "space-around",
+                  justifyContent: "center",
                   alignItems: "center",
                 }}
               >
@@ -420,14 +613,15 @@ export default function AnnotationPanel(props) {
                 <Button
                   className="zoom-btn"
                   icon={<ZoomOutOutlined />}
+                  style={{ marginRight: "2px" }}
                   onClick={onViewerChange("zoomout")}
                 />
 
-                <Input
+                {/* <Input
                   className="input-text smaller"
                   style={{ height: "30px", width: "70px" }}
                   value={`${viewerState.zoom * 100}%`}
-                />
+                /> */}
 
                 <Button
                   className="zoom-btn"
@@ -436,9 +630,33 @@ export default function AnnotationPanel(props) {
                 />
               </div>
             </Col>
+            <Col span={10}>
+              <Button className="reset-vp-btn" onClick={resetViewPort}>
+                Reset Viewport
+                <RedoOutlined />
+              </Button>
+            </Col>
           </Row>
-          <Row style={{ marginTop: "15px", marginBottom: "15px" }}>
-            <Col span={12} className="annotate-tool-btn-ctn">
+          {/* <Row align="end" style={{ marginTop: "5px" }}>
+            <Button className="reset-vp-btn" onClick={resetViewPort}>
+              Reset Viewport
+              <RedoOutlined />
+            </Button>
+          </Row> */}
+          <Row style={{ marginTop: "5px", marginBottom: "15px" }}>
+            <Col span={8} className="annotate-tool-btn-ctn">
+              <Button
+                className={`annotate-tool-btn ${
+                  tool === "mouse" ? "selected-tool" : ""
+                }`}
+                onClick={() => {
+                  selectTool("mouse");
+                }}
+              >
+                Mouse {<SelectOutlined />}
+              </Button>
+            </Col>
+            <Col span={8} className="annotate-tool-btn-ctn">
               <Button
                 className={`annotate-tool-btn ${
                   tool === "pan" ? "selected-tool" : ""
@@ -450,7 +668,7 @@ export default function AnnotationPanel(props) {
                 Pan {<DragOutlined />}
               </Button>
             </Col>
-            <Col span={12} className="annotate-tool-btn-ctn">
+            <Col span={8} className="annotate-tool-btn-ctn">
               <Button
                 className={`annotate-tool-btn ${
                   tool === "length" ? "selected-tool" : ""
@@ -462,7 +680,7 @@ export default function AnnotationPanel(props) {
                 Ruler {<ColumnHeightOutlined />}
               </Button>
             </Col>
-            <Col span={12} className="annotate-tool-btn-ctn">
+            <Col span={8} className="annotate-tool-btn-ctn">
               <Button
                 className={`annotate-tool-btn ${
                   tool === "rectangleRoi" ? "selected-tool" : ""
@@ -474,7 +692,7 @@ export default function AnnotationPanel(props) {
                 Rectangle {<BorderOutlined />}
               </Button>
             </Col>
-            <Col span={12} className="annotate-tool-btn-ctn">
+            <Col span={8} className="annotate-tool-btn-ctn">
               <Button
                 className={`annotate-tool-btn ${
                   tool === "freehand" ? "selected-tool" : ""
@@ -486,8 +704,21 @@ export default function AnnotationPanel(props) {
                 Polygon {<StarOutlined />}
               </Button>
             </Col>
+            <Col span={8} className="annotate-tool-btn-ctn">
+              <Button
+                className={`annotate-tool-btn ${
+                  tool === "ratio" ? "selected-tool" : ""
+                }`}
+                style={{ visibility: "hidden" }}
+                onClick={() => {
+                  // selectTool("freehand");
+                }}
+              >
+                Ratio {<VerticalAlignBottomOutlined />}
+              </Button>
+            </Col>
           </Row>
-          <Row justify="start" align="middle">
+          {/* <Row justify="start" align="middle">
             <Switch defaultChecked={false} onChange={onSwitchChange} />
             <label
               className="annotate-tool-label"
@@ -495,7 +726,7 @@ export default function AnnotationPanel(props) {
             >
               Bounding Box Info
             </label>
-          </Row>
+          </Row> */}
           <Row>
             <Col span={24} align="start" style={{ marginTop: "10px" }}>
               <label
@@ -505,29 +736,29 @@ export default function AnnotationPanel(props) {
                 Bounding Boxes
               </label>
               {/* <Button
-                className="add-layer-btn"
+                className="reset-vp-btn"
                 icon={<PlusCircleOutlined />}
-                onClick={addNewLayer}
+                onClick={addNewLabels}
               /> */}
             </Col>
             <Table
               className="annotate-table clickable-table"
               rowClassName={(record, index) =>
-                record.key === currentLayer ? "selected-layer" : ""
+                /* record.key === currentLabels ? "selected-labels" :  */ ""
               }
               columns={columns}
-              dataSource={layer}
+              dataSource={labels}
               showHeader={false}
               pagination={false}
               size="small"
-              onRow={(record, rowIndex) => {
-                return {
-                  onClick: (event) => {
-                    layerOnSelect(record.key)
-                    //setCurrentLayer(record.key);
-                  }, // click row
-                };
-              }}
+              // onRow={(record, rowIndex) => {
+              //   return {
+              //     onClick: (event) => {
+              //       // labelsOnSelect(record.key);
+              //       //setCurrentLabels(record.key);
+              //     }, // click row
+              //   };
+              // }}
             />
           </Row>
           <Row justify="end" style={{ marginTop: "25px" }}>
@@ -537,18 +768,27 @@ export default function AnnotationPanel(props) {
               </Button>
             )}
 
-            {true && (
+            {btnMode === "save-cancel" && (
               <Button
                 className="primary-btn smaller"
                 style={{ marginRight: "10px" }}
-                onClick={() => {}}
+                onClick={onCancelAnnotations}
               >
                 Cancel
               </Button>
             )}
-            {true && (
-              <Button className="primary-btn smaller" onClick={() => {}}>
+            {btnMode === "save-cancel" && (
+              <Button className="primary-btn smaller" onClick={saveAnnotations}>
                 Save
+              </Button>
+            )}
+
+            {btnMode === "close" && (
+              <Button
+                className="primary-btn smaller"
+                onClick={props.handleCancel}
+              >
+                Close
               </Button>
             )}
           </Row>

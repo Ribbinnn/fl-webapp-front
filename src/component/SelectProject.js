@@ -40,6 +40,7 @@ export default function SelectProject(props) {
         title: "Are you sure you want to change the project?",
         content: "All changes will not be saved and you will be redirected to the first step of Diagnosis",
         okText: "Sure",
+        width: 500,
         onOk: () => {
           window.location.reload()
         },

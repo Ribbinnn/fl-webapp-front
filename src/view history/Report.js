@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Collapse, Popover, Button, Row, Col, Image, Spin } from "antd";
+import { Collapse, Popover, Button, Row, Col, Image, Spin, Tag } from "antd";
 import Info from "../component/Info";
 import DicomViewOnly from "../component/dicom-viewer/DicomViewOnly";
 import {
@@ -146,23 +146,9 @@ const ReportHeader = (props) => {
         >
           Report
         </label>
-        <span
-          className="dot"
-          style={{
-            backgroundColor:
-              props.status === "annotated"
-                ? "#E9C869"
-                : props.status === "finalized"
-                ? "#7BE969"
-                : "",
-            marginLeft: "2.5%",
-          }}
-        />
-        <label
-          style={{ color: "#A3A3A3", marginLeft: "10px", fontSize: "medium" }}
-        >
+        <Tag color={props.status === "annotated" ? "warning" : "success"} style={{marginLeft: "10px"}}>
           {props.status === "annotated" ? "AI-Annotated" : "Finalized"}
-        </label>
+                    </Tag>
       </div>
       <label
         style={{
@@ -207,7 +193,7 @@ const ReportHeader = (props) => {
         <Popover
           className="proj-popover"
           placement="rightTop"
-          content={<ProjectInfo Project={props.project} />}
+          content={<ProjectInfo Project={props.project} notChange={true} />}
           style={{ margin: "0 30px 30px 30px" }}
         >
           <Button type="link" icon={<InfoCircleOutlined />} />

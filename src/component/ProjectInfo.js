@@ -35,7 +35,7 @@ export default function ProjectInfo(props) {
     .catch((err) => {
       console.error(err);
     });
-  }, [globalProject]);
+  }, props.notChange? []: [globalProject]);
 
   return (
     <div>
