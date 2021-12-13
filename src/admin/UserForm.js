@@ -71,8 +71,11 @@ function UserForm(props) {
                         >
                             {props.mode === "createuser" ? 
                                 <Input className="input-text" disabled={submit ? true : false} /> :
-                                <Select // add search
+                                <Select
                                     className="search-component wider" 
+                                    showSearch
+                                    optionFilterProp="children"
+                                    filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                                     onChange={(i) => {
                                         // setLoaded(false);
                                         getUserById(users[i]["_id"])

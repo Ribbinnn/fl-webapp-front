@@ -726,6 +726,10 @@ label.clickable-label:hover {
   width: 243px;
 }
 
+.ant-select-single .ant-select-selector .ant-select-selection-search {
+  top: 3px;
+}
+
 .ant-select-disabled.ant-select:not(.ant-select-customize-input) .ant-select-selector {
   border: 1px solid #d9d9d9 !important;
 }
