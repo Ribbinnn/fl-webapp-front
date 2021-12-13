@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useContext} from 'react';
 import { Button } from "antd";
 import "antd/dist/antd.css";
 import {
@@ -12,12 +12,6 @@ export default function Header(){
     const { globalProject, setGlobalProject } = useContext(Contexts.project);
 
     const username = JSON.parse(sessionStorage.getItem("user")).username
-    const [projectName, setProjectName] = useState(sessionStorage.getItem('project_name'))
-
-    useEffect(()=>{
-        console.log(projectName)
-        setProjectName(sessionStorage.getItem('project_name'))
-    }, [projectName])
 
     return(
             <div id="header">

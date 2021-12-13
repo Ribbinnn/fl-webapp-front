@@ -92,7 +92,7 @@ function MyRecord () {
         .catch((err)=>{
             console.log(err)
         })
-    }, [reload]);
+    }, [reload, globalProject]);
 
     function onChangeFirstDate(date, dateString) {
         setFirstDate(date? date.startOf('day').toDate(): "none") // Moment Object
