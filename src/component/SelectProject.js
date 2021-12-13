@@ -31,6 +31,7 @@ export default function SelectProject(props) {
       });
   }, []);
   
+  // handle change for select project dropdown in header
   function handleChange(value) {
     const project = itemList.filter(item => item.ProjectID===value)
     setGlobalProject({"projectId": project[0].ProjectID, "projectName": project[0].ProjectName, "projectReq": project[0].Requirement})
@@ -48,6 +49,7 @@ export default function SelectProject(props) {
       });
     }
   }
+  
   return (
       <Select
         onChange={handleChange}
