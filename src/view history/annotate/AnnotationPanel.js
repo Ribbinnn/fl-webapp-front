@@ -4,13 +4,13 @@ import {
   Row,
   Col,
   Slider,
-  Switch,
+  message,
   Input,
   Checkbox,
   Spin,
   Table,
   Modal,
-  Popconfirm
+  Popconfirm,
 } from "antd";
 import {
   ZoomInOutlined,
@@ -24,10 +24,14 @@ import {
   SelectOutlined,
   DeleteOutlined,
   VerticalAlignBottomOutlined,
+  ExclamationCircleOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
+import { useParams } from "react-router-dom";
 import { getDicomByAccessionNo } from "../../api/image";
 import { loadDicom } from "../../component/dicom-viewer/dicomLoader";
 import Label from "./Label";
+import { insertBBox, getBBox } from "../../api/masks";
 
 const cornerstone = window.cornerstone;
 const cornerstoneTools = window.cornerstoneTools;
@@ -54,8 +58,9 @@ export default function AnnotationPanel(props) {
       ),
     },
   ]);
+  const { mode, rid } = useParams();
   const [labels, setLabels] = useState([]);
-  const [labelList,setLabelList] = useState([]);
+  const [labelList, setLabelList] = useState([]);
   const [selectedLabel, setSelectedLabel] = useState();
   const [labelBuffer, setLabelBuffer] = useState();
   const [viewerState, setViewerState] = useState({
@@ -67,6 +72,7 @@ export default function AnnotationPanel(props) {
     defaultWindowWidth: 0,
     defaultWindowLevel: 0,
   });
+  const [btnMode, setBtnMode] = useState("close");
 
   useEffect(() => {
     loadDicom(
@@ -80,7 +86,7 @@ export default function AnnotationPanel(props) {
   }, []);
 
   useEffect(() => {
-    console.log(labels)
+    console.log(labels);
     setColumns([
       {
         title: "Label",
@@ -88,48 +94,83 @@ export default function AnnotationPanel(props) {
         key: "label",
         render: (text, record) => (
           <span className="label-tag">
-          {record.tool === "length" && <ColumnHeightOutlined/> ||
-          record.tool === "rectangleRoi" && <BorderOutlined/> ||
-          record.tool === "freehand" && <StarOutlined/>}{record.label}
+            {(record.tool === "length" && <ColumnHeightOutlined />) ||
+              (record.tool === "rectangleRoi" && <BorderOutlined />) ||
+              (record.tool === "freehand" && <StarOutlined />)}
+            {record.label}
           </span>
-        )
+        ),
       },
       {
         title: "Action",
         key: "action",
         render: (text, record) => (
-          <Popconfirm
-                  title="Delete this label?"
-                  onConfirm={() => {
-                    let update = labels;
-                    let ind = update.findIndex((item) => item.key === record.key);
-                    let target = cornerstoneTools.getToolState(
-                      dicomElement,
-                      record.tool
-                    ).data[record.index];
-                    cornerstoneTools.removeToolState(
-                      dicomElement,
-                      record.tool,
-                      target
-                    );
-                    cornerstone.updateImage(dicomElement);
-                    update.splice(ind, 1);
-                    update = update.reduce((current, item) => {
-                      if (item.tool === record.tool && item.index > record.index) {
-                        return [...current, {...item, index: item.index - 1}];
-                      }
-                      return [...current,item];
-                    }, []);
-                    setLabels(update);
-                  }}
-                  okButtonProps={{ className: "primary-btn popconfirm" }}
-                  cancelButtonProps={{ style: { display: "none" } }}
-                >
-          <Button
-            type="link"
-            icon={<DeleteOutlined />}
-          />
-          </Popconfirm>
+          <span style={{ textAlign: "right" }}>
+            {record.tool !== "length" && (
+              <Button
+                type="link"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  Modal.confirm({
+                    title: "Choose label",
+                    content: (
+                      <Label
+                        setSelectedLabel={setSelectedLabel}
+                        labelList={labelList}
+                        setLabelList={setLabelList}
+                        defaultLabel={record.label}
+                      />
+                    ),
+                    keyboard: false,
+                    className: "label-selector-modal",
+                    okText: "Submit",
+                    cancelText: "Cancel",
+                    onOk: () => {
+                      setLabelBuffer({
+                        key: record.key,
+                      });
+                    },
+                    okButtonProps: {
+                      style: {
+                        boxShadow: "none",
+                        backgroundColor: "#de5c8e",
+                      },
+                    },
+                  });
+                }}
+              />
+            )}
+            <Popconfirm
+              title="Delete this label?"
+              onConfirm={() => {
+                let update = labels;
+                let ind = update.findIndex((item) => item.key === record.key);
+                let target = cornerstoneTools.getToolState(
+                  dicomElement,
+                  record.tool
+                ).data[record.index];
+                cornerstoneTools.removeToolState(
+                  dicomElement,
+                  record.tool,
+                  target
+                );
+                cornerstone.updateImage(dicomElement);
+                update.splice(ind, 1);
+                update = update.reduce((current, item) => {
+                  if (item.tool === record.tool && item.index > record.index) {
+                    return [...current, { ...item, index: item.index - 1 }];
+                  }
+                  return [...current, item];
+                }, []);
+                setLabels(update);
+                if (btnMode === "close") setBtnMode("save-cancel");
+              }}
+              okButtonProps={{ className: "primary-btn popconfirm" }}
+              cancelButtonProps={{ style: { display: "none" } }}
+            >
+              <Button type="link" icon={<DeleteOutlined />} />
+            </Popconfirm>
+          </span>
         ),
       },
     ]);
@@ -137,11 +178,23 @@ export default function AnnotationPanel(props) {
 
   useEffect(() => {
     if (labelBuffer) {
-      let newLabel = {
-        ...labelBuffer,
-        label: selectedLabel,
-      };
-      setLabels([...labels, newLabel]);
+      console.log(labelBuffer)
+      if (labelBuffer.key <= labels.length) {
+        let edittedLabels = labels.map((item) => {
+          console.log(item)
+          if (item.key === labelBuffer.key) {
+            return { ...item, label: selectedLabel };
+          } else return item;
+        });
+        console.log(edittedLabels)
+        setLabels(edittedLabels);
+      } else {
+        let newLabel = {
+          ...labelBuffer,
+          label: labelBuffer.label ?? selectedLabel,
+        };
+        setLabels([...labels, newLabel]);
+      }
       setLabelBuffer();
       setSelectedLabel();
     }
@@ -175,7 +228,48 @@ export default function AnnotationPanel(props) {
 
     setTool("mouse");
     setDicomElement(element);
-    element.addEventListener("cornerstoneimagerendered", (e) => {console.log("here")});
+    removeAnnotations(element);
+    //getBBox
+    getBBox(rid).then((res) => {
+      if (res.data) {
+        let temp = res.data.data.reduce(
+          (current, item, i) => {
+            cornerstoneTools.addToolState(element, item.tool, {
+              ...item.data,
+              color: "#F76E8A",
+            });
+            console.log({
+              key: current.rectangleRoi + current.freehand + 1,
+              tool: item.tool,
+              index: current[item.tool],
+              label: item.label,
+            });
+            return {
+              ...current,
+              initial_lb: [
+                ...current.initial_lb,
+                {
+                  key: current.rectangleRoi + current.freehand + 1,
+                  tool: item.tool,
+                  index: current[item.tool],
+                  label: item.label,
+                },
+              ],
+              [item.tool]: current[item.tool] + 1,
+              initial_ll: current.initial_ll.includes(item.label)
+                ? current.initial_ll
+                : [...current.initial_ll, item.label],
+            };
+          },
+          { initial_lb: [], rectangleRoi: 0, freehand: 0, initial_ll: [] }
+        );
+        console.log(temp);
+        cornerstone.updateImage(element);
+        setLabels(temp.initial_lb);
+        setLabelList(temp.initial_ll);
+      }
+    });
+
     setImgLoaded(true);
   }
 
@@ -201,12 +295,11 @@ export default function AnnotationPanel(props) {
   }
 
   //onclose
-  const removeAnnotations = () => {
-    var toolStateManager =
-    cornerstoneTools.getElementToolStateManager(dicomElement);
-    toolStateManager.clear(dicomElement);
-    cornerstone.updateImage(dicomElement);
-  };
+  function removeAnnotations(element) {
+    var toolStateManager = cornerstoneTools.getElementToolStateManager(element);
+    toolStateManager.clear(element);
+    cornerstone.updateImage(element);
+  }
 
   const resetViewPort = () => {
     let viewport = cornerstone.getViewport(dicomElement);
@@ -226,8 +319,10 @@ export default function AnnotationPanel(props) {
   };
 
   const imageOnClick = () => {
-    console.log(labels)
-    console.log(cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState())
+    console.log(labels);
+    console.log(
+      cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState()
+    );
 
     if (tool === "ratio") {
       return;
@@ -254,36 +349,40 @@ export default function AnnotationPanel(props) {
     let toolState = cornerstoneTools.getToolState(dicomElement, tool);
     console.log(toolState);
     if (toolState.data && toolState.data.length > count[tool]) {
-      if (
-        toolState.data[toolState.data.length - 1].active
-      ) {
+      if (toolState.data[toolState.data.length - 1].active) {
         return;
       }
-      addNewLabel(tool, toolState.data.length - 1);
+      addNewLabel(
+        tool,
+        toolState.data.length - 1,
+        toolState.data[toolState.data.length - 1]["length"] ?? undefined
+      );
+      (tool === "freehand" || tool === "rectangleRoi") &&
+        setBtnMode("save-cancel");
     }
   };
 
   const imageOnScroll = () => {
-    console.log("zoom change")
-  }
+    console.log("zoom change");
+  };
 
   const imageOnMoseDown = () => {
-    console.log("wwwc change")
-  }
+    console.log("wwwc change");
+  };
 
   const onViewerChange = (prop, value) => (e) => {
     let viewport = cornerstone.getViewport(dicomElement);
     console.log(viewport);
     if (prop === "zoomin") {
       if (viewerState.zoom >= 30) return;
-      value = viewport.scale/viewerState.defaultZoom + 0.25;
+      value = viewport.scale / viewerState.defaultZoom + 0.25;
       viewport.scale = value * viewerState.defaultZoom;
       cornerstone.setViewport(dicomElement, viewport);
       prop = "zoom";
     }
     if (prop === "zoomout") {
       if (viewerState.zoom <= 0.25) return;
-      value = viewport.scale/viewerState.defaultZoom - 0.25;
+      value = viewport.scale / viewerState.defaultZoom - 0.25;
       viewport.scale = value * viewerState.defaultZoom;
       cornerstone.setViewport(dicomElement, viewport);
       prop = "zoom";
@@ -311,13 +410,26 @@ export default function AnnotationPanel(props) {
     console.log(`${checked ? "Show" : "Hide"} Bounding Box Info`);
   };
 
-  const addNewLabel = (tool, index) => {
+  const addNewLabel = (tool, index, len) => {
     let key = labels.length > 0 ? labels[labels.length - 1].key + 1 : 1;
-    let timeStamp = new Date();
-    let user = JSON.parse(sessionStorage.getItem("user")).id;
+    if (len) {
+      setLabelBuffer({
+        key: key,
+        tool: tool,
+        index: index,
+        label: `${len.toFixed(2)} mm`,
+      });
+      return;
+    }
     Modal.info({
       title: "Choose label",
-      content: <Label setSelectedLabel={setSelectedLabel} labelList={labelList} setLabelList={setLabelList} />,
+      content: (
+        <Label
+          setSelectedLabel={setSelectedLabel}
+          labelList={labelList}
+          setLabelList={setLabelList}
+        />
+      ),
       keyboard: false,
       className: "label-selector-modal",
       okText: "Submit",
@@ -326,10 +438,6 @@ export default function AnnotationPanel(props) {
           key: key,
           tool: tool,
           index: index,
-          createdAt: timeStamp,
-          createdBy: user,
-          updatedAt: timeStamp,
-          updatedBy: user,
         });
       },
       okButtonProps: {
@@ -338,6 +446,57 @@ export default function AnnotationPanel(props) {
           backgroundColor: "#de5c8e",
         },
       },
+    });
+  };
+
+  const saveAnnotations = () => {
+    let rectangleRoiState = cornerstoneTools.getToolState(
+      dicomElement,
+      "rectangleRoi"
+    );
+    let freehandState = cornerstoneTools.getToolState(dicomElement, "freehand");
+    let user = JSON.parse(sessionStorage.getItem("user")).id;
+    let bbox_data = labels.reduce((current, item, i) => {
+      if (item.tool === "length") return current;
+      return [
+        ...current,
+        {
+          label: item.label,
+          tool: item.tool,
+          updated_by: user,
+          data:
+            item.tool === "freehand"
+              ? freehandState.data[item.index]
+              : rectangleRoiState.data[item.index],
+        },
+      ];
+    }, []);
+    console.log(bbox_data);
+    insertBBox(rid, bbox_data).then((res) => {
+      console.log(res);
+      if (res.success) {
+        message.success("Bounding boxes successfully saved.", 5);
+        setBtnMode("close");
+      } else
+        message.error("Cannot save bounding boxes, please try again later.", 5);
+    });
+  };
+
+  const onCancelAnnotations = () => {
+    return Modal.confirm({
+      title: "Are you sure you want to cancel?",
+      icon: <ExclamationCircleOutlined />,
+      content: "All changes you made will not be saved.",
+      okText: "Sure",
+      onOk: () => {
+        loadDicom(
+          getDicomByAccessionNo(props.accession_no ?? "74"),
+          "wado",
+          displayImage
+        );
+        setBtnMode("close");
+      },
+      cancelText: "No",
     });
   };
 
@@ -454,7 +613,7 @@ export default function AnnotationPanel(props) {
                 <Button
                   className="zoom-btn"
                   icon={<ZoomOutOutlined />}
-                  style={{marginRight: "2px"}}
+                  style={{ marginRight: "2px" }}
                   onClick={onViewerChange("zoomout")}
                 />
 
@@ -472,10 +631,10 @@ export default function AnnotationPanel(props) {
               </div>
             </Col>
             <Col span={10}>
-            <Button className="reset-vp-btn" onClick={resetViewPort}>
-              Reset Viewport
-              <RedoOutlined />
-            </Button>
+              <Button className="reset-vp-btn" onClick={resetViewPort}>
+                Reset Viewport
+                <RedoOutlined />
+              </Button>
             </Col>
           </Row>
           {/* <Row align="end" style={{ marginTop: "5px" }}>
@@ -550,7 +709,7 @@ export default function AnnotationPanel(props) {
                 className={`annotate-tool-btn ${
                   tool === "ratio" ? "selected-tool" : ""
                 }`}
-                style={{visibility: "hidden"}}
+                style={{ visibility: "hidden" }}
                 onClick={() => {
                   // selectTool("freehand");
                 }}
@@ -609,18 +768,27 @@ export default function AnnotationPanel(props) {
               </Button>
             )}
 
-            {true && (
+            {btnMode === "save-cancel" && (
               <Button
                 className="primary-btn smaller"
                 style={{ marginRight: "10px" }}
-                onClick={() => {}}
+                onClick={onCancelAnnotations}
               >
                 Cancel
               </Button>
             )}
-            {true && (
-              <Button className="primary-btn smaller" onClick={() => {}}>
+            {btnMode === "save-cancel" && (
+              <Button className="primary-btn smaller" onClick={saveAnnotations}>
                 Save
+              </Button>
+            )}
+
+            {btnMode === "close" && (
+              <Button
+                className="primary-btn smaller"
+                onClick={props.handleCancel}
+              >
+                Close
               </Button>
             )}
           </Row>
@@ -629,318 +797,3 @@ export default function AnnotationPanel(props) {
     </div>
   );
 }
-/**
- * {
-    "rectangleRoi": {
-        "data": [
-            {
-                "visible": true,
-                "active": false,
-                "handles": {
-                    "start": {
-                        "x": 469.9,
-                        "y": 395.24999999999994,
-                        "highlight": true,
-                        "active": false
-                    },
-                    "end": {
-                        "x": 1144.1499999999996,
-                        "y": 943.9499999999999,
-                        "highlight": true,
-                        "active": false
-                    }
-                },
-                "invalidated": true
-            },
-            {
-                "visible": true,
-                "active": false,
-                "handles": {
-                    "start": {
-                        "x": 1683.5499999999997,
-                        "y": 246.44999999999996,
-                        "highlight": true,
-                        "active": false
-                    },
-                    "end": {
-                        "x": 2027.6499999999996,
-                        "y": 655.65,
-                        "highlight": true,
-                        "active": false
-                    }
-                },
-                "invalidated": true
-            }
-        ]
-    },
-    "freehand": {
-        "data": [
-            {
-                "visible": true,
-                "active": false,
-                "handles": [
-                    {
-                        "x": 2185.7499999999995,
-                        "y": 1641.4499999999998,
-                        "highlight": true,
-                        "active": true,
-                        "lines": [
-                            {
-                                "x": 1404.5499999999997,
-                                "y": 1464.7499999999998
-                            }
-                        ]
-                    },
-                    {
-                        "x": 1404.5499999999997,
-                        "y": 1464.7499999999998,
-                        "highlight": true,
-                        "active": true,
-                        "lines": [
-                            {
-                                "x": 1567.2999999999997,
-                                "y": 1697.2499999999998
-                            }
-                        ]
-                    },
-                    {
-                        "x": 1567.2999999999997,
-                        "y": 1697.2499999999998,
-                        "highlight": true,
-                        "active": true,
-                        "lines": [
-                            {
-                                "x": 2185.7499999999995,
-                                "y": 1641.4499999999998,
-                                "highlight": true,
-                                "active": true,
-                                "lines": [
-                                    {
-                                        "x": 1404.5499999999997,
-                                        "y": 1464.7499999999998
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ],
-                "highlight": false
-            },
-            {
-                "visible": true,
-                "active": false,
-                "handles": [
-                    {
-                        "x": 311.80000000000007,
-                        "y": 1125.3,
-                        "highlight": true,
-                        "active": true,
-                        "lines": [
-                            {
-                                "x": 395.5,
-                                "y": 1329.8999999999999
-                            }
-                        ]
-                    },
-                    {
-                        "x": 395.5,
-                        "y": 1329.8999999999999,
-                        "highlight": true,
-                        "active": true,
-                        "lines": [
-                            {
-                                "x": 702.4,
-                                "y": 1241.55
-                            }
-                        ]
-                    },
-                    {
-                        "x": 702.4,
-                        "y": 1241.55,
-                        "highlight": true,
-                        "active": true,
-                        "lines": [
-                            {
-                                "x": 311.80000000000007,
-                                "y": 1125.3,
-                                "highlight": true,
-                                "active": true,
-                                "lines": [
-                                    {
-                                        "x": 395.5,
-                                        "y": 1329.8999999999999
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ],
-                "highlight": false
-            },
-            {
-                "visible": true,
-                "active": false,
-                "handles": [
-                    {
-                        "x": 2372,
-                        "y": 1222.9499999999998,
-                        "highlight": true,
-                        "active": true,
-                        "lines": [
-                            {
-                                "x": 2176.45,
-                                "y": 1432.1999999999998
-                            }
-                        ]
-                    },
-                    {
-                        "x": 2176.45,
-                        "y": 1432.1999999999998,
-                        "highlight": true,
-                        "active": true,
-                        "lines": [
-                            {
-                                "x": 2278.7499999999995,
-                                "y": 1329.8999999999999
-                            }
-                        ]
-                    },
-                    {
-                        "x": 2278.7499999999995,
-                        "y": 1329.8999999999999,
-                        "highlight": true,
-                        "active": true,
-                        "lines": [
-                            {
-                                "x": 2372,
-                                "y": 1222.9499999999998,
-                                "highlight": true,
-                                "active": true,
-                                "lines": [
-                                    {
-                                        "x": 2176.45,
-                                        "y": 1432.1999999999998
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ],
-                "highlight": false
-            }
-        ]
-    },
-    "length": {
-        "data": [
-            {
-                "visible": true,
-                "active": false,
-                "handles": {
-                    "start": {
-                        "x": 1795.15,
-                        "y": 1241.5499999999997,
-                        "highlight": true,
-                        "active": false
-                    },
-                    "end": {
-                        "x": 2190.3999999999996,
-                        "y": 1050.8999999999996,
-                        "highlight": true,
-                        "active": false
-                    },
-                    "textBox": {
-                        "active": false,
-                        "hasMoved": false,
-                        "movesIndependently": false,
-                        "drawnIndependently": true,
-                        "allowedOutsideImage": true,
-                        "hasBoundingBox": true,
-                        "x": 2190.3999999999996,
-                        "y": 1050.8999999999996,
-                        "boundingBox": {
-                            "width": 76.6943359375,
-                            "height": 25,
-                            "left": 601,
-                            "top": 213.49999999999991
-                        }
-                    }
-                },
-                "length": 63.75946177460234,
-                "invalidated": true
-            },
-            {
-                "visible": true,
-                "active": false,
-                "handles": {
-                    "start": {
-                        "x": 711.6999999999999,
-                        "y": 1232.2499999999998,
-                        "highlight": true,
-                        "active": false
-                    },
-                    "end": {
-                        "x": 962.7999999999998,
-                        "y": 1167.1499999999999,
-                        "highlight": true,
-                        "active": false
-                    },
-                    "textBox": {
-                        "active": false,
-                        "hasMoved": false,
-                        "movesIndependently": false,
-                        "drawnIndependently": true,
-                        "allowedOutsideImage": true,
-                        "hasBoundingBox": true,
-                        "x": 962.7999999999998,
-                        "y": 1167.1499999999999,
-                        "boundingBox": {
-                            "width": 76.6943359375,
-                            "height": 25,
-                            "left": 337,
-                            "top": 238.49999999999997
-                        }
-                    }
-                },
-                "length": 37.68973562247797,
-                "invalidated": true
-            },
-            {
-                "visible": true,
-                "active": false,
-                "handles": {
-                    "start": {
-                        "x": 730.3000000000001,
-                        "y": 1106.6999999999998,
-                        "highlight": true,
-                        "active": false
-                    },
-                    "end": {
-                        "x": 1093,
-                        "y": 1381.0499999999997,
-                        "highlight": true,
-                        "active": false
-                    },
-                    "textBox": {
-                        "active": false,
-                        "hasMoved": false,
-                        "movesIndependently": false,
-                        "drawnIndependently": true,
-                        "allowedOutsideImage": true,
-                        "hasBoundingBox": true,
-                        "x": 1093,
-                        "y": 1381.0499999999997,
-                        "boundingBox": {
-                            "width": 76.6943359375,
-                            "height": 25,
-                            "left": 365,
-                            "top": 284.49999999999994
-                        }
-                    }
-                },
-                "length": 66.07631031494076,
-                "invalidated": true
-            }
-        ]
-    }
-}
- */

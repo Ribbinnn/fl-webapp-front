@@ -1076,6 +1076,7 @@ table tr td.ant-table-selection-column {
 }
 .annotate-table .ant-table-tbody > tr > td:nth-child(even) {
   width: 100px;
+  text-align: right;
 }
 .annotate-table .ant-table-tbody > tr > td:nth-child(odd) {
   text-align: left;

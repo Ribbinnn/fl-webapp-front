@@ -5,7 +5,7 @@ import { PlusOutlined } from "@ant-design/icons";
 const { Option } = Select;
 
 export default function Label(props) {
-    const [labelList,setLabelList] = useState(props.labelList);
+  const [labelList,setLabelList] = useState(props.labelList);
   const [name, setName] = useState("");
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function Label(props) {
       onChange={handleChange}
       style={{ width: 300 }}
       className="label-selector"
-      defaultValue={labelList[0] ?? ""}
+      defaultValue={props.defaultLabel ?? labelList[0] ?? ""}
       dropdownRender={(menu) => (
         <div>
           {menu}
