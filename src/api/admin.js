@@ -10,3 +10,43 @@ export const createUser = async (username, password, first_name, last_name, role
         throw e
     }
 }
+
+export const updateUser = async (username, first_name, last_name, role, email, id, password, isChulaSSO) => {
+    try {
+        if (password === "") {
+            const res = (
+                await instance.patch("/users", {username, first_name, last_name, role, email, id, isChulaSSO})
+            ).data;
+            return res;
+        } else {
+            const res = (
+                await instance.patch("/users", {username, first_name, last_name, role, email, id, password, isChulaSSO})
+            ).data;
+            return res;
+        }
+    } catch (e) {
+        throw e
+    }
+}
+
+export const getAllUsers = async () => {
+    try {
+        const res = (
+            await instance.get("/users")
+        ).data.data;
+        return res;
+    } catch (e) {
+        throw e
+    }
+}
+
+export const getUserById = async (user_id) => {
+    try {
+        const res = (
+            await instance.get("/users/" + user_id)
+        ).data.data;
+        return res;
+    } catch (e) {
+        throw e
+    }
+}

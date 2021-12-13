@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Form, Input, Select, Button, Modal } from "antd";
-import { createUser } from "../api/admin";
+import { createUser, updateUser, getAllUsers, getUserById } from "../api/admin";
 
 const { Option } = Select;
 
-function UserForm(props) {
+function UserForm(props) { // add loading
     const roles = ["clinician", "radiologist", "admin"];
+    const [users, setUsers] = useState([]);
+    const [isChulaSSO, setIsChulaSSO] = useState(null);
+    const [updateUserId, setUpdateUserId] = useState("");
     const [form] = Form.useForm();
+    const [submit, setSubmit] = useState(false);
+    const [inputVisible, setInputVisible] = useState(true);
     const [visible,setVisible] = useState(false)
     const showModal = () => {
         setVisible(true)
@@ -15,6 +20,18 @@ function UserForm(props) {
         setVisible(false)
     };
     const [message, setMessage] = useState("");
+    useEffect(() => {
+        if (props.mode === "edituser") {
+            getAllUsers()
+            .then((res) => {
+                setUsers(res);
+                form.resetFields();
+                setInputVisible(false);
+            }).catch((err) => console.log(err.response));
+        } else {
+            setInputVisible(true);
+        }
+    }, [props.mode]);
     return(
         <div>
             <label style={{fontWeight: "bold"}}>
@@ -33,11 +50,31 @@ function UserForm(props) {
                         ]}
                         style={{display: "inline-block", marginRight: "30px"}}
                     >
-                        <Input
-                            className="input-text"
-                            defaultValue="" />
+                        {props.mode === "createuser" ? 
+                            <Input className="input-text" disabled={submit ? true : false} /> :
+                            <Select 
+                                className="search-component wider" 
+                                onChange={(i) => {
+                                    form.resetFields();
+                                    getUserById(users[i]["_id"])
+                                    .then((res) => {
+                                        setIsChulaSSO(res["isChulaSSO"]);
+                                        setUpdateUserId(res["_id"]);
+                                        form.setFieldsValue(res);
+                                        setSubmit(false);
+                                        setInputVisible(true);
+                                    }).catch((err) => console.log(err.response));
+                                }}
+                                style={{width: "243px"}}
+                            >
+                                {users.map((user, i) => (
+                                    <Option key={i} value={i}>
+                                        {user.username}
+                                    </Option>
+                                ))}
+                            </Select>}
                     </Form.Item>
-                    <Form.Item
+                    {inputVisible && <Form.Item
                         name="email"
                         key="email"
                         label="Email"
@@ -49,27 +86,22 @@ function UserForm(props) {
                         ]}
                         style={{display: "inline-block"}}
                     >
-                        <Input
-                            className="input-text"
-                            defaultValue="" />
-                    </Form.Item>
+                        <Input className="input-text" disabled={submit || isChulaSSO ? true : false} />
+                    </Form.Item>}
                 </div>
-                <div>
+                {inputVisible && <div>
                     <Form.Item
                         name="password"
                         key="password"
                         label="Password"
                         rules={[
                             {
-                                required: true,
+                                required: props.mode === "createuser" ? true : false,
                             },
                         ]}
                         style={{display: "inline-block", marginRight: "30px"}}
                     >
-                        <Input
-                            className="input-text"
-                            type="password"
-                            defaultValue="" />
+                        <Input className="input-text" type="password" disabled={submit || isChulaSSO ? true : false} />
                     </Form.Item>
                     <Form.Item
                         name="confirm"
@@ -77,18 +109,15 @@ function UserForm(props) {
                         label="Confirm Password"
                         rules={[
                             {
-                                required: true,
+                                required: props.mode === "createuser" ? true : false,
                             },
                         ]}
                         style={{display: "inline-block"}}
                     >
-                        <Input
-                            className="input-text"
-                            type="password"
-                            defaultValue="" />
+                        <Input className="input-text" type="password" disabled={submit || isChulaSSO ? true : false} />
                     </Form.Item>
-                </div>
-                <div>
+                </div>}
+                {inputVisible && <div>
                     <Form.Item
                         name="first_name"
                         key="first_name"
@@ -100,9 +129,7 @@ function UserForm(props) {
                         ]}
                         style={{display: "inline-block", marginRight: "30px"}}
                     >
-                        <Input
-                            className="input-text"
-                            defaultValue="" />
+                        <Input className="input-text" disabled={submit || isChulaSSO ? true : false} />
                     </Form.Item>
                     <Form.Item
                         name="last_name"
@@ -115,12 +142,10 @@ function UserForm(props) {
                         ]}
                         style={{display: "inline-block"}}
                     >
-                        <Input
-                            className="input-text"
-                            defaultValue="" />
+                        <Input className="input-text" disabled={submit || isChulaSSO ? true : false} />
                     </Form.Item>
-                </div>
-                <Form.Item
+                </div>}
+                {inputVisible && <Form.Item
                     name="role"
                     key="role"
                     label="Role"
@@ -131,51 +156,72 @@ function UserForm(props) {
                     ]}
                     style={{display: "inline-block"}}
                 >
-                    <Select
-                        className="search-component"
-                        defaultValue=""
-                    >
+                    <Select className="search-component" disabled={submit ? true : false}>
                         {roles.map((role, i) => (
                             <Option key={i} value={role}>
                                 {role.charAt(0).toUpperCase() + role.slice(1)}
                             </Option>
                         ))}
                     </Select>
-                </Form.Item>
-                <Form.Item
+                </Form.Item>}
+                {inputVisible && <Form.Item
                     style={{marginTop: "30px"}}
                 >
-                    <Button
-                        className="primary-btn"
-                        onClick={async () => {
-                            try {
-                                const data = await form.validateFields();
-                                if (data.password !== data.confirm) {
-                                    setMessage("Confirm Password does not match.")
-                                    showModal();
-                                } else if (data.password.length < 8 || data.password.length > 32) {
-                                    setMessage("Password length must be 8-32.")
-                                    showModal();
-                                } else {
-                                    createUser(data.username, data.password, data.first_name, data.last_name, data.role, data.email)
-                                    .then((res) => {
-                                        console.log(res);
-                                        setMessage("Create user success.");
-                                        showModal();
-                                    }).catch((err) => {
-                                        console.log(err.response)
-                                    })
+                    {submit ? 
+                        <Button
+                            className="primary-btn"
+                            onClick={() => window.location.reload()}
+                        >
+                            {props.mode === "createuser" ? "Create new user" : "Edit other users"}
+                        </Button> :
+                        <Button
+                            className="primary-btn"
+                            onClick={async () => {
+                                try {
+                                    let checkPassword = true;
+                                    const data = await form.validateFields();
+                                    if (data.password === undefined || data.password === "") {
+                                        data["password"] = "";
+                                    } else {
+                                        if (data.password !== data.confirm) {
+                                            setMessage("Confirm Password does not match.");
+                                            showModal();
+                                            checkPassword = false;
+                                        } else if (data.password.length < 8 || data.password.length > 32) {
+                                            setMessage("Password length must be 8-32 characters.");
+                                            showModal();
+                                            checkPassword = false
+                                        }
+                                    }
+                                    if (checkPassword) {
+                                        if (props.mode === "createuser") {
+                                            createUser(data.username, data.password, data.first_name, data.last_name, data.role, data.email)
+                                            .then((res) => {
+                                                console.log(res);
+                                                setMessage("Create user successfully.");
+                                                showModal();
+                                                setSubmit(true);
+                                            }).catch((err) => console.log(err.response));
+                                        } else {
+                                            updateUser(data.username, data.first_name, data.last_name, data.role, data.email, updateUserId, data.password, isChulaSSO)
+                                            .then((res) => {
+                                                console.log(res);
+                                                setMessage("Update user successfully.");
+                                                showModal();
+                                                setSubmit(true);
+                                            }).catch((err) => console.log(err.response));
+                                        }
+                                    }
+                                } catch (errInfo) {
+                                    console.log('Validate Failed:', errInfo);
                                 }
-                            } catch (errInfo) {
-                                console.log('Validate Failed:', errInfo);
-                            }
-                        }}
-                    >
-                        Submit
-                    </Button>
-                </Form.Item>
+                            }}
+                        >
+                            Submit
+                        </Button>}
+                </Form.Item>}
             </Form>
-            <Modal
+            <Modal // change
                 visible={visible}
                 title={null}
                 onCancel={handleCancel}
