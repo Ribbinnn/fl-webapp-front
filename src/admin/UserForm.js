@@ -17,21 +17,13 @@ function UserForm(props) {
     const [form] = Form.useForm();
     const [submit, setSubmit] = useState(false);
     const [inputVisible, setInputVisible] = useState(true);
-    const [visible,setVisible] = useState(false)
-    const showModal = () => {
-        setVisible(true)
-    };
-    const handleCancel = () => {
-        setVisible(false)
-    };
-    const [message, setMessage] = useState("");
     useEffect(() => {
         setLoaded(false);
+        form.resetFields();
         if (props.mode === "edituser") {
             getAllUsers()
             .then((res) => {
                 setUsers(res);
-                form.resetFields();
                 setInputVisible(false);
                 setLoaded(true);
             }).catch((err) => console.log(err.response));
@@ -206,14 +198,12 @@ function UserForm(props) {
                                         if (data.password === undefined || data.password === "") {
                                             data["password"] = "";
                                         } else {
-                                            if (data.password !== data.confirm) {
-                                                setMessage("Confirm Password does not match.");
-                                                showModal();
-                                                checkPassword = false;
-                                            } else if (data.password.length < 8 || data.password.length > 32) {
-                                                setMessage("Password length must be 8-32 characters.");
-                                                showModal();
+                                            if (data.password.length < 8 || data.password.length > 32) {
+                                                Modal.warning({content: "Password length must be 8-32 characters."});
                                                 checkPassword = false
+                                            } else if (data.password !== data.confirm) {
+                                                Modal.warning({content: "Confirm Password does not match."});
+                                                checkPassword = false;
                                             }
                                         }
                                         if (checkPassword) {
@@ -221,16 +211,14 @@ function UserForm(props) {
                                                 createUser(data.username, data.password, data.first_name, data.last_name, data.role, data.email)
                                                 .then((res) => {
                                                     console.log(res);
-                                                    setMessage("Create user successfully.");
-                                                    showModal();
+                                                    Modal.success({content: "Create user successfully."});
                                                     setSubmit(true);
                                                 }).catch((err) => console.log(err.response));
                                             } else {
                                                 updateUser(data.username, data.first_name, data.last_name, data.role, data.email, updateUserId, data.password, isChulaSSO)
                                                 .then((res) => {
                                                     console.log(res);
-                                                    setMessage("Update user successfully.");
-                                                    showModal();
+                                                    Modal.success({content: "Update user successfully."});
                                                     setSubmit(true);
                                                 }).catch((err) => console.log(err.response));
                                             }
@@ -244,13 +232,6 @@ function UserForm(props) {
                             </Button>}
                     </Form.Item>}
                 </Form>}
-            <Modal // change
-                visible={visible}
-                title={null}
-                onCancel={handleCancel}
-                footer={null}>
-                    {message}
-            </Modal>
         </div>
     );
 }
