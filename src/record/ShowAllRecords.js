@@ -17,6 +17,7 @@ function ShowAllRecords(props) {
     const currentData = useRef([]);
     const [mergedColumns, setMergeColumns] = useState([]);
     const [editingKey, setEditingKey] = useState("");
+    const [projectName, setProjectName] = useState(props.project.projectName)
 
     const EditableCell = ({
         editing,
@@ -192,7 +193,7 @@ function ShowAllRecords(props) {
                     Record Name: {props.record.rec_name}
                 </label>
                 <label style={{display: "block"}}>
-                    Project: {props.project.projectName}
+                    Project: {projectName}
                 </label>
                 <label>
                     Uploaded Time: {props.record.updated}

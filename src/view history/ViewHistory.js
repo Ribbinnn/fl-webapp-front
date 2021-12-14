@@ -277,7 +277,7 @@ function HistoryLog(props) {
             setFindings(findings);
             setLoaded(true);
         }).catch((err) => console.log(err.response));
-    }, [reload])
+    }, [reload, props])
 
     return (
         <div>
