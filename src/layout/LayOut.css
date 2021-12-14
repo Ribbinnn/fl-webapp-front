@@ -697,6 +697,10 @@ label.clickable-label:hover {
   color: #58595b;
 }
 
+.ant-select-disabled .ant-select-arrow {
+  color: #d9d9d9;
+}
+
 .ant-select:not(.ant-select-customize-input) .ant-select-selector,
 .ant-select-focused:not(.ant-select-disabled)
   .ant-select:not(.ant-select-customize-input)
@@ -716,6 +720,22 @@ label.clickable-label:hover {
   .ant-select:not(.ant-select-customize-input)
   .ant-select-selector {
   width: 200px;
+}
+
+.search-component.wider.ant-select:not(.ant-select-customize-input)
+  .ant-select-selector,
+.search-component.wider.ant-select-focused:not(.ant-select-disabled)
+  .ant-select:not(.ant-select-customize-input)
+  .ant-select-selector {
+  width: 243px;
+}
+
+.ant-select-single .ant-select-selector .ant-select-selection-search {
+  top: 3px;
+}
+
+.ant-select-disabled.ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  border: 1px solid #d9d9d9 !important;
 }
 
 .ant-select-dropdown .ant-select-dropdown-placement-bottomLeft {
@@ -883,17 +903,32 @@ label.clickable-label:hover {
   color: #58595b;
 }
 
+.ant-modal-confirm-warning .ant-modal-body,
+.ant-modal-confirm-success .ant-modal-body {
+  text-align: left;
+}
+
 .img-modal .ant-modal-body {
   padding: 0 24px 24px 24px;
 }
 
-.ant-modal-confirm-body > .anticon {
+.ant-modal-confirm .ant-modal-confirm-body > .anticon {
   font-size: 40px;
-  color: #e9c869 !important;
 }
 
-.ant-modal-confirm .ant-modal-confirm-btns .ant-btn + .ant-btn,
-.ant-modal-confirm .ant-modal-confirm-btns .ant-btn + .ant-btn:hover {
+.ant-modal-confirm-warning .ant-modal-confirm-body > .anticon,
+.ant-modal-confirm-success .ant-modal-confirm-body > .anticon {
+  font-size: 30px;
+  margin-right: 23px;
+}
+
+.ant-modal-confirm-warning .ant-modal-confirm-body > .anticon, 
+.ant-modal-confirm-confirm .ant-modal-confirm-body > .anticon {
+  color: #e9c869;
+}
+
+.ant-modal-confirm .ant-modal-confirm-btns .ant-btn,
+.ant-modal-confirm .ant-modal-confirm-btns .ant-btn:hover {
   background-color: #de5c8e;
   border: none;
   border-radius: 8px;
@@ -901,8 +936,17 @@ label.clickable-label:hover {
   font-weight: bold;
 }
 
-.ant-modal-confirm .ant-modal-confirm-btns .ant-btn,
-.ant-modal-confirm .ant-modal-confirm-btns .ant-btn:hover {
+.ant-modal-confirm-confirm .ant-modal-confirm-btns .ant-btn + .ant-btn,
+.ant-modal-confirm-confirm .ant-modal-confirm-btns .ant-btn + .ant-btn:hover {
+  background-color: #de5c8e;
+  border: none;
+  border-radius: 8px;
+  font-size: medium;
+  font-weight: bold;
+}
+
+.ant-modal-confirm-confirm .ant-modal-confirm-btns .ant-btn,
+.ant-modal-confirm-confirm .ant-modal-confirm-btns .ant-btn:hover {
   background-color: #c4c4c4;
   border: none;
   border-radius: 8px;

@@ -11,16 +11,6 @@ const LoadingIcon = (
 const SelectMedicalRecord = forwardRef((props, ref) => {
     const { globalProject, setGlobalProject } = useContext(Contexts.project);
     const [loaded, setLoaded] = useState(false);
-
-    const [visible,setVisible] = useState(false)
-    const showModal = () => {
-        setVisible(true)
-    };
-
-    const handleCancel = () => {
-        setVisible(false)
-    };
-
     const [hasRecord, setHasRecord] = useState(true);
     const [requirementForm] = Form.useForm();
     const [requirementInput, setRequirementInput] = useState(null);
@@ -37,7 +27,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                     props.setMedRec(data);
                 }
                 if (hasRecord && props.MedRec === null) {
-                    showModal();
+                    Modal.warning({content: "Please select Medical Record."});
                 } else {
                     await props.setCurrent(props.current + 1);
                 }
@@ -342,13 +332,6 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                             {requirementInput}
                     </Form>
                 </div>}
-                <Modal
-                    visible={visible}
-                    title={null}
-                    onCancel={handleCancel}
-                    footer={null}>
-                        Please select Medical Record.
-                </Modal>
         </div>
     );
 });

@@ -68,21 +68,12 @@ export default function Diagnosis() {
   const [current, setCurrent] = useState(0);
   const selectMedicalRecordRef = useRef();
 
-  const [visible,setVisible] = useState(false)
-  const showModal = () => {
-      setVisible(true)
-  };
-
-  const handleCancel = () => {
-      setVisible(false)
-  };
-
   const next = () => {
     /** add condition for each step to go next step here */
     if (current === 1) {
       selectMedicalRecordRef.current.setMedicalRecord();
     } else if (current === 2 && accessionNo === null) {
-        showModal();
+        Modal.warning({content: "Please select X-Ray Image."});
     } else {
       if (current === 3) {
         setLoading(true);
@@ -201,13 +192,6 @@ export default function Diagnosis() {
           </Button>
         )}
       </div>
-      <Modal
-          visible={visible}
-          title={null}
-          onCancel={handleCancel}
-          footer={null}>
-              Please select X-Ray Image.
-      </Modal>
     </div>
   );
 }

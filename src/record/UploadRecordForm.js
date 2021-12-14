@@ -22,16 +22,6 @@ const UploadRecordForm = forwardRef((props, ref) => {
         return <label>{string}</label>;
     }
 
-    const [message, setMessage] = useState("");
-    const [visible,setVisible] = useState(false)
-    const showModal = () => {
-        setVisible(true)
-    };
-
-    const handleCancel = () => {
-        setVisible(false)
-    };
-
     useImperativeHandle(ref, () => ({
         uploadRecord: () => {
             if (uploadedRecord.without_key !== null) {
@@ -47,8 +37,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     console.log(err.response);
                 })
             } else {
-                setMessage("Please upload record.");
-                showModal();
+                Modal.warning({content: "Please upload record."});
             }
         },
         uploadedRecord: uploadedRecord.without_key,
@@ -116,8 +105,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
             // convert file to json
             const data = XLSX.utils.sheet_to_json(target_workbook);
             if (data.length === 0) {
-                setMessage("Record is empty.");
-                showModal();
+                Modal.warning({content: "Record is empty."});
             } else {
                 // add key to each row & change date-time
                 const data_with_key = JSON.parse(JSON.stringify(data));
@@ -213,13 +201,6 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     size="small"
                     className="three-rows-table"
                 />}
-            <Modal
-                visible={visible}
-                title={null}
-                onCancel={handleCancel}
-                footer={null}>
-                    {message}
-            </Modal>
         </div>
     );
 });
