@@ -28,7 +28,7 @@ export default function AnnotationModal (props){
           width="1200px"
           accession_no={props.accession_no}
         >
-          <AnnotationPanel handleCancel={handleCancel}/>
+          <AnnotationPanel handleCancel={handleCancel} labelList={props.labelList}/>
         </Modal>
       </div>
     )
