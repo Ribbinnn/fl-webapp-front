@@ -34,11 +34,15 @@ export default function Label(props) {
 
   return (
     <Select
+      showSearch
       onChange={handleChange}
       style={{ width: 300 }}
       className="label-selector"
       defaultValue={props.defaultLabel ?? labelList[0] ?? ""}
-      dropdownRender={(menu) => (
+      filterOption={(input, option) =>
+        option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      }
+      /* dropdownRender={(menu) => (
         <div>
           {menu}
           <Divider style={{ margin: "4px 0" }} />
@@ -57,7 +61,7 @@ export default function Label(props) {
             </a>
           </div>
         </div>
-      )}
+      )} */
     >
       {labelList.map((item) => (
         <Option key={item} value={item}>
