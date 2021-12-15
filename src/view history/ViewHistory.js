@@ -65,12 +65,15 @@ function HistoryLog(props) {
             render: (status) => {
                 var color = ""
                 if (status === "canceled") {
-                    color = "error"
+                    color = "default"
                 } else if (status === "finalized") {
                     color = "success"
                 } else if (status === "annotated") {
                     color = "warning"
                     status = "AI-Annotated"
+                } else if (status === "reviewed") {
+                    color = "error"
+                    status = "Human-Annotated"
                 } else {
                     color = "processing"
                 }
