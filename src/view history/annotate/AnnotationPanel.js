@@ -11,6 +11,7 @@ import {
   Table,
   Modal,
   Popconfirm,
+  Popover
 } from "antd";
 import {
   ZoomInOutlined,
@@ -26,6 +27,7 @@ import {
   VerticalAlignBottomOutlined,
   ExclamationCircleOutlined,
   EditOutlined,
+  InfoCircleOutlined,
 } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import { getDicomByAccessionNo } from "../../api/image";
@@ -42,9 +44,11 @@ const LoadingIcon = (
 
 export default function AnnotationPanel(props) {
   const [tool, setTool] = useState();
+  const user = JSON.parse(sessionStorage.getItem("user"))
   const [imgLoaded, setImgLoaded] = useState(false);
   const [dicomElement, setDicomElement] = useState();
-  const [columns, setColumns] = useState([
+  const [columns, setColumns] =
+    useState(/* [
     {
       title: "Label",
       dataIndex: "label",
@@ -57,10 +61,10 @@ export default function AnnotationPanel(props) {
         <Button type="link" icon={<DeleteOutlined />} />
       ),
     },
-  ]);
+  ] */);
   const { mode, rid } = useParams();
   const [labels, setLabels] = useState([]);
-  const [labelList, setLabelList] = useState([]);
+  //const [labelList, setLabelList] = useState([]);
   const [selectedLabel, setSelectedLabel] = useState();
   const [labelBuffer, setLabelBuffer] = useState();
   const [viewerState, setViewerState] = useState({
@@ -72,7 +76,9 @@ export default function AnnotationPanel(props) {
     defaultWindowWidth: 0,
     defaultWindowLevel: 0,
   });
+  const [savedTime,setSavedTime] = useState();
   const [btnMode, setBtnMode] = useState("close");
+  const [savedData, setSavedData] = useState();
 
   useEffect(() => {
     loadDicom(
@@ -80,10 +86,23 @@ export default function AnnotationPanel(props) {
       "wado",
       displayImage
     );
+    getBBox(rid).then((res) => {
+      if(res.data){
+        setSavedData(res.data.data.map((item,i)=>{
+          return {key: i+1, data: item.data}
+        }))
+      }
+    })
     //cornerstoneTools.toolColors.setToolColor('#4ad578');
     // Set color for active tools
     //cornerstoneTools.toolColors.setActiveColor('#58595b');
   }, []);
+
+  useEffect(() => {
+    console.log('changed')
+    // console.log(prevSavedData)
+    console.log(savedData)
+  }, [savedData])
 
   useEffect(() => {
     console.log(labels);
@@ -106,40 +125,42 @@ export default function AnnotationPanel(props) {
         key: "action",
         render: (text, record) => (
           <span style={{ textAlign: "right" }}>
-            {record.tool !== "length" && (
-              <Button
-                type="link"
-                icon={<EditOutlined />}
-                onClick={() => {
-                  Modal.confirm({
-                    title: "Choose label",
-                    content: (
-                      <Label
-                        setSelectedLabel={setSelectedLabel}
-                        labelList={labelList}
-                        setLabelList={setLabelList}
-                        defaultLabel={record.label}
-                      />
-                    ),
-                    keyboard: false,
-                    className: "label-selector-modal",
-                    okText: "Submit",
-                    cancelText: "Cancel",
-                    onOk: () => {
-                      setLabelBuffer({
-                        key: record.key,
-                      });
+            <Popover className="bbox-popover" placement="top" content={<span><p style={{marginBottom: 0}}>Last modified: {(new Date(record.updated_time)).toLocaleString()}</p><p style={{marginBottom: 0}}>by: {record.updated_by.username}</p></span>} trigger="click">
+              <Button type="link" icon={<InfoCircleOutlined />} />
+            </Popover>
+            <Button
+              type="link"
+              icon={<EditOutlined />}
+              onClick={() => {
+                Modal.confirm({
+                  title: "Choose label",
+                  content: (
+                    <Label
+                      setSelectedLabel={setSelectedLabel}
+                      labelList={props.labelList}
+                      // setLabelList={setLabelList}
+                      defaultLabel={record.label}
+                    />
+                  ),
+                  keyboard: false,
+                  className: "label-selector-modal",
+                  okText: "Submit",
+                  cancelText: "Cancel",
+                  onOk: () => {
+                    setLabelBuffer({
+                      key: record.key,
+                    });
+                    setBtnMode("save-cancel");
+                  },
+                  okButtonProps: {
+                    style: {
+                      boxShadow: "none",
+                      backgroundColor: "#de5c8e",
                     },
-                    okButtonProps: {
-                      style: {
-                        boxShadow: "none",
-                        backgroundColor: "#de5c8e",
-                      },
-                    },
-                  });
-                }}
-              />
-            )}
+                  },
+                });
+              }}
+            />
             <Popconfirm
               title="Delete this label?"
               onConfirm={() => {
@@ -178,20 +199,22 @@ export default function AnnotationPanel(props) {
 
   useEffect(() => {
     if (labelBuffer) {
-      console.log(labelBuffer)
+      console.log(labelBuffer);
       if (labelBuffer.key <= labels.length) {
         let edittedLabels = labels.map((item) => {
-          console.log(item)
+          console.log(item);
           if (item.key === labelBuffer.key) {
-            return { ...item, label: selectedLabel };
+            return { ...item, label: selectedLabel, saved:false, updated_time: new Date(), updated_by: user };
           } else return item;
         });
-        console.log(edittedLabels)
         setLabels(edittedLabels);
       } else {
         let newLabel = {
           ...labelBuffer,
           label: labelBuffer.label ?? selectedLabel,
+          saved: false,
+          updated_time: new Date(),
+          updated_by: user
         };
         setLabels([...labels, newLabel]);
       }
@@ -231,46 +254,47 @@ export default function AnnotationPanel(props) {
     removeAnnotations(element);
     //getBBox
     getBBox(rid).then((res) => {
+      console.log(res)
       if (res.data) {
-        let temp = res.data.data.reduce(
+        let temp = res
+        let loadedData = temp.data.data.reduce(
           (current, item, i) => {
-            cornerstoneTools.addToolState(element, item.tool, {
-              ...item.data,
-              color: "#F76E8A",
-            });
-            console.log({
-              key: current.rectangleRoi + current.freehand + 1,
-              tool: item.tool,
-              index: current[item.tool],
-              label: item.label,
-            });
+            const bbox = item.data
+            cornerstoneTools.addToolState(element, item.tool, bbox);
+            console.log(item)
             return {
               ...current,
               initial_lb: [
                 ...current.initial_lb,
                 {
-                  key: current.rectangleRoi + current.freehand + 1,
+                  key: /* current.rectangleRoi + current.freehand + current["length"] + 1 */ i+1,
                   tool: item.tool,
                   index: current[item.tool],
                   label: item.label,
+                  saved: true,
+                  updated_by: item.updated_by,
+                  updated_time: item.updated_time,
                 },
               ],
               [item.tool]: current[item.tool] + 1,
-              initial_ll: current.initial_ll.includes(item.label)
+              //lastSavedData: [...current.lastSavedData, {key:i+1, data:item.data.handles}]
+              /* initial_ll: current.initial_ll.includes(item.label)
                 ? current.initial_ll
-                : [...current.initial_ll, item.label],
+                : [...current.initial_ll, item.label], */
             };
           },
-          { initial_lb: [], rectangleRoi: 0, freehand: 0, initial_ll: [] }
+          { initial_lb: [], rectangleRoi: 0, freehand: 0, length: 0 /* initial_ll: [] */ }
         );
-        console.log(temp);
+        console.log(loadedData);
         cornerstone.updateImage(element);
-        setLabels(temp.initial_lb);
-        setLabelList(temp.initial_ll);
+        setLabels(loadedData.initial_lb);
+        setImgLoaded(true);
+        // setSavedData(res.data.data)
+        console.log(loadedData)
+        // setLabelList(temp.initial_ll);
       }
+      res.data.createdAt !== res.data.updatedAt && setSavedTime((new Date(res.data.updatedAt)).toLocaleString());
     });
-
-    setImgLoaded(true);
   }
 
   function selectTool(prop) {
@@ -320,10 +344,6 @@ export default function AnnotationPanel(props) {
 
   const imageOnClick = () => {
     console.log(labels);
-    console.log(
-      cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState()
-    );
-
     if (tool === "ratio") {
       return;
     }
@@ -352,13 +372,24 @@ export default function AnnotationPanel(props) {
       if (toolState.data[toolState.data.length - 1].active) {
         return;
       }
-      addNewLabel(
-        tool,
-        toolState.data.length - 1,
-        toolState.data[toolState.data.length - 1]["length"] ?? undefined
-      );
-      (tool === "freehand" || tool === "rectangleRoi") &&
-        setBtnMode("save-cancel");
+      addNewLabel(tool, toolState.data.length - 1);
+      setBtnMode("save-cancel");
+      return
+    }
+    let globalTool = cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState()
+    globalTool = globalTool[Object.keys(globalTool)[0]]
+    console.log(globalTool)
+    console.log(savedData)
+    let checker = labels.map((item, i)=> {
+      if (!item.saved) return item
+      if (globalTool[item.tool].data[item.index] !== savedData[savedData.findIndex((elm) => elm.key === item.key)].data){
+        return {...item, saved: false, updated_time: new Date(), updated_by: user}
+      }
+      else return item
+    })
+    if (checker !== labels) {
+      setLabels(checker);
+      setBtnMode("save-cancel");
     }
   };
 
@@ -410,24 +441,15 @@ export default function AnnotationPanel(props) {
     console.log(`${checked ? "Show" : "Hide"} Bounding Box Info`);
   };
 
-  const addNewLabel = (tool, index, len) => {
+  const addNewLabel = (tool, index) => {
     let key = labels.length > 0 ? labels[labels.length - 1].key + 1 : 1;
-    if (len) {
-      setLabelBuffer({
-        key: key,
-        tool: tool,
-        index: index,
-        label: `${len.toFixed(2)} mm`,
-      });
-      return;
-    }
     Modal.info({
       title: "Choose label",
       content: (
         <Label
           setSelectedLabel={setSelectedLabel}
-          labelList={labelList}
-          setLabelList={setLabelList}
+          labelList={props.labelList}
+          // setLabelList={setLabelList}
         />
       ),
       keyboard: false,
@@ -455,7 +477,7 @@ export default function AnnotationPanel(props) {
       "rectangleRoi"
     );
     let freehandState = cornerstoneTools.getToolState(dicomElement, "freehand");
-    let user = JSON.parse(sessionStorage.getItem("user")).id;
+    let lengthState = cornerstoneTools.getToolState(dicomElement, "length");
     let bbox_data = labels.reduce((current, item, i) => {
       if (item.tool === "length") return current;
       return [
@@ -463,20 +485,22 @@ export default function AnnotationPanel(props) {
         {
           label: item.label,
           tool: item.tool,
-          updated_by: user,
+          updated_by: user.id,
           data:
             item.tool === "freehand"
               ? freehandState.data[item.index]
-              : rectangleRoiState.data[item.index],
+              : item.tool === "length" ? lengthState.data[item.index] :rectangleRoiState.data[item.index],
+          updated_time: item.updated_time
         },
       ];
     }, []);
     console.log(bbox_data);
     insertBBox(rid, bbox_data).then((res) => {
-      console.log(res);
       if (res.success) {
         message.success("Bounding boxes successfully saved.", 5);
         setBtnMode("close");
+        setLabels(labels.map((item) => {return {...item, saved: true}}))
+        setSavedTime((new Date(res.data.updatedAt)).toLocaleString())
       } else
         message.error("Cannot save bounding boxes, please try again later.", 5);
     });
@@ -735,6 +759,9 @@ export default function AnnotationPanel(props) {
               >
                 Bounding Boxes
               </label>
+              {savedTime && (<span style={{ fontSize: "small", marginLeft: "10px" }}>
+                Last Saved: {savedTime}
+              </span>)}
               {/* <Button
                 className="reset-vp-btn"
                 icon={<PlusCircleOutlined />}
@@ -744,7 +771,7 @@ export default function AnnotationPanel(props) {
             <Table
               className="annotate-table clickable-table"
               rowClassName={(record, index) =>
-                /* record.key === currentLabels ? "selected-labels" :  */ ""
+                record.saved ? "" : "unsaved-label"
               }
               columns={columns}
               dataSource={labels}

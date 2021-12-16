@@ -65,7 +65,7 @@ export default function Report(props) {
               img_source="wado"
               size={400}
             />
-            {mode === "edit" && <AnnotationModal accession_no={info.image}/>}
+            {mode === "edit" && <AnnotationModal accession_no={info.image} labelList={info.classes.map((item)=>{return item.finding})}/>}
           </Col>
           <Col
             xs={24}
@@ -146,8 +146,8 @@ const ReportHeader = (props) => {
         >
           Report
         </label>
-        <Tag color={props.status === "annotated" ? "warning" : "success"} style={{marginLeft: "10px"}}>
-          {props.status === "annotated" ? "AI-Annotated" : "Finalized"}
+        <Tag color={props.status === "annotated" ? "warning" : props.status === "reviewed" ? "error" : "success"} style={{marginLeft: "10px"}}>
+          {props.status === "annotated" ? "AI-Annotated" : props.status === "reviewed" ? "Human-Annotated":"Finalized"}
                     </Tag>
       </div>
       <label
@@ -161,14 +161,14 @@ const ReportHeader = (props) => {
       >
         <i>
           {" "}
-          Created Date Time: {props.created_at}
+          Created Date Time: {(new Date(props.created_at)).toLocaleString()}
           <br />
           Created By: {props.created_by}
         </i>
-        {props.status === "finalized" && (
+        {props.status !== "annotated" && (
           <i>
             <br />
-            Last Modified: {props.updated_at}
+            Last Modified: {(new Date(props.updated_at)).toLocaleString()}
             <br />
             Finalized By: {props.finalized_by}
           </i>
