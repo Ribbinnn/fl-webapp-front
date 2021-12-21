@@ -3,6 +3,7 @@ import { useHistory, useParams } from "react-router-dom";
 import { Menu } from "antd";
 import { UserOutlined, SettingOutlined } from '@ant-design/icons';
 import UserForm from "./UserForm";
+import DeleteForm from "./DeleteForm";
 
 const { SubMenu } = Menu;
 
@@ -17,7 +18,7 @@ function Admin() {
             case "edituser":
                 return <UserForm mode={mode} />;
             case "deleteuser":
-                return <label>delete user</label>;
+                return <DeleteForm mode="user"/>;
             case "createproject":
                 return <label>create project</label>;
             case "editproject":
@@ -25,7 +26,7 @@ function Admin() {
             case "manageuser":
                 return <label>manage user</label>;
             case "deleteproject":
-                return <label>delete project</label>;
+                return <DeleteForm mode="project"/>;
             default:
                 return null;
         }
