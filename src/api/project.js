@@ -20,3 +20,14 @@ export const getProjectInfoByID = async (pid) => {
     throw e
   }
 }
+
+export const createProject = async (name, task, description, predClasses, head) => {
+  try {
+    const res = (
+      await instance.post("/projects", {name, task, description, predClasses, head})
+    ).data;
+    return res;
+  } catch (e) {
+    throw e
+  }
+}

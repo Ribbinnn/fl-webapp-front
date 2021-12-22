@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Form, Input, Select, Button, Modal, Spin, Row, Col, Tag, Tooltip } from "antd";
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { getAllUsers } from "../api/admin";
+import { createProject } from "../api/project";
 
 const LoadingIcon = (
     <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
@@ -42,6 +43,7 @@ function ProjectForm() {
         setTagEditInputVal("");
     }
     const [form] = Form.useForm();
+    const [submit, setSubmit] = useState(false);
     useEffect(() => {
         // setLoaded(false);
         // console.log(tagInputRef, tagEditInputRef);
@@ -74,7 +76,7 @@ function ProjectForm() {
                                 ]}
                                 style={{display: "inline-block", marginRight: "30px"}}
                             >
-                                <Input className="input-text" />
+                                <Input className="input-text" disabled={submit ? true : false} />
                             </Form.Item>
                             <Form.Item
                                 name="task"
@@ -87,7 +89,7 @@ function ProjectForm() {
                                 ]}
                                 style={{display: "inline-block"}}
                             >
-                                <Select className="search-component wider" /*disabled={submit ? true : false}*/>
+                                <Select className="search-component wider" disabled={submit ? true : false}>
                                     {tasks.map((task, i) => (
                                         <Option key={i} value={task}>
                                             {task}
@@ -115,7 +117,7 @@ function ProjectForm() {
                             // ]}
                             style={{width: "516px"}}
                         >
-                            <div className="input-text tag-wrapper">
+                            <div className={submit ? "input-text tag-wrapper disabled" : "input-text tag-wrapper"}>
                                 <>
                                     {classes.map((tag, index) => {
                                         if (tagEditInputIndex === index) {
@@ -135,18 +137,23 @@ function ProjectForm() {
                                         const isLongTag = tag.length > 20;
                                         const tagElem = (
                                             <Tag
-                                                className="edit-tag"
+                                                className={submit ? "edit-tag disabled" : "edit-tag"}
+                                                disabled={submit ? true : false}
                                                 key={tag}
                                                 color={palette[(tag.charCodeAt(0))%palette.length]}
                                                 closable={true}
-                                                onClose={() => {
-                                                    const updatedClasses = classes.filter(tags => tags !== tag);
-                                                    setClasses(updatedClasses);
+                                                onClose={(e) => {
+                                                    if (!submit) {
+                                                        const updatedClasses = classes.filter(tags => tags !== tag);
+                                                        setClasses(updatedClasses);
+                                                    } else {
+                                                        e.preventDefault();
+                                                    }
                                                 }}
                                             >
                                                 <span
                                                     onDoubleClick={(e) => {
-                                                        if (index !== 0) {
+                                                        if (!submit) {
                                                             setTagEditInputIndex(index);
                                                             setTagEditInputVal(tag);
                                                             // tagEditInputRef.current.focus();
@@ -179,10 +186,16 @@ function ProjectForm() {
                                         />
                                     )}
                                     {!tagInputVisible && (
-                                        <Tag className="site-tag-plus" onClick={() => {
-                                            setTagInputVisible(true);
-                                            // tagInputRef.current.focus();
-                                        }}>
+                                        <Tag 
+                                            className={submit ? "site-tag-plus disabled" : "site-tag-plus"} 
+                                            disabled={submit ? true : false} 
+                                            onClick={() => {
+                                                if (!submit) {
+                                                    setTagInputVisible(true);
+                                                    // tagInputRef.current.focus();
+                                                }
+                                            }}
+                                        >
                                             <PlusOutlined /> add class
                                         </Tag>
                                     )}
@@ -203,6 +216,7 @@ function ProjectForm() {
                             <TextArea
                                 className="input-text"
                                 autoSize={{ minRows: 2, maxRows: 6 }}
+                                disabled={submit ? true : false}
                             />
                         </Form.Item>
                         <Form.Item
@@ -219,7 +233,7 @@ function ProjectForm() {
                                 className="multiple-select"
                                 mode="multiple"
                                 allowClear 
-                                /*disabled={submit ? true : false}*/
+                                disabled={submit ? true : false}
                             >
                                 {users.map((user, i) => (
                                     <Option key={i} value={user["_id"]}>
@@ -310,23 +324,37 @@ function ProjectForm() {
                 <Form.Item
                     style={{marginTop: "30px"}}
                 >
-                    <Button
-                        className="primary-btn"
-                        onClick={async () => {
-                            try {
-                                const data = await form.validateFields();
-                                console.log(data);
-                                // if (classes.length === 0) {
-                                //     setClassesStatus("error");
-                                //     setHelpMessage("'classes' is required");
-                                // }
-                            } catch (errInfo) {
-                                console.log('Validate Failed:', errInfo);
-                            }
-                        }}
-                    >
-                        Submit
-                    </Button>
+                    {submit ?
+                        <Button
+                            className="primary-btn"
+                            onClick={() => window.location.reload()}
+                        >
+                            {mode === "createproject" ? "Create new project" : "Edit other projects"}
+                        </Button> :
+                        <Button
+                            className="primary-btn"
+                            onClick={async () => {
+                                try {
+                                    const data = await form.validateFields();
+                                    console.log(data);
+                                    console.log(classes);
+                                    // if (classes.length === 0) {
+                                    //     setClassesStatus("error");
+                                    //     setHelpMessage("'classes' is required");
+                                    // }
+                                    createProject(data.name, data.task, data.description, classes, data.head)
+                                    .then((res) => {
+                                        console.log(res);
+                                        Modal.success({content: "Create project successfully."});
+                                        setSubmit(true);
+                                    }).catch((err) => console.log(err.response));
+                                } catch (errInfo) {
+                                    console.log('Validate Failed:', errInfo);
+                                }
+                            }}
+                        >
+                            Submit
+                        </Button>}
                 </Form.Item>
             </Form>
         </div>
