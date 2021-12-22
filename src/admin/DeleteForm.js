@@ -59,6 +59,7 @@ export default function DeleteForm(props) {
             res.success
               ? message.success(res.message, 5)
               : message.error(res.message, 5);
+            initializePage();
           })
           .catch((err) => message.error(err.response));
       }
@@ -68,10 +69,10 @@ export default function DeleteForm(props) {
             res.success
               ? message.success(res.message, 5)
               : message.error(res.message, 5);
+              initializePage();
           })
           .catch((err) => message.error(err.response));
       }
-      initializePage();
     } else Modal.warning({ content: "Confirm message does not match." });
   };
 
@@ -106,21 +107,45 @@ export default function DeleteForm(props) {
             </div>
             <Select
               className="search-component wider"
-              showSearch
+              showSearch = {props.mode === "user" ? true : false}
               optionFilterProp="children"
               filterOption={(input, option) =>
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
               onChange={(i, j) => {
                 console.log(j);
+                if (props.mode === "project"){
+                  j.children = options.find((member) => {
+                    return member._id === i
+                  }).name
+                }
                 setKeyword(j);
                 console.log("selected ---> ", i);
               }}
               style={{ width: "243px" }}
             >
-              {options.map((item, i) => (
+              {props.mode === "project" && options.map((project, i) => {
+                                            let projectHead = "";
+                                            for (const i in project.head) {
+                                                if (parseInt(i)+1 === project.head.length) {
+                                                    projectHead += project.head[i].username;
+                                                } else {
+                                                    projectHead += project.head[i].username + ", ";
+                                                }
+                                            }
+                                            return(
+                                                <Option key={i} value={project["_id"]}>
+                                                    {<div className="select-item-group">
+                                                        <label>{project.name}</label>
+                                                        <br />
+                                                        <label style={{fontSize: "small"}}>{projectHead}</label>
+                                                    </div>}
+                                                </Option>
+                                            );
+                                        })}
+              {props.mode === "user" && options.map((item, i) => (
                 <Option key={i} value={item._id}>
-                  {props.mode === "user" ? item.username : item.name}
+                  {item.username}
                 </Option>
               ))}
             </Select>
