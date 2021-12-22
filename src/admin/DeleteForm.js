@@ -1,8 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Select, Button, Modal, Spin, Col, Row, message } from "antd";
+import {
+  Form,
+  Input,
+  Select,
+  Button,
+  Modal,
+  Spin,
+  Col,
+  Row,
+  message,
+} from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
+import { getAllProjects, deleteProjectById } from "../api/project";
 import { getAllUsers, deleteUserById } from "../api/admin";
-import ConfirmDelete from "../component/ConfirmDelete";
 
 const LoadingIcon = (
   <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
@@ -19,7 +29,7 @@ export default function DeleteForm(props) {
     initializePage();
   }, [props.mode]);
 
-  function initializePage(){
+  function initializePage() {
     setKeyword();
     setLoaded(false);
     if (props.mode === "user") {
@@ -31,21 +41,38 @@ export default function DeleteForm(props) {
         .catch((err) => console.log(err.response));
     } else {
       //get all project
-      setLoaded(true);
+      getAllProjects()
+        .then((res) => {
+          console.log(res)
+          setOptions(res);
+          setLoaded(true);
+        })
+        .catch((err) => console.log(err.response));
     }
   }
 
   const deleteAPI = () => {
-      if (cfmMessage === keyword.children) {
-          if (props.mode === "user"){
-              deleteUserById(keyword.value).then((res)=> {
-                  res.success ?
-                  message.success(res.message, 5): message.error(res.message, 5)
-                }).catch((err) => message.error(err.response));
-          }
-          initializePage();
-        }
-    else Modal.warning({content: "Confirm message does not match."});    
+    if (cfmMessage === keyword.children) {
+      if (props.mode === "user") {
+        deleteUserById(keyword.value)
+          .then((res) => {
+            res.success
+              ? message.success(res.message, 5)
+              : message.error(res.message, 5);
+          })
+          .catch((err) => message.error(err.response));
+      }
+      if (props.mode === "project") {
+        deleteProjectById(keyword.value)
+          .then((res) => {
+            res.success
+              ? message.success(res.message, 5)
+              : message.error(res.message, 5);
+          })
+          .catch((err) => message.error(err.response));
+      }
+      initializePage();
+    } else Modal.warning({ content: "Confirm message does not match." });
   };
 
   const handleOnChangeCfmMessage = (e) => {
@@ -117,9 +144,13 @@ export default function DeleteForm(props) {
                 className="input-text"
                 style={{ width: "550px", marginBottom: 0 }}
               />
-              <Button className="primary-btn smaller" style={{ marginLeft: 8 }} onClick={deleteAPI}>
-              Submit
-            </Button>
+              <Button
+                className="primary-btn smaller"
+                style={{ marginLeft: 8 }}
+                onClick={deleteAPI}
+              >
+                Submit
+              </Button>
             </div>
           </Form.Item>
         </Form>
