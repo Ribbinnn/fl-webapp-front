@@ -941,7 +941,7 @@ label.clickable-label:hover {
   vertical-align: 0.2em;
 }
 
-.ant-tag.edit-tag.disabled > .anticon + span, .ant-tag > span + .anticon {
+.ant-tag.edit-tag.disabled > .anticon + span, .ant-tag.edit-tag.disabled > span + .anticon {
   color: #bfbfbf;
   cursor: not-allowed;
 }

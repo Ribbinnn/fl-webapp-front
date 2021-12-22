@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Form, Input, Select, Button, Modal, Spin, Row, Col, Tag, Tooltip } from "antd";
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { getAllUsers } from "../api/admin";
-import { createProject } from "../api/project";
+import { createProject, getAllProjects, getProjectInfoByID, updateProjectById } from "../api/project";
 
 const LoadingIcon = (
     <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
@@ -13,7 +13,10 @@ const { TextArea } = Input;
 
 function ProjectForm() {
     const { mode } = useParams();
+    const [loaded, setLoaded] = useState(false);
     const palette = ["magenta","red","volcano","orange","gold","green","cyan","blue","geekblue","purple"];
+    const [projects, setProjects] = useState([]);
+    const [projectName, setProjectName] = useState(""); // required ?
     const tasks = ["classification_pylon_256", "classification_pylon_1024", "covid19_admission"];
     const [users, setUsers] = useState([]);
     const [classes, setClasses] = useState([]);
@@ -44,24 +47,49 @@ function ProjectForm() {
     }
     const [form] = Form.useForm();
     const [submit, setSubmit] = useState(false);
+    const [inputVisible, setInputVisible] = useState(true);
     useEffect(() => {
-        // setLoaded(false);
+        setLoaded(false);
         // console.log(tagInputRef, tagEditInputRef);
         form.resetFields();
         setClasses([]);
-        getAllUsers()
+        if (mode === "editproject") {
+            getAllProjects()
+            .then((res) => {
+                console.log(res);
+                setProjects(res);
+                getAllUsers()
+                .then((res) => {
+                    setUsers(res.filter(user => user.role === "radiologist"));
+                    setInputVisible(false);
+                    setLoaded(true);
+                }).catch((err) => console.log(err.response));
+            }).catch((err) => console.log(err.response));
+        } else {
+            getAllUsers()
             .then((res) => {
                 setUsers(res.filter(user => user.role === "radiologist"));
-                // setInputVisible(false);
-                // setLoaded(true);
+                setInputVisible(true);
+                setLoaded(true);
             }).catch((err) => console.log(err.response));
+        }
     }, [mode]);
     return(
         <div>
             <label style={{fontWeight: "bold"}}>
                 {mode === "createproject" ? "Create New Project" : "Edit Project"}
             </label>
-            <Form form={form} layout="vertical" requiredMark={false} style={{marginTop: "30px"}}>
+            {!loaded && (
+                <div style={{ textAlign: "center", marginTop: "20%" }}>
+                <Spin indicator={LoadingIcon} />
+                <br />
+                <br />
+                <span style={{ fontSize: "medium", color: "#de5c8e" }}>
+                    Loading ...
+                </span>
+                </div>
+            )}
+            {loaded && <Form form={form} layout="vertical" requiredMark={false} style={{marginTop: "30px"}}>
                 <Row>
                     <Col span={13}>
                         <div>
@@ -76,9 +104,36 @@ function ProjectForm() {
                                 ]}
                                 style={{display: "inline-block", marginRight: "30px"}}
                             >
-                                <Input className="input-text" disabled={submit ? true : false} />
+                                {mode === "createproject" ?
+                                    <Input className="input-text" disabled={submit ? true : false} /> :
+                                    <Select
+                                        className="search-component wider" 
+                                        showSearch
+                                        optionFilterProp="children"
+                                        filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                        onChange={(id) => {
+                                            // setLoaded(false);
+                                            getProjectInfoByID(id)
+                                            .then((res) => {
+                                                console.log(res);
+                                                const data = res.data;
+                                                setProjectName(data.name);
+                                                form.setFieldsValue({task: data.task, description: data.description, head: data.head});
+                                                setClasses(data.predClasses);
+                                                setSubmit(false);
+                                                setInputVisible(true);
+                                                // setLoaded(true);
+                                            }).catch((err) => console.log(err.response));
+                                        }}
+                                    >
+                                        {projects.map((project, i) => (
+                                            <Option key={i} value={project["_id"]}>
+                                                {project.name}
+                                            </Option>
+                                        ))}
+                                    </Select>}
                             </Form.Item>
-                            <Form.Item
+                            {inputVisible && <Form.Item
                                 name="task"
                                 key="task"
                                 label="Task"
@@ -96,11 +151,11 @@ function ProjectForm() {
                                         </Option>
                                     ))}
                                 </Select>
-                            </Form.Item>
+                            </Form.Item>}
                         </div>
-                        <Form.Item
-                            name="predClasses"
-                            key="predClasses"
+                        {inputVisible && <Form.Item
+                            // name="predClasses"
+                            // key="predClasses"
                             label="Classes"
                             // initialValue={classes}
                             // validateStatus={classesStatus}
@@ -201,8 +256,8 @@ function ProjectForm() {
                                     )}
                                 </>
                             </div>
-                        </Form.Item>
-                        <Form.Item
+                        </Form.Item>}
+                        {inputVisible && <Form.Item
                             name="description"
                             key="description"
                             label="Description"
@@ -218,8 +273,8 @@ function ProjectForm() {
                                 autoSize={{ minRows: 2, maxRows: 6 }}
                                 disabled={submit ? true : false}
                             />
-                        </Form.Item>
-                        <Form.Item
+                        </Form.Item>}
+                        {inputVisible && <Form.Item
                             name="head"
                             key="head"
                             label="Head (at least 1)"
@@ -241,7 +296,7 @@ function ProjectForm() {
                                     </Option>
                                 ))}
                             </Select>
-                        </Form.Item>
+                        </Form.Item>}
                     </Col>
                     <Col span={11}>
                         {/* <Form.List
@@ -321,7 +376,7 @@ function ProjectForm() {
                         </Form.List> */}
                     </Col>
                 </Row>
-                <Form.Item
+                {inputVisible && <Form.Item
                     style={{marginTop: "30px"}}
                 >
                     {submit ?
@@ -342,12 +397,22 @@ function ProjectForm() {
                                     //     setClassesStatus("error");
                                     //     setHelpMessage("'classes' is required");
                                     // }
-                                    createProject(data.name, data.task, data.description, classes, data.head)
-                                    .then((res) => {
-                                        console.log(res);
-                                        Modal.success({content: "Create project successfully."});
-                                        setSubmit(true);
-                                    }).catch((err) => console.log(err.response));
+                                    if (mode === "createproject") {
+                                        createProject(data.name, data.task, data.description, classes, data.head)
+                                        .then((res) => {
+                                            console.log(res);
+                                            Modal.success({content: "Create project successfully."});
+                                            setSubmit(true);
+                                        }).catch((err) => console.log(err.response));
+                                    } else {
+                                        console.log(projectName);
+                                        updateProjectById(projectName, data.task, data.description, classes, data.head, data.name)
+                                        .then((res) => {
+                                            console.log(res);
+                                            Modal.success({content: "Update project successfully."});
+                                            setSubmit(true);
+                                        }).catch((err) => console.log(err.response));
+                                    }
                                 } catch (errInfo) {
                                     console.log('Validate Failed:', errInfo);
                                 }
@@ -355,8 +420,8 @@ function ProjectForm() {
                         >
                             Submit
                         </Button>}
-                </Form.Item>
-            </Form>
+                </Form.Item>}
+            </Form>}
         </div>
     );
 }
