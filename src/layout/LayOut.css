@@ -382,6 +382,18 @@ ol {
   color: #58595b;
 }
 
+/* .add-button,
+.add-button:hover {
+  color: #58595b;
+  font-size: medium;
+  border-color: #c4c4c4;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+} */
+
 .zoom-btn,
 .zoom-btn:focus {
   background-color: #c4c4c4;
@@ -470,6 +482,10 @@ ol {
 .input-text.smaller:hover,
 .input-text.smaller:focus {
   font-size: medium;
+}
+
+.input-text.tag-wrapper {
+  padding: 5px 7px;
 }
 
 .input-prev-edit-text,
@@ -691,6 +707,7 @@ label.clickable-label:hover {
 /* select dropdown ------------- */
 .ant-select {
   font-size: large;
+  /* display: block; */
 }
 
 .ant-select-arrow {
@@ -712,6 +729,41 @@ label.clickable-label:hover {
   width: 300px;
   height: 38px;
   padding-top: 3px;
+}
+
+.multiple-select.ant-select {
+  width: 516px;
+}
+
+.multiple-select.ant-select:not(.ant-select-customize-input) .ant-select-selector,
+.multiple-select.ant-select-focused:not(.ant-select-disabled)
+  .ant-select:not(.ant-select-customize-input)
+  .ant-select-selector {
+  width: 100%;
+  height: 100%;
+  padding: 3px 7px;
+}
+
+.ant-select-clear {
+  display: flex;
+  align-items: center;
+}
+
+.ant-select-multiple .ant-select-selection-item {
+  margin-right: 8px;
+  border: 1px solid #d9d9d9;
+  font-size: medium;
+}
+
+.ant-select-multiple .ant-select-selection-item-remove {
+  display: flex;
+  align-items: center;
+}
+
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled) .ant-select-item-option-state {
+  color: #de5c8e;
+  display: flex;
+  align-items: center;
 }
 
 .search-component.ant-select:not(.ant-select-customize-input)
@@ -843,6 +895,37 @@ label.clickable-label:hover {
   background-color: #fff1c8;
   border-color: #c69c25;
   color: #c69c25;
+}
+
+.site-tag-plus {
+  color: #58595b;
+  background: #fff;
+  border-style: dashed;
+}
+
+.site-tag-plus > .anticon {
+  font-size: smaller;
+  vertical-align: 0.1em;
+}
+
+.edit-tag {
+  user-select: none;
+}
+
+.ant-tag > .anticon + span, .ant-tag > span + .anticon {
+  vertical-align: 0.2em;
+}
+
+.tag-input,
+.tag-input:hover,
+.tag-input:focus {
+  width: 90px;
+  margin-right: 8px;
+  /* vertical-align: top; */
+  font-size: medium;
+  color: #58595b;
+  border-color: #d9d9d9;
+  box-shadow: none;
 }
 
 /* date picker ---------------- */

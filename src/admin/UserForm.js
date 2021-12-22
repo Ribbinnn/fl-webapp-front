@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Form, Input, Select, Button, Modal, Spin } from "antd";
 import { LoadingOutlined } from '@ant-design/icons';
 import { createUser, updateUser, getAllUsers, getUserById } from "../api/admin";
@@ -8,7 +9,8 @@ const LoadingIcon = (
 );
 const { Option } = Select;
 
-function UserForm(props) {
+function UserForm() {
+    const { mode } = useParams();
     const [loaded, setLoaded] = useState(false);
     const roles = ["clinician", "radiologist", "admin"];
     const [users, setUsers] = useState([]);
@@ -20,7 +22,7 @@ function UserForm(props) {
     useEffect(() => {
         setLoaded(false);
         form.resetFields();
-        if (props.mode === "edituser") {
+        if (mode === "edituser") {
             getAllUsers()
             .then((res) => {
                 setUsers(res);
@@ -31,11 +33,11 @@ function UserForm(props) {
             setInputVisible(true);
             setLoaded(true);
         }
-    }, [props.mode]);
+    }, [mode]);
     return(
         <div>
             <label style={{fontWeight: "bold"}}>
-                {props.mode === "createuser" ? "Create New User" : "Edit User"}
+                {mode === "createuser" ? "Create New User" : "Edit User"}
             </label>
             {!loaded && (
                 <div style={{ textAlign: "center", marginTop: "20%" }}>
@@ -61,7 +63,7 @@ function UserForm(props) {
                             ]}
                             style={{display: "inline-block", marginRight: "30px"}}
                         >
-                            {props.mode === "createuser" ? 
+                            {mode === "createuser" ? 
                                 <Input className="input-text" disabled={submit ? true : false} /> :
                                 <Select
                                     className="search-component wider" 
@@ -80,10 +82,9 @@ function UserForm(props) {
                                             // setLoaded(true);
                                         }).catch((err) => console.log(err.response));
                                     }}
-                                    style={{width: "243px"}}
                                 >
                                     {users.map((user, i) => (
-                                        <Option key={i} value={i}>
+                                        <Option key={i} value={i /* edit */}>
                                             {user.username}
                                         </Option>
                                     ))}
@@ -111,7 +112,7 @@ function UserForm(props) {
                             label="Password"
                             rules={[
                                 {
-                                    required: props.mode === "createuser" ? true : false,
+                                    required: mode === "createuser" ? true : false,
                                 },
                             ]}
                             style={{display: "inline-block", marginRight: "30px"}}
@@ -124,7 +125,7 @@ function UserForm(props) {
                             label="Confirm Password"
                             rules={[
                                 {
-                                    required: props.mode === "createuser" ? true : false,
+                                    required: mode === "createuser" ? true : false,
                                 },
                             ]}
                             style={{display: "inline-block"}}
@@ -171,7 +172,7 @@ function UserForm(props) {
                         ]}
                         style={{display: "inline-block"}}
                     >
-                        <Select className="search-component" disabled={submit ? true : false}>
+                        <Select className="search-component wider" disabled={submit ? true : false}>
                             {roles.map((role, i) => (
                                 <Option key={i} value={role}>
                                     {role.charAt(0).toUpperCase() + role.slice(1)}
@@ -187,7 +188,7 @@ function UserForm(props) {
                                 className="primary-btn"
                                 onClick={() => window.location.reload()}
                             >
-                                {props.mode === "createuser" ? "Create new user" : "Edit other users"}
+                                {mode === "createuser" ? "Create new user" : "Edit other users"}
                             </Button> :
                             <Button
                                 className="primary-btn"
@@ -207,7 +208,7 @@ function UserForm(props) {
                                             }
                                         }
                                         if (checkPassword) {
-                                            if (props.mode === "createuser") {
+                                            if (mode === "createuser") {
                                                 createUser(data.username, data.password, data.first_name, data.last_name, data.role, data.email)
                                                 .then((res) => {
                                                     console.log(res);
