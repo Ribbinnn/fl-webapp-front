@@ -20,3 +20,36 @@ export const getProjectInfoByID = async (pid) => {
     throw e
   }
 }
+
+export const createProject = async (name, task, description, predClasses, head) => {
+  try {
+    const res = (
+      await instance.post("/projects", {name, task, description, predClasses, head})
+    ).data;
+    return res;
+  } catch (e) {
+    throw e
+  }
+}
+
+export const getAllProjects = async () => {
+  try {
+    const res = (
+      await instance.get("/projects")
+    ).data.data;
+    return res;
+  } catch (e) {
+    throw e
+  }
+}
+
+export const updateProjectById = async (name, task, description, predClasses, head, id) => {
+  try {
+    const res = (
+      await instance.patch("/projects", {name, task, description, predClasses, head, id})
+    ).data;
+    return res;
+  } catch (e) {
+    throw e
+  }
+}
