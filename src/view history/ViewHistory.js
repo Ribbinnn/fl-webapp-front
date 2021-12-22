@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Table, Tooltip, Form, Input, Button, Select, DatePicker, Tag, Spin, Popconfirm } from "antd";
 import { DownloadOutlined ,EditOutlined, DeleteOutlined, ReloadOutlined, LoadingOutlined } from '@ant-design/icons';
-import {viewHistory} from "../api/viewHistory"
+import {viewHistory, deleteReport} from "../api/viewHistory"
 import SelectProject from "../component/SelectProject";
 import ImageModal from "../component/ImageModal";
 import { useHistory, useLocation } from "react-router-dom";
@@ -217,8 +217,11 @@ function HistoryLog(props) {
                 <Popconfirm
                   title="Delete this report?"
                   onConfirm={() => {
-                    //deleteReport(report.pred_result_id);
-                    //window.location.reload();
+                    deleteReport(report.pred_result_id).then((res) => {
+                        window.location.reload();
+                    }).catch((err) => {
+                        console.log(err);
+                    })
                   }}
                   okButtonProps={{ className: "primary-btn popconfirm" }}
                   cancelButtonProps={{ style: { display: "none" } }}
