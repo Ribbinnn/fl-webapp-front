@@ -1012,6 +1012,10 @@ tbody {
   max-height: 123px; /* 3 rows */
 }
 
+.four-rows-table tbody {
+  max-height: 200px; /* 4 rows */
+}
+
 thead,
 tbody tr {
   display: table;
