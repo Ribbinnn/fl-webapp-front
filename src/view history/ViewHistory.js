@@ -68,20 +68,31 @@ function HistoryLog(props) {
                     color = "default"
                 } else if (status === "finalized") {
                     color = "success"
+                    status = "4_" + status
                 } else if (status === "annotated") {
                     color = "warning"
-                    status = "AI-Annotated"
+                    status = "2 AI-Annotated"
                 } else if (status === "reviewed") {
                     color = "error"
-                    status = "Human-Annotated"
+                    status = "3 Human-Annotated"
                 } else {
                     color = "processing"
+                    status = "1_" + status
                 }
-                return(
+                const isLongTag = status.length > 10;
+                const renderStatus = status.charAt(0).toUpperCase() + status.slice(1).split("_").join(" ");
+                const tagElem = (
                     <Tag color={color}  style={{width: "100%"}}>
-                        {status.charAt(0).toUpperCase() + status.slice(1).split("_").join(" ")}
+                        {isLongTag ? `${renderStatus.slice(0, 10)}...` : renderStatus}
                     </Tag>
                 );
+                return isLongTag ? (
+                    <Tooltip title={renderStatus} key={renderStatus}>
+                        {tagElem}
+                    </Tooltip>
+                    ) : (
+                        tagElem
+                    );
             }
         },
         {
