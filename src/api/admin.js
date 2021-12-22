@@ -50,3 +50,14 @@ export const getUserById = async (user_id) => {
         throw e
     }
 }
+
+export const deleteUserById = async (user_id) => {
+    try {
+        const res = (
+            await instance.patch("/users/" + user_id)
+        ).data;
+        return res;
+    } catch (e) {
+        throw e
+    }
+}
