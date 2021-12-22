@@ -33,9 +33,6 @@ export default function SelectProject(props) {
   
   // handle change for select project dropdown in header
   function handleChange(value) {
-    const project = itemList.filter(item => item.ProjectID===value)
-    setGlobalProject({"projectId": project[0].ProjectID, "projectName": project[0].ProjectName, "projectReq": project[0].Requirement})
-    sessionStorage.setItem("project", JSON.stringify({"projectId": project[0].ProjectID, "projectName": project[0].ProjectName, "projectReq": project[0].Requirement}));
     if (pathname.includes('/diagnosis')){
       return Modal.confirm({
         title: "Are you sure you want to change the project?",
@@ -43,11 +40,17 @@ export default function SelectProject(props) {
         okText: "Sure",
         width: 500,
         onOk: () => {
+          const project = itemList.filter(item => item.ProjectID===value)
+          setGlobalProject({"projectId": project[0].ProjectID, "projectName": project[0].ProjectName, "projectReq": project[0].Requirement})
+          sessionStorage.setItem("project", JSON.stringify({"projectId": project[0].ProjectID, "projectName": project[0].ProjectName, "projectReq": project[0].Requirement}));
           window.location.reload()
         },
         cancelText: "No",
       });
     }
+    const project = itemList.filter(item => item.ProjectID===value)
+    setGlobalProject({"projectId": project[0].ProjectID, "projectName": project[0].ProjectName, "projectReq": project[0].Requirement})
+    sessionStorage.setItem("project", JSON.stringify({"projectId": project[0].ProjectID, "projectName": project[0].ProjectName, "projectReq": project[0].Requirement}));
   }
   
   return (
