@@ -157,20 +157,17 @@ export default function AnnotationPanel(props) {
                     }
                     return [...current, item];
                   }, []);
-                }
-                else {
+                } else {
                   cornerstoneTools.addToolState(
                     dicomElement,
                     record.tool,
                     record.invisible
                   );
                   update = update.reduce((current, item) => {
-                    if (
-                      item.key === record.key
-                    ) {
+                    if (item.key === record.key) {
                       return [
                         ...current,
-                        { ...item, index: target.length-1, invisible: false },
+                        { ...item, index: target.length - 1, invisible: false },
                       ];
                     }
                     return [...current, item];
@@ -260,7 +257,11 @@ export default function AnnotationPanel(props) {
               okButtonProps={{ className: "primary-btn popconfirm" }}
               cancelButtonProps={{ style: { display: "none" } }}
             >
-              <Button type="link" disabled={record.invisible} icon={<DeleteOutlined />} />
+              <Button
+                type="link"
+                disabled={record.invisible}
+                icon={<DeleteOutlined />}
+              />
             </Popconfirm>
           </span>
         ),
@@ -391,6 +392,7 @@ export default function AnnotationPanel(props) {
     setTool(prop);
     if (prop === "mouse") prop = "wwwc";
     else if (prop === "ratio") {
+      prop = "length";
     }
     cornerstoneTools[prop].activate(dicomElement, 1);
   }
@@ -443,24 +445,24 @@ export default function AnnotationPanel(props) {
         windowLevel: viewport.voi["windowCenter"],
         windowWidth: viewport.voi["windowWidth"],
       });
-      return;
-    }
-    let count = labels.reduce(
-      (counter, item) => {
-        counter[item.tool] = counter[item.tool] + 1;
-        return counter;
-      },
-      { rectangleRoi: 0, length: 0, freehand: 0 }
-    );
-    let toolState = cornerstoneTools.getToolState(dicomElement, tool);
-    console.log(toolState);
-    if (toolState.data && toolState.data.length > count[tool]) {
-      if (toolState.data[toolState.data.length - 1].active) {
+    } else {
+      let count = labels.reduce(
+        (counter, item) => {
+          counter[item.tool] = counter[item.tool] + 1;
+          return counter;
+        },
+        { rectangleRoi: 0, length: 0, freehand: 0 }
+      );
+      let toolState = cornerstoneTools.getToolState(dicomElement, tool);
+      console.log(toolState);
+      if (toolState.data && toolState.data.length > count[tool]) {
+        if (toolState.data[toolState.data.length - 1].active) {
+          return;
+        }
+        addNewLabel(tool, toolState.data.length - 1);
+        setBtnMode("save-cancel");
         return;
       }
-      addNewLabel(tool, toolState.data.length - 1);
-      setBtnMode("save-cancel");
-      return;
     }
     let globalTool =
       cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState();
@@ -482,7 +484,7 @@ export default function AnnotationPanel(props) {
         };
       } else return item;
     });
-    if (checker !== labels) {
+    if (checker.some((member) => { return !member.saved;})){
       setLabels(checker);
       setBtnMode("save-cancel");
     }
@@ -576,8 +578,9 @@ export default function AnnotationPanel(props) {
           tool: item.tool,
           updated_by: user.id,
           data:
-            item.index === -1 ? item.invisible :
-            item.tool === "freehand"
+            item.index === -1
+              ? item.invisible
+              : item.tool === "freehand"
               ? freehandState.data[item.index]
               : item.tool === "length"
               ? lengthState.data[item.index]
@@ -588,7 +591,7 @@ export default function AnnotationPanel(props) {
     }, []);
     console.log(bbox_data);
     insertBBox(rid, bbox_data).then((res) => {
-      console.log(res)
+      console.log(res);
       if (res.success) {
         message.success("Bounding boxes successfully saved.", 5);
         setBtnMode("close");
@@ -624,6 +627,45 @@ export default function AnnotationPanel(props) {
       },
       cancelText: "No",
     });
+  };
+
+  const hideAll = () => {
+    let update = labels;
+    let globalTool =
+      cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState();
+    globalTool = globalTool[Object.keys(globalTool)[0]];
+    update = update
+      .reduceRight((current, item, i) => {
+        if (item.invisible) return [...current, item];
+        const bbox = globalTool[item.tool].data[item.index];
+        cornerstoneTools.removeToolState(dicomElement, item.tool, bbox);
+        return [...current, { ...item, index: -1, invisible: bbox }];
+      }, [])
+      .reverse();
+    cornerstone.updateImage(dicomElement);
+    setLabels(update);
+  };
+
+  const showAll = () => {
+    let update = labels;
+    let globalTool =
+      cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState();
+    globalTool = globalTool[Object.keys(globalTool)[0]];
+    update = update.reduce((current, item, i) => {
+      if (!item.invisible) return [...current, item];
+      const bbox = item.invisible;
+      cornerstoneTools.addToolState(dicomElement, item.tool, bbox);
+      return [
+        ...current,
+        {
+          ...item,
+          index: globalTool[item.tool].data.length - 1,
+          invisible: false,
+        },
+      ];
+    }, []);
+    cornerstone.updateImage(dicomElement);
+    setLabels(update);
   };
 
   return (
@@ -743,12 +785,6 @@ export default function AnnotationPanel(props) {
                   onClick={onViewerChange("zoomout")}
                 />
 
-                {/* <Input
-                  className="input-text smaller"
-                  style={{ height: "30px", width: "70px" }}
-                  value={`${viewerState.zoom * 100}%`}
-                /> */}
-
                 <Button
                   className="zoom-btn"
                   icon={<ZoomInOutlined />}
@@ -763,12 +799,6 @@ export default function AnnotationPanel(props) {
               </Button>
             </Col>
           </Row>
-          {/* <Row align="end" style={{ marginTop: "5px" }}>
-            <Button className="reset-vp-btn" onClick={resetViewPort}>
-              Reset Viewport
-              <RedoOutlined />
-            </Button>
-          </Row> */}
           <Row style={{ marginTop: "5px", marginBottom: "15px" }}>
             <Col span={8} className="annotate-tool-btn-ctn">
               <Button
@@ -835,24 +865,15 @@ export default function AnnotationPanel(props) {
                 className={`annotate-tool-btn ${
                   tool === "ratio" ? "selected-tool" : ""
                 }`}
-                style={{ visibility: "hidden" }}
+                //style={{ visibility: "hidden" }}
                 onClick={() => {
-                  // selectTool("freehand");
+                  selectTool("ratio");
                 }}
               >
                 Ratio {<VerticalAlignBottomOutlined />}
               </Button>
             </Col>
           </Row>
-          {/* <Row justify="start" align="middle">
-            <Switch defaultChecked={false} onChange={onSwitchChange} />
-            <label
-              className="annotate-tool-label"
-              style={{ marginLeft: "5px" }}
-            >
-              Bounding Box Info
-            </label>
-          </Row> */}
           <Row>
             <Col span={24} align="start" style={{ marginTop: "10px" }}>
               <label
@@ -892,7 +913,31 @@ export default function AnnotationPanel(props) {
               // }}
             />
           </Row>
-          <Row justify="end" style={{ marginTop: "25px" }}>
+          <Row justify="end">
+            {labels.some((member) => {
+              return member.invisible;
+            }) && (
+              <Button
+                type="link"
+                style={{ padding: 0, paddingRight: 10 }}
+                onClick={showAll}
+              >
+                Show All
+              </Button>
+            )}
+            {labels.some((member) => {
+              return !member.invisible;
+            }) && (
+              <Button
+                type="link"
+                style={{ padding: 0, paddingLeft: 10 }}
+                onClick={hideAll}
+              >
+                Hide All
+              </Button>
+            )}
+          </Row>
+          <Row justify="end" style={{ marginTop: "13px" }}>
             {false && (
               <Button className="primary-btn smaller" onClick={() => {}}>
                 Close

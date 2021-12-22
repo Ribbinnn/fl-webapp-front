@@ -1224,7 +1224,7 @@ table tr td.ant-table-selection-column {
 
 .annotate-table tbody {
   overflow: scroll;
-  height: 270px;
+  height: 250px;
   background-color: rgb(229 229 229);
 }
 
@@ -1241,7 +1241,7 @@ table tr td.ant-table-selection-column {
 }
 
 .annotate-table .ant-table-empty .ant-table-tbody > tr.ant-table-placeholder {
-  height: 270px;
+  height: 250px;
 }
 
 .selected-layer {
