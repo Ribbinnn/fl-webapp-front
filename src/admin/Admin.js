@@ -4,6 +4,8 @@ import { Menu } from "antd";
 import { UserOutlined, SettingOutlined } from '@ant-design/icons';
 import UserForm from "./UserForm";
 import ProjectForm from "./ProjectForm";
+import DeleteForm from "./DeleteForm";
+import ManageUser from "./ManageUser";
 
 const { SubMenu } = Menu;
 
@@ -18,15 +20,15 @@ function Admin() {
             case "edituser":
                 return <UserForm />;
             case "deleteuser":
-                return <label>delete user</label>;
+                return <DeleteForm mode="user"/>;
             case "createproject":
                 return <ProjectForm />;
             case "editproject":
                 return <ProjectForm />;
             case "manageuser":
-                return <label>manage user</label>;
+                return <ManageUser/>;
             case "deleteproject":
-                return <label>delete project</label>;
+                return <DeleteForm mode="project"/>;
             default:
                 return null;
         }

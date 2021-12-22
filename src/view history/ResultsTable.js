@@ -26,10 +26,10 @@ export default function ResultsTable(props) {
     if (!data) {
       let defaultSelectedRowKeys = [];
       let filtered_data = props.classes.reduce((config, item, i) => {
-        if (mode === "edit" && status === "finalized" && item.selected) {
+        if (mode === "edit" && status === "reviewed" && item.selected) {
           defaultSelectedRowKeys = [...defaultSelectedRowKeys, i];
         }
-        if (status === "finalized" && mode === "view" && !item.selected) {
+        if (status === "reviewed" && mode === "view" && !item.selected) {
           return [...config];
         }
         return [

@@ -1202,7 +1202,7 @@ table tr td.ant-table-selection-column {
   padding: 4px 4px !important;
 }
 .annotate-table .ant-table-tbody > tr > td:nth-child(even) {
-  width: 100px;
+  width: 150px;
   text-align: right;
 }
 .annotate-table .ant-table-tbody > tr > td:nth-child(odd) {
@@ -1216,6 +1216,11 @@ table tr td.ant-table-selection-column {
 
 .selected-layer {
   background: #f8e1ea !important;
+}
+
+.unsaved-label {
+  font-style: oblique;
+  font-weight: bold;
 }
 
 /* dot ------------- */

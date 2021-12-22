@@ -216,7 +216,7 @@ function UserForm() {
                                                     setSubmit(true);
                                                 }).catch((err) => console.log(err.response));
                                             } else {
-                                                updateUser(data.username, data.first_name, data.last_name, data.role, data.email, updateUserId, data.password, isChulaSSO)
+                                                updateUser(data.first_name, data.last_name, data.role, data.email, updateUserId, data.password, isChulaSSO)
                                                 .then((res) => {
                                                     console.log(res);
                                                     Modal.success({content: "Update user successfully."});
