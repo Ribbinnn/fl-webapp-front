@@ -108,9 +108,9 @@ function ProjectForm() {
                                     <Input className="input-text" disabled={submit ? true : false} /> :
                                     <Select
                                         className="search-component wider" 
-                                        showSearch
-                                        optionFilterProp="children"
-                                        filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                        // showSearch
+                                        // optionFilterProp="children"
+                                        // filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                                         onChange={(id) => {
                                             // setLoaded(false);
                                             getProjectInfoByID(id)
@@ -126,11 +126,25 @@ function ProjectForm() {
                                             }).catch((err) => console.log(err.response));
                                         }}
                                     >
-                                        {projects.map((project, i) => (
-                                            <Option key={i} value={project["_id"]}>
-                                                {project.name}
-                                            </Option>
-                                        ))}
+                                        {projects.map((project, i) => {
+                                            let projectHead = "";
+                                            for (const i in project.head) {
+                                                if (parseInt(i)+1 === project.head.length) {
+                                                    projectHead += project.head[i].username;
+                                                } else {
+                                                    projectHead += project.head[i].username + ", ";
+                                                }
+                                            }
+                                            return(
+                                                <Option key={i} value={project["_id"]}>
+                                                    {<div className="select-item-group">
+                                                        <label>{project.name}</label>
+                                                        <br />
+                                                        <label style={{fontSize: "small"}}>{projectHead}</label>
+                                                    </div>}
+                                                </Option>
+                                            );
+                                        })}
                                     </Select>}
                             </Form.Item>
                             {inputVisible && <Form.Item
