@@ -778,13 +778,23 @@ label.clickable-label:hover {
   align-items: center;
 }
 
-.select-item-group:hover > label {
-  cursor: pointer;
-  color: #de5c8e;
-}
-
+.ant-select-item.ant-select-item-option.ant-select-item-option-active .ant-select-item-option-content .select-item-group > label,
 .ant-select-item.ant-select-item-option.ant-select-item-option-active.ant-select-item-option-selected .ant-select-item-option-content .select-item-group > label {
   color: #de5c8e;
+  cursor: pointer;
+}
+
+.select-item-group {
+  text-overflow: ellipsis;
+}
+
+.ant-select-item.ant-select-item-option .ant-select-item-option-content .select-item-group > label,
+.ant-select .ant-select-selector .ant-select-selection-item .select-item-group > label {
+  width: 100%;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .ant-select .ant-select-selector .ant-select-selection-item .select-item-group > label,

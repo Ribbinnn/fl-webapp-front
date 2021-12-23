@@ -67,9 +67,10 @@ function UserForm() {
                                 <Input className="input-text" disabled={submit ? true : false} /> :
                                 <Select
                                     className="search-component wider" 
+                                    allowClear
                                     showSearch
                                     optionFilterProp="children"
-                                    filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                                    // filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                                     onChange={(i) => {
                                         // setLoaded(false);
                                         getUserById(users[i]["_id"])
@@ -172,7 +173,7 @@ function UserForm() {
                         ]}
                         style={{display: "inline-block"}}
                     >
-                        <Select className="search-component wider" disabled={submit ? true : false}>
+                        <Select className="search-component wider" allowClear disabled={submit ? true : false}>
                             {roles.map((role, i) => (
                                 <Option key={i} value={role}>
                                     {role.charAt(0).toUpperCase() + role.slice(1)}

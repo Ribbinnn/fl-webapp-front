@@ -108,8 +108,9 @@ function ProjectForm() {
                                     <Input className="input-text" disabled={submit ? true : false} /> :
                                     <Select
                                         className="search-component wider" 
-                                        // showSearch
-                                        // optionFilterProp="children"
+                                        allowClear
+                                        showSearch
+                                        optionFilterProp="label"
                                         // filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                                         onChange={(id) => {
                                             // setLoaded(false);
@@ -136,12 +137,12 @@ function ProjectForm() {
                                                 }
                                             }
                                             return(
-                                                <Option key={i} value={project["_id"]}>
-                                                    {<div className="select-item-group">
+                                                <Option key={i} value={project["_id"]} label={project.name}>
+                                                    <div className="select-item-group">
                                                         <label>{project.name}</label>
                                                         <br />
                                                         <label style={{fontSize: "small"}}>{projectHead}</label>
-                                                    </div>}
+                                                    </div>
                                                 </Option>
                                             );
                                         })}
@@ -158,7 +159,7 @@ function ProjectForm() {
                                 ]}
                                 style={{display: "inline-block"}}
                             >
-                                <Select className="search-component wider" disabled={submit ? true : false}>
+                                <Select className="search-component wider" allowClear disabled={submit ? true : false}>
                                     {tasks.map((task, i) => (
                                         <Option key={i} value={task}>
                                             {task}
