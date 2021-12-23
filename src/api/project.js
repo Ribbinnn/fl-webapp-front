@@ -53,3 +53,14 @@ export const updateProjectById = async (name, task, description, predClasses, he
     throw e
   }
 }
+
+export const deleteProjectById = async (id) => {
+  try {
+    const res = (
+      await instance.delete("/projects/delete/"+id)
+    ).data;
+    return res;
+  } catch (e) {
+    throw e
+  }
+}

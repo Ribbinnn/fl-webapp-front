@@ -11,7 +11,7 @@ import {
   Table,
   Modal,
   Popconfirm,
-  Popover
+  Popover,
 } from "antd";
 import {
   ZoomInOutlined,
@@ -28,6 +28,9 @@ import {
   ExclamationCircleOutlined,
   EditOutlined,
   InfoCircleOutlined,
+  ExclamationOutlined,
+  EyeInvisibleOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import { getDicomByAccessionNo } from "../../api/image";
@@ -44,24 +47,10 @@ const LoadingIcon = (
 
 export default function AnnotationPanel(props) {
   const [tool, setTool] = useState();
-  const user = JSON.parse(sessionStorage.getItem("user"))
+  const user = JSON.parse(sessionStorage.getItem("user"));
   const [imgLoaded, setImgLoaded] = useState(false);
   const [dicomElement, setDicomElement] = useState();
-  const [columns, setColumns] =
-    useState(/* [
-    {
-      title: "Label",
-      dataIndex: "label",
-      key: "label",
-    },
-    {
-      title: "Action",
-      key: "action",
-      render: (text, record) => (
-        <Button type="link" icon={<DeleteOutlined />} />
-      ),
-    },
-  ] */);
+  const [columns, setColumns] = useState();
   const { mode, rid } = useParams();
   const [labels, setLabels] = useState([]);
   //const [labelList, setLabelList] = useState([]);
@@ -76,7 +65,7 @@ export default function AnnotationPanel(props) {
     defaultWindowWidth: 0,
     defaultWindowLevel: 0,
   });
-  const [savedTime,setSavedTime] = useState();
+  const [savedTime, setSavedTime] = useState();
   const [btnMode, setBtnMode] = useState("close");
   const [savedData, setSavedData] = useState();
 
@@ -87,22 +76,19 @@ export default function AnnotationPanel(props) {
       displayImage
     );
     getBBox(rid).then((res) => {
-      if(res.data){
-        setSavedData(res.data.data.map((item,i)=>{
-          return {key: i+1, data: item.data}
-        }))
+      console.log(res);
+      if (res.data) {
+        setSavedData(
+          res.data.data.map((item, i) => {
+            return { key: i + 1, data: item.data };
+          })
+        );
       }
-    })
+    });
     //cornerstoneTools.toolColors.setToolColor('#4ad578');
     // Set color for active tools
     //cornerstoneTools.toolColors.setActiveColor('#58595b');
   }, []);
-
-  useEffect(() => {
-    console.log('changed')
-    // console.log(prevSavedData)
-    console.log(savedData)
-  }, [savedData])
 
   useEffect(() => {
     console.log(labels);
@@ -112,11 +98,19 @@ export default function AnnotationPanel(props) {
         dataIndex: "label",
         key: "label",
         render: (text, record) => (
-          <span className="label-tag">
+          <span
+            className="label-tag"
+            style={record.saved ? {} : { color: "#de5c8e" }}
+          >
             {(record.tool === "length" && <ColumnHeightOutlined />) ||
               (record.tool === "rectangleRoi" && <BorderOutlined />) ||
               (record.tool === "freehand" && <StarOutlined />)}
             {record.label}
+            {record.updated_by.username !== user.username && (
+              <ExclamationOutlined
+                style={{ color: "#de5c8e", strokeWidth: 30, stroke: "#de5c8e" }}
+              />
+            )}
           </span>
         ),
       },
@@ -125,12 +119,86 @@ export default function AnnotationPanel(props) {
         key: "action",
         render: (text, record) => (
           <span style={{ textAlign: "right" }}>
-            <Popover className="bbox-popover" placement="top" content={<span><p style={{marginBottom: 0}}>Last modified: {(new Date(record.updated_time)).toLocaleString()}</p><p style={{marginBottom: 0}}>by: {record.updated_by.username}</p></span>} trigger="click">
+            <Button
+              type="link"
+              icon={
+                record.invisible ? <EyeInvisibleOutlined /> : <EyeOutlined />
+              }
+              onClick={() => {
+                let update = labels;
+                let target = cornerstoneTools.getToolState(
+                  dicomElement,
+                  record.tool
+                ).data;
+                if (!record.invisible) {
+                  let ind = update.findIndex((item) => item.key === record.key);
+                  const bbox = target[record.index];
+                  cornerstoneTools.removeToolState(
+                    dicomElement,
+                    record.tool,
+                    bbox
+                  );
+                  console.log(bbox);
+                  update = update.reduce((current, item) => {
+                    if (
+                      item.tool === record.tool &&
+                      item.index > record.index
+                    ) {
+                      return [...current, { ...item, index: item.index - 1 }];
+                    }
+                    if (
+                      item.tool === record.tool &&
+                      item.index === record.index
+                    ) {
+                      return [
+                        ...current,
+                        { ...item, index: -1, invisible: bbox },
+                      ];
+                    }
+                    return [...current, item];
+                  }, []);
+                } else {
+                  cornerstoneTools.addToolState(
+                    dicomElement,
+                    record.tool,
+                    record.invisible
+                  );
+                  update = update.reduce((current, item) => {
+                    if (item.key === record.key) {
+                      return [
+                        ...current,
+                        { ...item, index: target.length - 1, invisible: false },
+                      ];
+                    }
+                    return [...current, item];
+                  }, []);
+                }
+                cornerstone.updateImage(dicomElement);
+                setLabels(update);
+              }}
+            />
+            <Popover
+              className="bbox-popover"
+              placement="top"
+              content={
+                <span>
+                  <p style={{ marginBottom: 0 }}>
+                    Last modified:{" "}
+                    {new Date(record.updated_time).toLocaleString()}
+                  </p>
+                  <p style={{ marginBottom: 0 }}>
+                    by: {record.updated_by.username}
+                  </p>
+                </span>
+              }
+              trigger="click"
+            >
               <Button type="link" icon={<InfoCircleOutlined />} />
             </Popover>
             <Button
               type="link"
               icon={<EditOutlined />}
+              disabled={record.invisible}
               onClick={() => {
                 Modal.confirm({
                   title: "Choose label",
@@ -189,7 +257,11 @@ export default function AnnotationPanel(props) {
               okButtonProps={{ className: "primary-btn popconfirm" }}
               cancelButtonProps={{ style: { display: "none" } }}
             >
-              <Button type="link" icon={<DeleteOutlined />} />
+              <Button
+                type="link"
+                disabled={record.invisible}
+                icon={<DeleteOutlined />}
+              />
             </Popconfirm>
           </span>
         ),
@@ -204,7 +276,13 @@ export default function AnnotationPanel(props) {
         let edittedLabels = labels.map((item) => {
           console.log(item);
           if (item.key === labelBuffer.key) {
-            return { ...item, label: selectedLabel, saved:false, updated_time: new Date(), updated_by: user };
+            return {
+              ...item,
+              label: selectedLabel,
+              saved: false,
+              updated_time: new Date(),
+              updated_by: user,
+            };
           } else return item;
         });
         setLabels(edittedLabels);
@@ -214,7 +292,7 @@ export default function AnnotationPanel(props) {
           label: labelBuffer.label ?? selectedLabel,
           saved: false,
           updated_time: new Date(),
-          updated_by: user
+          updated_by: user,
         };
         setLabels([...labels, newLabel]);
       }
@@ -254,26 +332,29 @@ export default function AnnotationPanel(props) {
     removeAnnotations(element);
     //getBBox
     getBBox(rid).then((res) => {
-      console.log(res)
+      console.log(res);
       if (res.data) {
-        let temp = res
+        let temp = res;
         let loadedData = temp.data.data.reduce(
           (current, item, i) => {
-            const bbox = item.data
+            const bbox = item.data;
             cornerstoneTools.addToolState(element, item.tool, bbox);
-            console.log(item)
+            console.log(item);
             return {
               ...current,
               initial_lb: [
                 ...current.initial_lb,
                 {
-                  key: /* current.rectangleRoi + current.freehand + current["length"] + 1 */ i+1,
+                  key:
+                    /* current.rectangleRoi + current.freehand + current["length"] + 1 */ i +
+                    1,
                   tool: item.tool,
                   index: current[item.tool],
                   label: item.label,
                   saved: true,
                   updated_by: item.updated_by,
                   updated_time: item.updated_time,
+                  invisible: false,
                 },
               ],
               [item.tool]: current[item.tool] + 1,
@@ -283,17 +364,23 @@ export default function AnnotationPanel(props) {
                 : [...current.initial_ll, item.label], */
             };
           },
-          { initial_lb: [], rectangleRoi: 0, freehand: 0, length: 0 /* initial_ll: [] */ }
+          {
+            initial_lb: [],
+            rectangleRoi: 0,
+            freehand: 0,
+            length: 0 /* initial_ll: [] */,
+          }
         );
         console.log(loadedData);
         cornerstone.updateImage(element);
         setLabels(loadedData.initial_lb);
         setImgLoaded(true);
         // setSavedData(res.data.data)
-        console.log(loadedData)
+        console.log(loadedData);
         // setLabelList(temp.initial_ll);
       }
-      res.data.createdAt !== res.data.updatedAt && setSavedTime((new Date(res.data.updatedAt)).toLocaleString());
+      res.data.createdAt !== res.data.updatedAt &&
+        setSavedTime(new Date(res.data.updatedAt).toLocaleString());
     });
   }
 
@@ -305,6 +392,7 @@ export default function AnnotationPanel(props) {
     setTool(prop);
     if (prop === "mouse") prop = "wwwc";
     else if (prop === "ratio") {
+      prop = "length";
     }
     cornerstoneTools[prop].activate(dicomElement, 1);
   }
@@ -357,37 +445,46 @@ export default function AnnotationPanel(props) {
         windowLevel: viewport.voi["windowCenter"],
         windowWidth: viewport.voi["windowWidth"],
       });
-      return;
-    }
-    let count = labels.reduce(
-      (counter, item) => {
-        counter[item.tool] = counter[item.tool] + 1;
-        return counter;
-      },
-      { rectangleRoi: 0, length: 0, freehand: 0 }
-    );
-    let toolState = cornerstoneTools.getToolState(dicomElement, tool);
-    console.log(toolState);
-    if (toolState.data && toolState.data.length > count[tool]) {
-      if (toolState.data[toolState.data.length - 1].active) {
+    } else {
+      let count = labels.reduce(
+        (counter, item) => {
+          counter[item.tool] = counter[item.tool] + 1;
+          return counter;
+        },
+        { rectangleRoi: 0, length: 0, freehand: 0 }
+      );
+      let toolState = cornerstoneTools.getToolState(dicomElement, tool);
+      console.log(toolState);
+      if (toolState.data && toolState.data.length > count[tool]) {
+        if (toolState.data[toolState.data.length - 1].active) {
+          return;
+        }
+        addNewLabel(tool, toolState.data.length - 1);
+        setBtnMode("save-cancel");
         return;
       }
-      addNewLabel(tool, toolState.data.length - 1);
-      setBtnMode("save-cancel");
-      return
     }
-    let globalTool = cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState()
-    globalTool = globalTool[Object.keys(globalTool)[0]]
-    console.log(globalTool)
-    console.log(savedData)
-    let checker = labels.map((item, i)=> {
-      if (!item.saved) return item
-      if (globalTool[item.tool].data[item.index] !== savedData[savedData.findIndex((elm) => elm.key === item.key)].data){
-        return {...item, saved: false, updated_time: new Date(), updated_by: user}
-      }
-      else return item
-    })
-    if (checker !== labels) {
+    let globalTool =
+      cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState();
+    globalTool = globalTool[Object.keys(globalTool)[0]];
+    let checker = labels.map((item, i) => {
+      if (!item.saved) return item;
+      if (
+        JSON.stringify(globalTool[item.tool].data[item.index].handles) !==
+        JSON.stringify(
+          savedData[savedData.findIndex((elm) => elm.key === item.key)].data
+            .handles
+        )
+      ) {
+        return {
+          ...item,
+          saved: false,
+          updated_time: new Date(),
+          updated_by: user,
+        };
+      } else return item;
+    });
+    if (checker.some((member) => { return !member.saved;})){
       setLabels(checker);
       setBtnMode("save-cancel");
     }
@@ -436,11 +533,6 @@ export default function AnnotationPanel(props) {
     setViewerState({ ...viewerState, [prop]: value || e });
   };
 
-  const onSwitchChange = (checked) => {
-    onViewerChange("showInfo", checked);
-    console.log(`${checked ? "Show" : "Hide"} Bounding Box Info`);
-  };
-
   const addNewLabel = (tool, index) => {
     let key = labels.length > 0 ? labels[labels.length - 1].key + 1 : 1;
     Modal.info({
@@ -479,7 +571,6 @@ export default function AnnotationPanel(props) {
     let freehandState = cornerstoneTools.getToolState(dicomElement, "freehand");
     let lengthState = cornerstoneTools.getToolState(dicomElement, "length");
     let bbox_data = labels.reduce((current, item, i) => {
-      if (item.tool === "length") return current;
       return [
         ...current,
         {
@@ -487,20 +578,34 @@ export default function AnnotationPanel(props) {
           tool: item.tool,
           updated_by: user.id,
           data:
-            item.tool === "freehand"
+            item.index === -1
+              ? item.invisible
+              : item.tool === "freehand"
               ? freehandState.data[item.index]
-              : item.tool === "length" ? lengthState.data[item.index] :rectangleRoiState.data[item.index],
-          updated_time: item.updated_time
+              : item.tool === "length"
+              ? lengthState.data[item.index]
+              : rectangleRoiState.data[item.index],
+          updated_time: item.updated_time,
         },
       ];
     }, []);
     console.log(bbox_data);
     insertBBox(rid, bbox_data).then((res) => {
+      console.log(res);
       if (res.success) {
         message.success("Bounding boxes successfully saved.", 5);
         setBtnMode("close");
-        setLabels(labels.map((item) => {return {...item, saved: true}}))
-        setSavedTime((new Date(res.data.updatedAt)).toLocaleString())
+        setLabels(
+          labels.map((item) => {
+            return { ...item, saved: true };
+          })
+        );
+        setSavedData(
+          res.data.data.map((item, i) => {
+            return { key: labels[i].key, data: item.data };
+          })
+        );
+        setSavedTime(new Date(res.data.updatedAt).toLocaleString());
       } else
         message.error("Cannot save bounding boxes, please try again later.", 5);
     });
@@ -522,6 +627,45 @@ export default function AnnotationPanel(props) {
       },
       cancelText: "No",
     });
+  };
+
+  const hideAll = () => {
+    let update = labels;
+    let globalTool =
+      cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState();
+    globalTool = globalTool[Object.keys(globalTool)[0]];
+    update = update
+      .reduceRight((current, item, i) => {
+        if (item.invisible) return [...current, item];
+        const bbox = globalTool[item.tool].data[item.index];
+        cornerstoneTools.removeToolState(dicomElement, item.tool, bbox);
+        return [...current, { ...item, index: -1, invisible: bbox }];
+      }, [])
+      .reverse();
+    cornerstone.updateImage(dicomElement);
+    setLabels(update);
+  };
+
+  const showAll = () => {
+    let update = labels;
+    let globalTool =
+      cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState();
+    globalTool = globalTool[Object.keys(globalTool)[0]];
+    update = update.reduce((current, item, i) => {
+      if (!item.invisible) return [...current, item];
+      const bbox = item.invisible;
+      cornerstoneTools.addToolState(dicomElement, item.tool, bbox);
+      return [
+        ...current,
+        {
+          ...item,
+          index: globalTool[item.tool].data.length - 1,
+          invisible: false,
+        },
+      ];
+    }, []);
+    cornerstone.updateImage(dicomElement);
+    setLabels(update);
   };
 
   return (
@@ -641,12 +785,6 @@ export default function AnnotationPanel(props) {
                   onClick={onViewerChange("zoomout")}
                 />
 
-                {/* <Input
-                  className="input-text smaller"
-                  style={{ height: "30px", width: "70px" }}
-                  value={`${viewerState.zoom * 100}%`}
-                /> */}
-
                 <Button
                   className="zoom-btn"
                   icon={<ZoomInOutlined />}
@@ -661,12 +799,6 @@ export default function AnnotationPanel(props) {
               </Button>
             </Col>
           </Row>
-          {/* <Row align="end" style={{ marginTop: "5px" }}>
-            <Button className="reset-vp-btn" onClick={resetViewPort}>
-              Reset Viewport
-              <RedoOutlined />
-            </Button>
-          </Row> */}
           <Row style={{ marginTop: "5px", marginBottom: "15px" }}>
             <Col span={8} className="annotate-tool-btn-ctn">
               <Button
@@ -733,24 +865,15 @@ export default function AnnotationPanel(props) {
                 className={`annotate-tool-btn ${
                   tool === "ratio" ? "selected-tool" : ""
                 }`}
-                style={{ visibility: "hidden" }}
+                //style={{ visibility: "hidden" }}
                 onClick={() => {
-                  // selectTool("freehand");
+                  selectTool("ratio");
                 }}
               >
                 Ratio {<VerticalAlignBottomOutlined />}
               </Button>
             </Col>
           </Row>
-          {/* <Row justify="start" align="middle">
-            <Switch defaultChecked={false} onChange={onSwitchChange} />
-            <label
-              className="annotate-tool-label"
-              style={{ marginLeft: "5px" }}
-            >
-              Bounding Box Info
-            </label>
-          </Row> */}
           <Row>
             <Col span={24} align="start" style={{ marginTop: "10px" }}>
               <label
@@ -759,9 +882,11 @@ export default function AnnotationPanel(props) {
               >
                 Bounding Boxes
               </label>
-              {savedTime && (<span style={{ fontSize: "small", marginLeft: "10px" }}>
-                Last Saved: {savedTime}
-              </span>)}
+              {savedTime && (
+                <span style={{ fontSize: "small", marginLeft: "10px" }}>
+                  Last Saved: {savedTime}
+                </span>
+              )}
               {/* <Button
                 className="reset-vp-btn"
                 icon={<PlusCircleOutlined />}
@@ -788,7 +913,31 @@ export default function AnnotationPanel(props) {
               // }}
             />
           </Row>
-          <Row justify="end" style={{ marginTop: "25px" }}>
+          <Row justify="end">
+            {labels.some((member) => {
+              return member.invisible;
+            }) && (
+              <Button
+                type="link"
+                style={{ padding: 0, paddingRight: 10 }}
+                onClick={showAll}
+              >
+                Show All
+              </Button>
+            )}
+            {labels.some((member) => {
+              return !member.invisible;
+            }) && (
+              <Button
+                type="link"
+                style={{ padding: 0, paddingLeft: 10 }}
+                onClick={hideAll}
+              >
+                Hide All
+              </Button>
+            )}
+          </Row>
+          <Row justify="end" style={{ marginTop: "13px" }}>
             {false && (
               <Button className="primary-btn smaller" onClick={() => {}}>
                 Close

@@ -61,3 +61,14 @@ export const deleteUserById = async (user_id) => {
         throw e
     }
 }
+
+export const manageUser = async (id, users) => {
+    try {
+        const res = (
+            await instance.patch("/projects/manage", {id, users})
+        ).data
+        return res;
+    } catch (e) {
+        throw e
+    }
+}
