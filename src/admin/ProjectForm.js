@@ -108,7 +108,6 @@ function ProjectForm() {
                                     // setLoaded(false);
                                     getProjectInfoByID(id)
                                     .then((res) => {
-                                        console.log(res);
                                         const data = res.data;
                                         setProjectName(data.name);
                                         form.setFieldsValue({task: data.task, description: data.description, head: data.head});
@@ -385,8 +384,6 @@ function ProjectForm() {
                             onClick={async () => {
                                 try {
                                     const data = await form.validateFields();
-                                    console.log(data);
-                                    console.log(classes);
                                     if (mode === "createproject") {
                                         createProject(data.name, data.task, data.description, classes, data.head)
                                         .then((res) => {
@@ -395,7 +392,6 @@ function ProjectForm() {
                                             setSubmit(true);
                                         }).catch((err) => console.log(err.response));
                                     } else {
-                                        console.log(projectName);
                                         updateProjectById(projectName, data.task, data.description, classes, data.head, data.name)
                                         .then((res) => {
                                             console.log(res);
