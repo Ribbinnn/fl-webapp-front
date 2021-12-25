@@ -107,7 +107,7 @@ function ManageUserTable(props) {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [selectedUserKeys, setSelectedUserKeys] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([])
-  const [allUsers, setAllUsers] = useState(props.users.filter(user => !props.project.head.includes(user._id)))
+  const [allUsers, setAllUsers] = useState([])
 
   const columns = [
     {
@@ -174,9 +174,10 @@ function ManageUserTable(props) {
   };
 
   useEffect(() => {
-    console.log(1, props.users, allUsers,)
+    const userList = props.users.filter(user => !props.project.head.includes(user._id))
+    setAllUsers(userList)
 
-    const defaultSelectedRow = allUsers.filter(user => props.project.users.includes(user._id));
+    const defaultSelectedRow = userList.filter(user => props.project.users.includes(user._id));
     defaultSelectedRow.map(item => {
       item.note = '-'
       return item
@@ -189,7 +190,6 @@ function ManageUserTable(props) {
       item.note = 'head'
       return item
     });
-    console.log(headUsers,defaultSelectedRow)
     setSelectedUsers([...headUsers, ...defaultSelectedRow])
     setSelectedUserKeys([...props.project.head, ...defaultSelectedRow.map(item => item._id)])
   }, [props])
