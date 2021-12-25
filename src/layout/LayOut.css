@@ -800,12 +800,22 @@ label.clickable-label:hover {
 .ant-select .ant-select-selector .ant-select-selection-item .select-item-group > label,
 .ant-select .ant-select-selector .ant-select-selection-item .select-item-group > label:hover {
   color: #58595b;
+  cursor: pointer;
+}
+
+.ant-select.ant-select-show-search .ant-select-selector .ant-select-selection-item .select-item-group > label,
+.ant-select.ant-select-show-search .ant-select-selector .ant-select-selection-item .select-item-group > label:hover {
   cursor: text;
 }
 
 .ant-select.ant-select-open .ant-select-selector .ant-select-selection-item .select-item-group > label,
 .ant-select.ant-select-open .ant-select-selector .ant-select-selection-item .select-item-group > label:hover {
   color: #bfbfbf;
+  cursor: pointer;
+}
+
+.ant-select.ant-select-open.ant-select-show-search .ant-select-selector .ant-select-selection-item .select-item-group > label,
+.ant-select.ant-select-open.ant-select-show-search .ant-select-selector .ant-select-selection-item .select-item-group > label:hover {
   cursor: text;
 }
 

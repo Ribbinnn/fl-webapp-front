@@ -70,7 +70,6 @@ function UserForm() {
                                     allowClear
                                     showSearch
                                     optionFilterProp="children"
-                                    // filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                                     onChange={(i) => {
                                         // setLoaded(false);
                                         getUserById(users[i]["_id"])

@@ -111,7 +111,6 @@ function ProjectForm() {
                                         allowClear
                                         showSearch
                                         optionFilterProp="label"
-                                        // filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                                         onChange={(id) => {
                                             // setLoaded(false);
                                             getProjectInfoByID(id)
