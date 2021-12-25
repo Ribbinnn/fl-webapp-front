@@ -107,11 +107,8 @@ export default function DeleteForm(props) {
             </div>
             <Select
               className="search-component wider"
-              showSearch = {props.mode === "user" ? true : false}
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
+              showSearch
+              optionFilterProp={props.mode === "user" ? "children" : "label"}
               onChange={(i, j) => {
                 console.log(j);
                 if (props.mode === "project"){
@@ -134,7 +131,7 @@ export default function DeleteForm(props) {
                                                 }
                                             }
                                             return(
-                                                <Option key={i} value={project["_id"]}>
+                                                <Option key={i} value={project["_id"]} label={project.name}>
                                                     {<div className="select-item-group">
                                                         <label>{project.name}</label>
                                                         <br />

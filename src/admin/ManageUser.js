@@ -60,9 +60,8 @@ export default function ManageUser(props) {
             </div>
             <Select
               className="search-component wider"
-              // showSearch
-              // optionFilterProp="children"
-              // filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+              showSearch
+              optionFilterProp="label"
               onChange={(id) => {
                 getProjectInfoByID(id).then((res) => {
                   setProject(res.data)
@@ -82,7 +81,7 @@ export default function ManageUser(props) {
                   }
                 }
                 return (
-                  <Option key={i} value={project["_id"]}>
+                  <Option key={i} value={project["_id"]} label={project.name}>
                     {<div className="select-item-group">
                       <label>{project.name}</label>
                       <br />
