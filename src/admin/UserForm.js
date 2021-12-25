@@ -15,7 +15,6 @@ function UserForm() {
     const roles = ["clinician", "radiologist", "admin"];
     const [users, setUsers] = useState([]);
     const [isChulaSSO, setIsChulaSSO] = useState(null);
-    const [updateUserId, setUpdateUserId] = useState("");
     const [form] = Form.useForm();
     const [submit, setSubmit] = useState(false);
     const [inputVisible, setInputVisible] = useState(true);
@@ -70,13 +69,12 @@ function UserForm() {
                                     allowClear
                                     showSearch
                                     optionFilterProp="children"
-                                    onChange={(i) => {
+                                    onChange={(id) => {
                                         // setLoaded(false);
-                                        getUserById(users[i]["_id"])
+                                        getUserById(id)
                                         .then((res) => {
                                             setIsChulaSSO(res["isChulaSSO"]);
-                                            setUpdateUserId(res["_id"]);
-                                            form.setFieldsValue({...res, password: "", confirm: ""});
+                                            form.setFieldsValue({...res, username: id, password: "", confirm: ""});
                                             setSubmit(false);
                                             setInputVisible(true);
                                             // setLoaded(true);
@@ -84,7 +82,7 @@ function UserForm() {
                                     }}
                                 >
                                     {users.map((user, i) => (
-                                        <Option key={i} value={i /* edit */}>
+                                        <Option key={i} value={user["_id"]}>
                                             {user.username}
                                         </Option>
                                     ))}
@@ -114,6 +112,11 @@ function UserForm() {
                                 {
                                     required: mode === "createuser" ? true : false,
                                 },
+                                {
+                                    min: 8,
+                                    max: 32,
+                                    message: "'password' length must be 8-32."
+                                }
                             ]}
                             style={{display: "inline-block", marginRight: "30px"}}
                         >
@@ -198,14 +201,9 @@ function UserForm() {
                                         const data = await form.validateFields();
                                         if (data.password === undefined || data.password === "") {
                                             data["password"] = "";
-                                        } else {
-                                            if (data.password.length < 8 || data.password.length > 32) {
-                                                Modal.warning({content: "Password length must be 8-32 characters."});
-                                                checkPassword = false
-                                            } else if (data.password !== data.confirm) {
-                                                Modal.warning({content: "Confirm Password does not match."});
-                                                checkPassword = false;
-                                            }
+                                        } else if (data.password !== data.confirm) {
+                                            Modal.warning({content: "Confirm Password does not match."});
+                                            checkPassword = false;
                                         }
                                         if (checkPassword) {
                                             if (mode === "createuser") {
@@ -216,7 +214,7 @@ function UserForm() {
                                                     setSubmit(true);
                                                 }).catch((err) => console.log(err.response));
                                             } else {
-                                                updateUser(data.first_name, data.last_name, data.role, data.email, updateUserId, data.password, isChulaSSO)
+                                                updateUser(data.first_name, data.last_name, data.role, data.email, data.username, data.password, isChulaSSO)
                                                 .then((res) => {
                                                     console.log(res);
                                                     Modal.success({content: "Update user successfully."});
