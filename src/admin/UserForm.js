@@ -63,7 +63,7 @@ function UserForm() {
                             style={{display: "inline-block", marginRight: "30px"}}
                         >
                             {mode === "createuser" ? 
-                                <Input className="input-text" disabled={submit ? true : false} /> :
+                                <Input className="input-text admin" disabled={submit ? true : false} /> :
                                 <Select
                                     className="search-component wider" 
                                     showSearch
@@ -99,7 +99,7 @@ function UserForm() {
                             ]}
                             style={{display: "inline-block"}}
                         >
-                            <Input className="input-text" disabled={submit || isChulaSSO ? true : false} />
+                            <Input className="input-text admin" disabled={submit || isChulaSSO ? true : false} />
                         </Form.Item>}
                     </div>
                     {inputVisible && <div>
@@ -119,7 +119,7 @@ function UserForm() {
                             ]}
                             style={{display: "inline-block", marginRight: "30px"}}
                         >
-                            <Input className="input-text" type="password" disabled={submit || isChulaSSO ? true : false} />
+                            <Input className="input-text admin" type="password" disabled={submit || isChulaSSO ? true : false} />
                         </Form.Item>
                         <Form.Item
                             name="confirm"
@@ -132,7 +132,7 @@ function UserForm() {
                             ]}
                             style={{display: "inline-block"}}
                         >
-                            <Input className="input-text" type="password" disabled={submit || isChulaSSO ? true : false} />
+                            <Input className="input-text admin" type="password" disabled={submit || isChulaSSO ? true : false} />
                         </Form.Item>
                     </div>}
                     {inputVisible && <div>
@@ -147,7 +147,7 @@ function UserForm() {
                             ]}
                             style={{display: "inline-block", marginRight: "30px"}}
                         >
-                            <Input className="input-text" disabled={submit || isChulaSSO ? true : false} />
+                            <Input className="input-text admin" disabled={submit || isChulaSSO ? true : false} />
                         </Form.Item>
                         <Form.Item
                             name="last_name"
@@ -160,7 +160,7 @@ function UserForm() {
                             ]}
                             style={{display: "inline-block"}}
                         >
-                            <Input className="input-text" disabled={submit || isChulaSSO ? true : false} />
+                            <Input className="input-text admin" disabled={submit || isChulaSSO ? true : false} />
                         </Form.Item>
                     </div>}
                     {inputVisible && <Form.Item

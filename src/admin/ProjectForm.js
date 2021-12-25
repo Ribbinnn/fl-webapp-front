@@ -99,7 +99,7 @@ function ProjectForm() {
                         style={{display: "inline-block", marginRight: "30px"}}
                     >
                         {mode === "createproject" ?
-                            <Input className="input-text" disabled={submit ? true : false} /> :
+                            <Input className="input-text admin" disabled={submit ? true : false} /> :
                             <Select
                                 className="search-component wider" 
                                 showSearch

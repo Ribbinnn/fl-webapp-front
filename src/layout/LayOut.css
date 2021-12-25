@@ -500,6 +500,10 @@ ol {
   border-right-width: 1px !important;
 }
 
+.input-text.admin {
+  width: 243px;
+}
+
 .input-prev-edit-text,
 .input-prev-edit-text:hover,
 .input-prev-edit-text:focus {
