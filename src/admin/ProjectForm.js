@@ -102,7 +102,6 @@ function ProjectForm() {
                             <Input className="input-text" disabled={submit ? true : false} /> :
                             <Select
                                 className="search-component wider" 
-                                allowClear
                                 showSearch
                                 optionFilterProp="label"
                                 onChange={(id) => {
@@ -152,7 +151,7 @@ function ProjectForm() {
                         ]}
                         style={{display: "inline-block"}}
                     >
-                        <Select className="search-component wider" allowClear disabled={submit ? true : false}>
+                        <Select className="search-component wider" disabled={submit ? true : false}>
                             {tasks.map((task, i) => (
                                 <Option key={i} value={task}>
                                     {task}
