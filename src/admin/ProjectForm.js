@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Form, Input, Select, Button, Modal, Spin, Tag, Tooltip } from "antd";
+import { Form, Input, Select, Button, Modal, Spin, Tag, Tooltip, Popconfirm } from "antd";
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { getAllUsers } from "../api/admin";
 import { createProject, getAllProjects, getProjectInfoByID, updateProjectById } from "../api/project";
@@ -29,8 +29,13 @@ function ProjectForm() {
         const inputVal = tagInputVal;
         let tags = classes;
         if (inputVal && tags.indexOf(inputVal) === -1) {
-            tags = [...tags, inputVal];
-        }
+            if (inputVal.includes(",")) {
+                const newClasses = inputVal.split(", ").filter(tag => !tags.includes(tag));
+                tags = [...tags, ...newClasses];
+            } else {
+                tags = [...tags, inputVal];
+            }
+        } 
         setClasses(tags);
         setTagInputVisible(false);
         setTagInputVal("");
@@ -160,7 +165,7 @@ function ProjectForm() {
                     </Form.Item>}
                 </div>
                 {inputVisible && <Form.Item
-                    label="Classes"
+                    label={<label>Classes <label style={{fontSize: "medium"}}>(split with ', ' if input more than 1 class at the same time)</label></label>}
                     validateStatus={classesError ? "error" : "success"}
                     help={classesError ? "'classes' is required" : null}
                     style={{width: "516px"}}
@@ -251,6 +256,19 @@ function ProjectForm() {
                                     <PlusOutlined /> add class
                                 </Tag>
                             )}
+                            {classes.length > 1 && <Popconfirm
+                                title="Remove all classes?"
+                                onConfirm={() => setClasses([])}
+                                okButtonProps={{ className: "primary-btn popconfirm" }}
+                                cancelButtonProps={{ style: { display: "none" } }}
+                            >
+                                <label
+                                    className="clickable-label"
+                                    style={{fontSize: "small", color: "red"}}
+                                >
+                                    remove all classes
+                                </label>
+                            </Popconfirm>}
                         </>
                     </div>
                 </Form.Item>}
@@ -274,10 +292,11 @@ function ProjectForm() {
                 {inputVisible && <Form.Item
                     name="head"
                     key="head"
-                    label="Head (at least 1)"
+                    label={<label>Head <label style={{fontSize: "medium"}}>(at least 1)</label></label>}
                     rules={[
                         {
                             required: true,
+                            message: "at least 1 'head' is required"
                         },
                     ]}
                 >
