@@ -1256,11 +1256,11 @@ table tr td.ant-table-selection-column {
 .annotate-table .ant-table-tbody > tr > td {
   padding: 4px 4px !important;
 }
-.annotate-table .ant-table-tbody > tr > td:nth-child(even) {
+.annotate-table .ant-table-tbody > tr > td:nth-child(2) {
   width: 150px;
   text-align: right;
 }
-.annotate-table .ant-table-tbody > tr > td:nth-child(odd) {
+.annotate-table .ant-table-tbody > tr > td:nth-child(1) {
   text-align: left;
   padding: 0 15px !important;
 }
