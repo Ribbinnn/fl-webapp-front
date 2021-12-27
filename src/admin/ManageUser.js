@@ -25,11 +25,10 @@ export default function ManageUser(props) {
         setProjectList(res);
         getAllUsers().then((res) => {
           res = res.filter(i => i.role !== 'admin')
-          res = res.map((item, i) => {
+          setUsers(res.map((item, i) => {
             item.key = i;
             return item
-          })
-          setUsers(res)
+          }))
           setLoaded(true);
         }).catch((err) => {
           console.log(err.response)
@@ -61,12 +60,10 @@ export default function ManageUser(props) {
             </div>
             <Select
               className="search-component wider"
-              // showSearch
-              // optionFilterProp="children"
-              // filterOption={(input, option) => option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+              showSearch
+              optionFilterProp="label"
               onChange={(id) => {
                 getProjectInfoByID(id).then((res) => {
-                  setUsers(users.filter(user => !res.data.head.includes(user._id)))
                   setProject(res.data)
                   setSubmit(false);
                 }).catch((err) => {
@@ -84,7 +81,7 @@ export default function ManageUser(props) {
                   }
                 }
                 return (
-                  <Option key={i} value={project["_id"]}>
+                  <Option key={i} value={project["_id"]} label={project.name}>
                     {<div className="select-item-group">
                       <label>{project.name}</label>
                       <br />
@@ -106,9 +103,55 @@ export default function ManageUser(props) {
 }
 
 function ManageUserTable(props) {
-  const [columns, setColumn] = useState();
   const [selectedRows, setSelectedRows] = useState();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [selectedUserKeys, setSelectedUserKeys] = useState([]);
+  const [selectedUsers, setSelectedUsers] = useState([])
+  const [allUsers, setAllUsers] = useState([])
+
+  const columns = [
+    {
+      title: "Username",
+      dataIndex: "username",
+      key: "username",
+      sorter: {
+        compare: (a, b) => (a.username).localeCompare(b.username),
+      },
+    },
+    {
+      title: "First Name",
+      dataIndex: "first_name",
+      key: "first_name",
+      sorter: {
+        compare: (a, b) => (a.first_name).localeCompare(b.first_name),
+      },
+    },
+    {
+      title: "Last Name",
+      dataIndex: "last_name",
+      key: "last_name",
+      sorter: {
+        compare: (a, b) => (a.last_name).localeCompare(b.last_name),
+      },
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      key: "role",
+      sorter: {
+        compare: (a, b) => (a.role).localeCompare(b.role),
+      },
+    }
+  ]
+
+  const userTableColumns = [...columns, {
+    title: "Note",
+    dataIndex: "note",
+    key: "note",
+    sorter: {
+      compare: (a, b) => (a.note).localeCompare(b.note),
+    },
+  }]
 
   const rowSelection = {
     type: "checkbox",
@@ -122,50 +165,33 @@ function ManageUserTable(props) {
       // );
       setSelectedRows(selectedRows);
       setSelectedRowKeys(selectedKeys);
+
+      const headUsers = props.users.filter(user => props.project.head.includes(user._id));
+      setSelectedUsers([...headUsers, ...selectedRows])
+      setSelectedUserKeys([...props.project.head, ...selectedKeys])
       //console.log(selectedKeys.sort(), defaultRowKeys.sort());
     },
   };
 
   useEffect(() => {
-    setColumn(
-      [
-        {
-          title: "Username",
-          dataIndex: "username",
-          key: "username",
-          sorter: {
-            compare: (a, b) => (a.username).localeCompare(b.username),
-          },
-        },
-        {
-          title: "First Name",
-          dataIndex: "first_name",
-          key: "first_name",
-          sorter: {
-            compare: (a, b) => (a.first_name).localeCompare(b.first_name),
-          },
-        },
-        {
-          title: "Last Name",
-          dataIndex: "last_name",
-          key: "last_name",
-          sorter: {
-            compare: (a, b) => (a.last_name).localeCompare(b.last_name),
-          },
-        },
-        {
-          title: "Role",
-          dataIndex: "role",
-          key: "role",
-          sorter: {
-            compare: (a, b) => (a.role).localeCompare(b.role),
-          },
-        }
-      ]
-    )
-    const defaultSelectedRow = props.users.filter(user => props.project.users.includes(user._id));
+    const userList = props.users.filter(user => !props.project.head.includes(user._id))
+    setAllUsers(userList)
+
+    const defaultSelectedRow = userList.filter(user => props.project.users.includes(user._id));
+    defaultSelectedRow.map(item => {
+      item.note = '-'
+      return item
+    });
     setSelectedRows(defaultSelectedRow)
     setSelectedRowKeys(defaultSelectedRow.map(item => item.key))
+
+    const headUsers = props.users.filter(user => props.project.head.includes(user._id));
+    headUsers.map(item => {
+      item.note = 'head'
+      return item
+    });
+    setSelectedUsers([...headUsers, ...defaultSelectedRow])
+    setSelectedUserKeys([...props.project.head, ...defaultSelectedRow.map(item => item._id)])
   }, [props])
 
   return (
@@ -178,13 +204,13 @@ function ManageUserTable(props) {
             ...rowSelection,
           }}
           columns={columns}
-          dataSource={props.users}
+          dataSource={allUsers}
           pagination={false}
           style={{ width: '48%' }}
         />
         <Table
-          columns={columns}
-          dataSource={selectedRows}
+          columns={userTableColumns}
+          dataSource={selectedUsers}
           pagination={false}
           size="small"
           style={{ width: '48%' }}
