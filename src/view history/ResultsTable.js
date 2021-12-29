@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table, Input, Button, Modal } from "antd";
+import { Table, Input, Button, Modal, Row, Col, Rate, message } from "antd";
 import {
   EyeOutlined,
   EyeInvisibleOutlined,
@@ -11,8 +11,17 @@ const { TextArea } = Input;
 const GradCamStyle = { fontSize: "x-large" };
 
 export default function ResultsTable(props) {
+  const user = JSON.parse(localStorage.getItem("user")).id;
   const mode = props.mode;
   const status = props.status;
+  const ratingDesc = [
+    "Poor",
+    "Need Improvements",
+    "Satisfactory",
+    "Good",
+    "Excellent",
+  ];
+  const [rating, setRating] = useState(props.rate);
   const [columns, setColumn] = useState();
   const [data, setData] = useState();
   const [selectedRows, setSelectedRows] = useState();
@@ -29,7 +38,11 @@ export default function ResultsTable(props) {
         if (mode === "edit" && status === "reviewed" && item.selected) {
           defaultSelectedRowKeys = [...defaultSelectedRowKeys, i];
         }
-        if (status === "reviewed" && mode === "view" && !item.selected) {
+        if (
+          ((status === "reviewed" && mode === "view") ||
+            status === "finalized") &&
+          !item.selected
+        ) {
           return [...config];
         }
         return [
@@ -96,18 +109,29 @@ export default function ResultsTable(props) {
 
   const onSaveReport = () => {
     /* save report api */
+    const key = "updatable";
+    message.loading({ content: "Loading...", key });
     let selected_class = [];
     for (const i in selectedRows) {
-      selected_class.push(selectedRows[i].class)
+      selected_class.push(selectedRows[i].class);
     }
-    updateReport(props.rid, note, (JSON.parse(sessionStorage.getItem('user'))).id, {finding: selected_class})
-    .then((res) => {
-      console.log(res)
-      setDefaultRowKeys(selectedRowKeys);
-      setDefaultNote(note);
-      setBtnGroup("back");
-    })
-    .catch((err) => console.log(err.response));
+    updateReport(
+      props.rid,
+      note,
+      JSON.parse(sessionStorage.getItem("user")).id,
+      { finding: selected_class },
+      rating
+    )
+      .then((res) => {
+        console.log(res);
+        if (res.success) {
+          message.success({ content: res.message, key, duration: 5 });
+          setDefaultRowKeys(selectedRowKeys);
+          setDefaultNote(note);
+          setBtnGroup("back");
+        } else message.error({ content: res.message, key, duration: 5 });
+      })
+      .catch((err) => console.log(err.response));
   };
 
   const onCancelReport = () => {
@@ -156,7 +180,7 @@ export default function ResultsTable(props) {
           pagination={false}
         />
       )}
-      {mode === "view" && (
+      {(mode === "view" || status === "finalized") && (
         <Table
           className="report-table"
           columns={columns}
@@ -164,41 +188,79 @@ export default function ResultsTable(props) {
           pagination={false}
         />
       )}
-      <label
-        style={{
-          display: "block",
-          color: "#58595b",
-          marginBottom: "10px",
-          marginTop: "10px",
-        }}
-      >
-        Note
-      </label>
-      {mode === "view" && (
-        <label
-          style={{
-            display: "block",
-            color: "#58595b",
-            marginBottom: "10px",
-            fontSize: "medium",
-          }}
-        >
-          {props.note === "" ? "-" : props.note}
-        </label>
-      )}
-      {mode === "edit" && (
-        <TextArea
-          id="report-note"
-          className="input-text"
-          style={{ width: "600px", fontSize: "medium" }}
-          autoSize={{ minRows: 2, maxRows: 6 }}
-          value={note}
-          onChange={(e) => {
-            setNote(e.target.value);
-            e.target.value !== defaultNote && setBtnGroup("save");
-          }}
-        />
-      )}
+      <Row align="space-between">
+        <Col  xs={24}
+            sm={24}
+            md={24}
+            lg={11}
+            xl={11}>
+          <label
+            style={{
+              display: "block",
+              color: "#58595b",
+              marginBottom: "10px",
+              fontWeight: "bold",
+              marginTop: "20px"
+            }}
+          >
+            Note
+          </label>
+          {(mode === "view" || status === "finalized") && (
+            <label
+              style={{
+                display: "block",
+                color: "#58595b",
+                marginBottom: "10px",
+                fontSize: "medium",
+              }}
+            >
+              {props.note === "" ? "-" : props.note}
+            </label>
+          )}
+          {mode === "edit" && (
+            <TextArea
+              id="report-note"
+              className="input-text"
+              style={{ width: "100%", fontSize: "medium" }}
+              autoSize={{ minRows: 2, maxRows: 6 }}
+              value={note}
+              onChange={(e) => {
+                setNote(e.target.value);
+                e.target.value !== defaultNote && setBtnGroup("save");
+              }}
+            />
+          )}
+        </Col>
+        <Col xs={24}
+            sm={24}
+            md={24}
+            lg={11}
+            xl={11}>
+          <label
+            style={{
+              display: "block",
+              color: "#58595b",
+              marginBottom: "10px",
+              fontWeight: "bold",
+              marginTop: "20px"
+            }}
+          >
+            Rate this AI
+          </label>
+          <span style={{ justifyItems: "center" }}>
+            <Rate
+              className="rating"
+              disabled={mode === "view" || status === "finalized"}
+              tooltips={ratingDesc}
+              onChange={setRating}
+              value={rating}
+            />
+            <span className="rating-text">
+              {rating ? ratingDesc[rating - 1] : "No Rating"}
+            </span>
+          </span>
+        </Col>
+      </Row>
       <div
         style={{
           display: "flex",
@@ -211,7 +273,13 @@ export default function ResultsTable(props) {
             Back
           </Button>
         )}
-
+        {btnGroup === "back" &&
+          status === "reviewed" &&
+          props.head.includes(user) && (
+            <Button className="primary-btn" onClick={() => onSaveReport()}>
+              Save to PACS
+            </Button>
+          )}
         {btnGroup === "save" && (
           <Button className="primary-btn" onClick={() => onCancelReport()}>
             Cancel

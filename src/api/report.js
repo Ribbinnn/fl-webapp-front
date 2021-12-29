@@ -9,9 +9,9 @@ export const getReport = async (reportId) => {
     }
 }
 
-export const updateReport = async (report_id, note, user_id, label) => {
+export const updateReport = async (report_id, note, user_id, label, rating) => {
     try {
-        const res = (await instance.patch("/report/", {report_id, note, user_id, label}))
+        const res = (await instance.patch("/report/", {report_id, note, user_id, label, rating}))
         return res.data;
     } catch (e) {
         throw e

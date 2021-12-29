@@ -46,26 +46,33 @@ export default function Report(props) {
       )}
       {loaded && (
         <ReportHeader
-          HN={info.HN}
+          HN={info.result.hn}
           patient={info.patient}
-          status={info.status}
+          status={info.result.status}
           medrec={info.record}
-          project={info.project}
-          created_at={info.created_at}
-          created_by={info.created_by}
-          finalized_by={info.finalized_by}
-          updated_at={info.updated_at}
+          project={info.result.project_id}
+          created_at={info.result.createdAt}
+          created_by={info.result.created_by}
+          finalized_by={info.result.finalized_by}
+          updated_at={info.result.updatedAt}
         />
       )}
       {loaded && (
         <Row justify="center" align="top">
           <Col xs={24} sm={24} md={24} lg={12} xl={12} align="middle">
             <DicomViewOnly
-              img_url={getDicomByAccessionNo(info.image)}
+              img_url={getDicomByAccessionNo(info.result.image_id.accession_no)}
               img_source="wado"
               size={400}
             />
-            {mode === "edit" && <AnnotationModal accession_no={info.image} labelList={info.classes.map((item)=>{return item.finding})}/>}
+            {mode === "edit" && (
+              <AnnotationModal
+                accession_no={info.result.image_id.accession_no}
+                labelList={info.classes.map((item) => {
+                  return item.finding;
+                })}
+              />
+            )}
           </Col>
           <Col
             xs={24}
@@ -89,7 +96,9 @@ export default function Report(props) {
                 />
               ) : (
                 <DicomViewOnly
-                  img_url={getDicomByAccessionNo(info.image)}
+                  img_url={getDicomByAccessionNo(
+                    info.result.image_id.accession_no
+                  )}
                   img_source="wado"
                   size={400}
                   div_id="gradcam"
@@ -111,14 +120,16 @@ export default function Report(props) {
       )}
       {loaded && (
         <ResultsTable
+          rate={info.result.rating}
+          head={info.result.project_id.head}
           rid={rid}
           gradCam={gradCam}
           setGradCam={setGradCam}
           classes={info.classes}
           mode={mode}
-          status={info.status}
+          status={info.result.status}
           gradCamList={info.gradCam}
-          note={info.note}
+          note={info.result.note}
         />
       )}
     </div>
@@ -146,9 +157,22 @@ const ReportHeader = (props) => {
         >
           Report
         </label>
-        <Tag color={props.status === "annotated" ? "warning" : props.status === "reviewed" ? "error" : "success"} style={{marginLeft: "10px"}}>
-          {props.status === "annotated" ? "AI-Annotated" : props.status === "reviewed" ? "Human-Annotated":"Finalized"}
-                    </Tag>
+        <Tag
+          color={
+            props.status === "annotated"
+              ? "warning"
+              : props.status === "reviewed"
+              ? "error"
+              : "success"
+          }
+          style={{ marginLeft: "10px" }}
+        >
+          {props.status === "annotated"
+            ? "AI-Annotated"
+            : props.status === "reviewed"
+            ? "Human-Annotated"
+            : "Finalized"}
+        </Tag>
       </div>
       <label
         style={{
@@ -161,16 +185,18 @@ const ReportHeader = (props) => {
       >
         <i>
           {" "}
-          Created Date Time: {(new Date(props.created_at)).toLocaleString()}
+          Created Date Time: {new Date(props.created_at).toLocaleString()}
           <br />
-          Created By: {props.created_by}
+          Created By:{" "}
+          {`${props.created_by.first_name} ${props.created_by.last_name}`}
         </i>
         {props.status !== "annotated" && (
           <i>
             <br />
-            Last Modified: {(new Date(props.updated_at)).toLocaleString()}
+            Last Modified: {new Date(props.updated_at).toLocaleString()}
             <br />
-            Finalized By: {props.finalized_by}
+            Finalized By:{" "}
+            {`${props.finalized_by.first_name} ${props.finalized_by.last_name}`}
           </i>
         )}
       </label>
@@ -189,11 +215,11 @@ const ReportHeader = (props) => {
           color: "#58595b",
         }}
       >
-        Project: {props.project.Name}{" "}
+        Project: {props.project.name}{" "}
         <Popover
           className="proj-popover"
           placement="rightTop"
-          content={<ProjectInfo Project={props.project} notChange={true} />}
+          content={<ProjectInfo notChange={true} />}
           style={{ margin: "0 30px 30px 30px" }}
         >
           <Button type="link" icon={<InfoCircleOutlined />} />
