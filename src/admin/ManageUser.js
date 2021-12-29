@@ -175,13 +175,13 @@ function ManageUserTable(props) {
 
   useEffect(() => {
     const userList = props.users.filter(user => !props.project.head.includes(user._id))
-    setAllUsers(userList)
-
-    const defaultSelectedRow = userList.filter(user => props.project.users.includes(user._id));
-    defaultSelectedRow.map(item => {
+    userList.map(item => {
       item.note = '-'
       return item
     });
+    setAllUsers(userList)
+
+    const defaultSelectedRow = userList.filter(user => props.project.users.includes(user._id));
     setSelectedRows(defaultSelectedRow)
     setSelectedRowKeys(defaultSelectedRow.map(item => item.key))
 
