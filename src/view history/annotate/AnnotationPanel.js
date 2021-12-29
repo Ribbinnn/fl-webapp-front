@@ -1190,20 +1190,24 @@ export default function AnnotationPanel(props) {
               </Button>
             </Col>
           </Row>
-          <Row>
-            <Col span={24} align="start" style={{ marginTop: "10px" }}>
+          <Row align="space-between" style={{ marginTop: "10px" }}>
+            {/* <Col span={24} align="space-between" style={{ marginTop: "10px" }}> */}
+              <Col span={8} align="start">
               <label
                 className="annotate-tool-label"
                 style={{ marginLeft: "5px" }}
               >
                 Bounding Boxes
               </label>
+              </Col>
               {savedTime && (
+                <Col span={16} align="end">
                 <span style={{ fontSize: "small", marginLeft: "10px" }}>
                   Last Saved: {savedTime}
                 </span>
+                </Col>
               )}
-            </Col>
+            {/* </Col> */}
             <Table
               className="annotate-table clickable-table"
               rowClassName={(record, index) =>
