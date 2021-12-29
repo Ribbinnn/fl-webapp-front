@@ -106,6 +106,20 @@ export default function ResultsTable(props) {
     ];
     setColumn(col);
   }
+  const onSavetoPACS = () => {
+    /* save to PACS api */
+    const key = "updatable";
+    message.loading({ content: "Loading...", key, duration: 2.5}).then(() => message.success({ content: "Successfully save to PACS. This report can no longer edit.", key, duration: 5 }));
+    
+    // SaveToPACS()
+    //   .then((res) => {
+    //     console.log(res);
+    //     if (res.success) {
+    //       message.success({ content: res.message, key, duration: 5 });
+    //     } else message.error({ content: res.message, key, duration: 5 });
+    //   })
+    //   .catch((err) => console.log(err.response));
+  };
 
   const onSaveReport = () => {
     /* save report api */
@@ -149,6 +163,11 @@ export default function ResultsTable(props) {
     });
   };
 
+  const onChangeRating = (e) => {
+    console.log(e)
+    setRating(e);
+    btnGroup !== "save" && setBtnGroup("save");
+  }
   const rowSelection = {
     type: "checkbox",
     selectedRowKeys,
@@ -252,7 +271,7 @@ export default function ResultsTable(props) {
               className="rating"
               disabled={mode === "view" || status === "finalized"}
               tooltips={ratingDesc}
-              onChange={setRating}
+              onChange={onChangeRating}
               value={rating}
             />
             <span className="rating-text">
@@ -276,7 +295,7 @@ export default function ResultsTable(props) {
         {btnGroup === "back" &&
           status === "reviewed" &&
           props.head.includes(user) && (
-            <Button className="primary-btn" onClick={() => onSaveReport()}>
+            <Button className="primary-btn" onClick={() => onSavetoPACS()}>
               Save to PACS
             </Button>
           )}
