@@ -25,7 +25,7 @@ export default function AnnotationModal (props){
           visible={visible}
           onCancel={handleCancel}
           footer={null}
-          width="1200px"
+          width="1350px"
           accession_no={props.accession_no}
         >
           <AnnotationPanel handleCancel={handleCancel} labelList={props.labelList}/>
