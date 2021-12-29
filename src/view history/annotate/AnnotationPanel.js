@@ -47,7 +47,7 @@ const LoadingIcon = (
 
 export default function AnnotationPanel(props) {
   const [tool, setTool] = useState();
-  const user = JSON.parse(sessionStorage.getItem("user"));
+  const [user, setUser] = useState(JSON.parse(sessionStorage.getItem("user")));
   const [imgLoaded, setImgLoaded] = useState(false);
   const [dicomElement, setDicomElement] = useState();
   const [columns, setColumns] = useState();
@@ -76,10 +76,13 @@ export default function AnnotationPanel(props) {
       displayImage
     );
     getBBox(rid).then((res) => {
-      console.log(res);
+      // console.log(res);
       if (res.data) {
+        setUser({...user, ...res.data.user});
         setSavedData(
           res.data.data.map((item, i) => {
+            if (item.tool === "ratio")
+              return { key: i + 1, data: [item.data[0], item.data[1]] };
             return { key: i + 1, data: item.data };
           })
         );
@@ -91,7 +94,7 @@ export default function AnnotationPanel(props) {
   }, []);
 
   useEffect(() => {
-    console.log(labels);
+    // console.log(labels);
     setColumns([
       {
         title: "Label",
@@ -104,7 +107,8 @@ export default function AnnotationPanel(props) {
           >
             {(record.tool === "length" && <ColumnHeightOutlined />) ||
               (record.tool === "rectangleRoi" && <BorderOutlined />) ||
-              (record.tool === "freehand" && <StarOutlined />)}
+              (record.tool === "freehand" && <StarOutlined />) ||
+              (record.tool === "ratio" && <VerticalAlignBottomOutlined />)}
             {record.label}
             {record.updated_by.username !== user.username && (
               <ExclamationOutlined
@@ -113,6 +117,12 @@ export default function AnnotationPanel(props) {
             )}
           </span>
         ),
+      },
+      {
+        title: "Editor",
+        key: "editor",
+        render: (text, record) =>
+          <span style={record.saved ? {} : { color: "#de5c8e" }}>{record.updated_by.first_name[0] ?? "-"}{record.updated_by.last_name[0] ?? "-"}</span>
       },
       {
         title: "Action",
@@ -128,50 +138,143 @@ export default function AnnotationPanel(props) {
                 let update = labels;
                 let target = cornerstoneTools.getToolState(
                   dicomElement,
-                  record.tool
+                  record.tool === "ratio" ? "length" : record.tool
                 ).data;
                 if (!record.invisible) {
-                  let ind = update.findIndex((item) => item.key === record.key);
-                  const bbox = target[record.index];
-                  cornerstoneTools.removeToolState(
-                    dicomElement,
-                    record.tool,
-                    bbox
-                  );
-                  console.log(bbox);
-                  update = update.reduce((current, item) => {
-                    if (
-                      item.tool === record.tool &&
-                      item.index > record.index
-                    ) {
-                      return [...current, { ...item, index: item.index - 1 }];
-                    }
-                    if (
-                      item.tool === record.tool &&
-                      item.index === record.index
-                    ) {
-                      return [
-                        ...current,
-                        { ...item, index: -1, invisible: bbox },
-                      ];
-                    }
-                    return [...current, item];
-                  }, []);
+                  if (record.tool === "ratio") {
+                    const first_line = target[record.index[0]];
+                    const second_line = target[record.index[1]];
+                    cornerstoneTools.removeToolState(
+                      dicomElement,
+                      "length",
+                      first_line
+                    );
+                    cornerstoneTools.removeToolState(
+                      dicomElement,
+                      "length",
+                      second_line
+                    );
+
+                    update = update.reduce((current, item) => {
+                      if (item.invisible) return [...current, item];
+                      if (
+                        item.tool === "length" &&
+                        item.index > record.index[1]
+                      ) {
+                        return [...current, { ...item, index: item.index - 2 }];
+                      }
+                      if (
+                        item.tool === "ratio" &&
+                        item.index[0] > record.index[0]
+                      ) {
+                        return [
+                          ...current,
+                          {
+                            ...item,
+                            index: [item.index[0] - 2, item.index[1] - 2],
+                          },
+                        ];
+                      }
+                      if (
+                        item.tool === "ratio" &&
+                        item.index[0] === record.index[0]
+                      ) {
+                        return [
+                          ...current,
+                          {
+                            ...item,
+                            index: -1,
+                            invisible: [first_line, second_line],
+                          },
+                        ];
+                      }
+                      return [...current, item];
+                    }, []);
+                  } else {
+                    const bbox = target[record.index];
+                    cornerstoneTools.removeToolState(
+                      dicomElement,
+                      record.tool,
+                      bbox
+                    );
+                    update = update.reduce((current, item) => {
+                      if (item.invisible) return [...current, item];
+                      if (
+                        record.tool === "length" &&
+                        item.tool === "ratio" &&
+                        item.index[0] > record.index
+                      ) {
+                        return [
+                          ...current,
+                          {
+                            ...item,
+                            index: [item.index[0] - 1, item.index[1] - 1],
+                          },
+                        ];
+                      }
+                      if (
+                        item.tool === record.tool &&
+                        item.index > record.index
+                      ) {
+                        return [...current, { ...item, index: item.index - 1 }];
+                      }
+                      if (
+                        item.tool === record.tool &&
+                        item.index === record.index
+                      ) {
+                        return [
+                          ...current,
+                          { ...item, index: -1, invisible: bbox },
+                        ];
+                      }
+                      return [...current, item];
+                    }, []);
+                  }
                 } else {
-                  cornerstoneTools.addToolState(
-                    dicomElement,
-                    record.tool,
-                    record.invisible
-                  );
-                  update = update.reduce((current, item) => {
-                    if (item.key === record.key) {
-                      return [
-                        ...current,
-                        { ...item, index: target.length - 1, invisible: false },
-                      ];
-                    }
-                    return [...current, item];
-                  }, []);
+                  if (record.tool === "ratio") {
+                    cornerstoneTools.addToolState(
+                      dicomElement,
+                      "length",
+                      record.invisible[0]
+                    );
+                    cornerstoneTools.addToolState(
+                      dicomElement,
+                      "length",
+                      record.invisible[1]
+                    );
+                    update = update.reduce((current, item) => {
+                      if (item.key === record.key) {
+                        return [
+                          ...current,
+                          {
+                            ...item,
+                            index: [target.length - 2, target.length - 1],
+                            invisible: false,
+                          },
+                        ];
+                      }
+                      return [...current, item];
+                    }, []);
+                  } else {
+                    cornerstoneTools.addToolState(
+                      dicomElement,
+                      record.tool,
+                      record.invisible
+                    );
+                    update = update.reduce((current, item) => {
+                      if (item.key === record.key) {
+                        return [
+                          ...current,
+                          {
+                            ...item,
+                            index: target.length - 1,
+                            invisible: false,
+                          },
+                        ];
+                      }
+                      return [...current, item];
+                    }, []);
+                  }
                 }
                 cornerstone.updateImage(dicomElement);
                 setLabels(update);
@@ -182,12 +285,13 @@ export default function AnnotationPanel(props) {
               placement="top"
               content={
                 <span>
-                  <p style={{ marginBottom: 0 }}>
+                  <p style={{ marginBottom: 0, color: "#58595b" }}>
                     Last modified:{" "}
                     {new Date(record.updated_time).toLocaleString()}
                   </p>
-                  <p style={{ marginBottom: 0 }}>
-                    by: {record.updated_by.username}
+                  <p style={{ marginBottom: 0, color: "#58595b" }}>
+                    by:{" "}
+                    {`${record.updated_by.username} (${record.updated_by.first_name} ${record.updated_by.last_name})`}
                   </p>
                 </span>
               }
@@ -198,7 +302,7 @@ export default function AnnotationPanel(props) {
             <Button
               type="link"
               icon={<EditOutlined />}
-              disabled={record.invisible}
+              disabled={record.tool === "ratio" || record.invisible}
               onClick={() => {
                 Modal.confirm({
                   title: "Choose label",
@@ -236,16 +340,65 @@ export default function AnnotationPanel(props) {
                 let ind = update.findIndex((item) => item.key === record.key);
                 let target = cornerstoneTools.getToolState(
                   dicomElement,
-                  record.tool
-                ).data[record.index];
-                cornerstoneTools.removeToolState(
-                  dicomElement,
-                  record.tool,
-                  target
-                );
+                  record.tool === "ratio" ? "length" : record.tool
+                ).data;
+                if (record.tool === "ratio") {
+                  cornerstoneTools.removeToolState(
+                    dicomElement,
+                    "length",
+                    target[record.index[1]]
+                  );
+                  cornerstoneTools.removeToolState(
+                    dicomElement,
+                    "length",
+                    target[record.index[0]]
+                  );
+                } else {
+                  // console.log(target[record.index]);
+                  cornerstoneTools.removeToolState(
+                    dicomElement,
+                    record.tool,
+                    target[record.index]
+                  );
+                }
                 cornerstone.updateImage(dicomElement);
                 update.splice(ind, 1);
                 update = update.reduce((current, item) => {
+                  // console.log(record);
+                  // console.log(item);
+                  if (
+                    record.tool === "ratio" &&
+                    item.tool === "ratio" &&
+                    record.index[0] < item.index[0]
+                  ) {
+                    return [
+                      ...current,
+                      {
+                        ...item,
+                        index: [item.index[0] - 2, item.index[1] - 2],
+                      },
+                    ];
+                  }
+                  if (
+                    record.tool === "ratio" &&
+                    item.tool === "length" &&
+                    record.index[0] < item.index
+                  ) {
+                    return [...current, { ...item, index: item.index - 2 }];
+                  }
+                  if (
+                    record.tool === "length" &&
+                    item.tool === "ratio" &&
+                    record.index < item.index[0]
+                  ) {
+                    return [
+                      ...current,
+                      {
+                        ...item,
+                        index: [item.index[0] - 1, item.index[1] - 1],
+                      },
+                    ];
+                  }
                   if (item.tool === record.tool && item.index > record.index) {
                     return [...current, { ...item, index: item.index - 1 }];
                   }
@@ -271,10 +424,9 @@ export default function AnnotationPanel(props) {
 
   useEffect(() => {
     if (labelBuffer) {
-      console.log(labelBuffer);
+      // console.log(labelBuffer);
       if (labelBuffer.key <= labels.length) {
         let edittedLabels = labels.map((item) => {
-          console.log(item);
           if (item.key === labelBuffer.key) {
             return {
               ...item,
@@ -286,6 +438,15 @@ export default function AnnotationPanel(props) {
           } else return item;
         });
         setLabels(edittedLabels);
+      } else if (labelBuffer.tool === "ratio") {
+        if (labelBuffer.index.length === 1) return;
+        let newLabel = {
+          ...labelBuffer,
+          saved: false,
+          updated_time: new Date(),
+          updated_by: user,
+        };
+        setLabels([...labels, newLabel]);
       } else {
         let newLabel = {
           ...labelBuffer,
@@ -305,7 +466,7 @@ export default function AnnotationPanel(props) {
     var element = document.getElementById("annotate-dicom-image");
     cornerstone.enable(element);
     var viewport = cornerstone.getDefaultViewportForImage(element, image);
-    console.log(viewport);
+    // console.log(viewport);
     cornerstone.displayImage(element, image, viewport);
     setViewerState({
       ...viewerState,
@@ -332,22 +493,40 @@ export default function AnnotationPanel(props) {
     removeAnnotations(element);
     //getBBox
     getBBox(rid).then((res) => {
-      console.log(res);
       if (res.data) {
         let temp = res;
         let loadedData = temp.data.data.reduce(
           (current, item, i) => {
             const bbox = item.data;
+            if (item.tool === "ratio") {
+              cornerstoneTools.addToolState(element, "length", bbox[0]);
+              cornerstoneTools.addToolState(element, "length", bbox[1]);
+              return {
+                ...current,
+                initial_lb: [
+                  ...current.initial_lb,
+                  {
+                    key: i + 1,
+                    tool: item.tool,
+                    index: [current["length"], current["length"] + 1],
+                    label: item.label,
+                    saved: true,
+                    updated_by: item.updated_by,
+                    updated_time: item.updated_time,
+                    invisible: false,
+                  },
+                ],
+                length: current["length"] + 2,
+              };
+            }
             cornerstoneTools.addToolState(element, item.tool, bbox);
-            console.log(item);
+            // console.log(item);
             return {
               ...current,
               initial_lb: [
                 ...current.initial_lb,
                 {
-                  key:
-                    /* current.rectangleRoi + current.freehand + current["length"] + 1 */ i +
-                    1,
+                  key: i + 1,
                   tool: item.tool,
                   index: current[item.tool],
                   label: item.label,
@@ -371,12 +550,12 @@ export default function AnnotationPanel(props) {
             length: 0 /* initial_ll: [] */,
           }
         );
-        console.log(loadedData);
+        // console.log(loadedData);
         cornerstone.updateImage(element);
         setLabels(loadedData.initial_lb);
         setImgLoaded(true);
         // setSavedData(res.data.data)
-        console.log(loadedData);
+        // console.log(loadedData);
         // setLabelList(temp.initial_ll);
       }
       res.data.createdAt !== res.data.updatedAt &&
@@ -388,12 +567,23 @@ export default function AnnotationPanel(props) {
     /**
      * check if current is ratio and not complete yet -> remove
      */
+    if (
+      labelBuffer &&
+      labelBuffer.tool === "ratio" &&
+      labelBuffer.index.length === 1
+    ) {
+      let index = labelBuffer.index[0];
+      // console.log(index);
+      let toolState = cornerstoneTools.getToolState(dicomElement, "length")
+        .data[index];
+      cornerstoneTools.removeToolState(dicomElement, "length", toolState);
+      cornerstone.updateImage(dicomElement);
+      setLabelBuffer();
+    }
     deactivateTools();
     setTool(prop);
     if (prop === "mouse") prop = "wwwc";
-    else if (prop === "ratio") {
-      prop = "length";
-    }
+    else if (prop === "ratio") prop = "length";
     cornerstoneTools[prop].activate(dicomElement, 1);
   }
 
@@ -432,9 +622,9 @@ export default function AnnotationPanel(props) {
 
   const imageOnClick = () => {
     console.log(labels);
-    if (tool === "ratio") {
-      return;
-    }
+    // if (tool === "ratio") {
+    //   return;
+    // }
     if (tool === "pan") {
       return;
     }
@@ -448,17 +638,50 @@ export default function AnnotationPanel(props) {
     } else {
       let count = labels.reduce(
         (counter, item) => {
-          counter[item.tool] = counter[item.tool] + 1;
+          if (item.tool === "ratio") counter["length"] = counter["length"] + 2;
+          else counter[item.tool] = counter[item.tool] + 1;
           return counter;
         },
         { rectangleRoi: 0, length: 0, freehand: 0 }
       );
-      let toolState = cornerstoneTools.getToolState(dicomElement, tool);
-      console.log(toolState);
-      if (toolState.data && toolState.data.length > count[tool]) {
-        if (toolState.data[toolState.data.length - 1].active) {
+      let toolState = cornerstoneTools.getToolState(
+        dicomElement,
+        tool === "ratio" ? "length" : tool
+      );
+      // console.log(count["length"]);
+      if (
+        tool === "ratio" &&
+        toolState.data &&
+        toolState.data.length > count["length"] &&
+        !toolState.data[toolState.data.length - 1].active
+      ) {
+        if (labelBuffer) {
+          setLabelBuffer({
+            ...labelBuffer,
+            label: (
+              toolState.data[labelBuffer.index[0]]["length"] /
+              toolState.data[toolState.data.length - 1]["length"]
+            ).toFixed(4),
+            index: [...labelBuffer.index, toolState.data.length - 1],
+          });
+        } else {
+          setLabelBuffer({
+            key: labels.length > 0 ? labels[labels.length - 1].key + 1 : 1,
+            tool: tool,
+            index: [toolState.data.length - 1],
+          });
+          setBtnMode("save-cancel");
           return;
         }
+      }
+      if (
+        toolState.data &&
+        toolState.data.length > count[tool] &&
+        !toolState.data[toolState.data.length - 1].active
+      ) {
+        // if (toolState.data[toolState.data.length - 1].active) {
+        //   return;
+        // }
         addNewLabel(tool, toolState.data.length - 1);
         setBtnMode("save-cancel");
         return;
@@ -468,39 +691,93 @@ export default function AnnotationPanel(props) {
       cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState();
     globalTool = globalTool[Object.keys(globalTool)[0]];
     let checker = labels.map((item, i) => {
-      if (!item.saved) return item;
-      if (
-        JSON.stringify(globalTool[item.tool].data[item.index].handles) !==
-        JSON.stringify(
-          savedData[savedData.findIndex((elm) => elm.key === item.key)].data
-            .handles
-        )
-      ) {
-        return {
-          ...item,
-          saved: false,
-          updated_time: new Date(),
-          updated_by: user,
-        };
-      } else return item;
+      if (item.tool === "ratio") {
+        let first_line = globalTool["length"].data[item.index[0]];
+        let second_line = globalTool["length"].data[item.index[1]];
+        let ratio = (first_line["length"] / second_line["length"]).toFixed(4);
+        if (ratio !== item.label) {
+          return {
+            ...item,
+            label: ratio,
+            saved: false,
+            updated_time: new Date(),
+            updated_by: user,
+          };
+        }
+        if (!item.saved) return item;
+        let ind = savedData.findIndex((elm) => elm.key === item.key);
+        if (
+          JSON.stringify(first_line.handles.start) !==
+            JSON.stringify(savedData[ind].data[0].handles.start) ||
+          JSON.stringify(second_line.handles.start) !==
+            JSON.stringify(savedData[ind].data[1].handles.start) ||
+          JSON.stringify(first_line.handles.end) !==
+            JSON.stringify(savedData[ind].data[0].handles.end) ||
+          JSON.stringify(second_line.handles.end) !==
+            JSON.stringify(savedData[ind].data[1].handles.end)
+        ) {
+          return {
+            ...item,
+            saved: false,
+            updated_time: new Date(),
+            updated_by: user,
+          };
+        } else return item;
+      } else {
+        if (!item.saved) return item;
+        if (item.tool === "length") {
+          if (
+            JSON.stringify(
+              globalTool[item.tool].data[item.index].handles.start
+            ) !==
+              JSON.stringify(
+                savedData[savedData.findIndex((elm) => elm.key === item.key)]
+                  .data.handles.start
+              ) ||
+            JSON.stringify(
+              globalTool[item.tool].data[item.index].handles.end
+            ) !==
+              JSON.stringify(
+                savedData[savedData.findIndex((elm) => elm.key === item.key)]
+                  .data.handles.end
+              )
+          )
+            return {
+              ...item,
+              saved: false,
+              updated_time: new Date(),
+              updated_by: user,
+            };
+          else return item;
+        }
+        if (
+          JSON.stringify(globalTool[item.tool].data[item.index].handles) !==
+          JSON.stringify(
+            savedData[savedData.findIndex((elm) => elm.key === item.key)].data
+              .handles
+          )
+        ) {
+          return {
+            ...item,
+            saved: false,
+            updated_time: new Date(),
+            updated_by: user,
+          };
+        } else return item;
+      }
     });
-    if (checker.some((member) => { return !member.saved;})){
+    if (
+      checker.some((member) => {
+        return !member.saved;
+      })
+    ) {
       setLabels(checker);
       setBtnMode("save-cancel");
     }
   };
 
-  const imageOnScroll = () => {
-    console.log("zoom change");
-  };
-
-  const imageOnMoseDown = () => {
-    console.log("wwwc change");
-  };
-
   const onViewerChange = (prop, value) => (e) => {
     let viewport = cornerstone.getViewport(dicomElement);
-    console.log(viewport);
     if (prop === "zoomin") {
       if (viewerState.zoom >= 30) return;
       value = viewport.scale / viewerState.defaultZoom + 0.25;
@@ -517,7 +794,6 @@ export default function AnnotationPanel(props) {
     }
     if (prop === "invert") {
       e = e.target.checked;
-      console.log(e);
       viewport.invert = e;
       cornerstone.setViewport(dicomElement, viewport);
     }
@@ -564,6 +840,8 @@ export default function AnnotationPanel(props) {
   };
 
   const saveAnnotations = () => {
+    const key = "updatable";
+    message.loading({ content: "Loading...", key });
     let rectangleRoiState = cornerstoneTools.getToolState(
       dicomElement,
       "rectangleRoi"
@@ -576,9 +854,16 @@ export default function AnnotationPanel(props) {
         {
           label: item.label,
           tool: item.tool,
-          updated_by: user.id,
+          updated_by: item.updated_by.id ?? item.updated_by._id,
           data:
-            item.index === -1
+            item.tool === "ratio"
+              ? item.index === -1
+                ? { 0: item.invisible[0], 1: item.invisible[1] }
+                : {
+                    0: lengthState.data[item.index[0]],
+                    1: lengthState.data[item.index[1]],
+                  }
+              : item.index === -1
               ? item.invisible
               : item.tool === "freehand"
               ? freehandState.data[item.index]
@@ -589,11 +874,14 @@ export default function AnnotationPanel(props) {
         },
       ];
     }, []);
-    console.log(bbox_data);
     insertBBox(rid, bbox_data).then((res) => {
       console.log(res);
       if (res.success) {
-        message.success("Bounding boxes successfully saved.", 5);
+        message.success({
+          content: "Bounding boxes successfully saved.",
+          key,
+          duration: 5,
+        });
         setBtnMode("close");
         setLabels(
           labels.map((item) => {
@@ -607,7 +895,11 @@ export default function AnnotationPanel(props) {
         );
         setSavedTime(new Date(res.data.updatedAt).toLocaleString());
       } else
-        message.error("Cannot save bounding boxes, please try again later.", 5);
+        message.error({
+          content: "Cannot save bounding boxes, please try again later.",
+          key,
+          duration: 5,
+        });
     });
   };
 
@@ -637,6 +929,17 @@ export default function AnnotationPanel(props) {
     update = update
       .reduceRight((current, item, i) => {
         if (item.invisible) return [...current, item];
+        if (item.tool === "ratio") {
+          const first_line = globalTool["length"].data[item.index[0]];
+          const second_line = globalTool["length"].data[item.index[1]];
+          cornerstoneTools.removeToolState(dicomElement, "length", second_line);
+          cornerstoneTools.removeToolState(dicomElement, "length", first_line);
+          // console.log(first_line, second_line)
+          return [
+            ...current,
+            { ...item, index: -1, invisible: [first_line, second_line] },
+          ];
+        }
         const bbox = globalTool[item.tool].data[item.index];
         cornerstoneTools.removeToolState(dicomElement, item.tool, bbox);
         return [...current, { ...item, index: -1, invisible: bbox }];
@@ -654,6 +957,22 @@ export default function AnnotationPanel(props) {
     update = update.reduce((current, item, i) => {
       if (!item.invisible) return [...current, item];
       const bbox = item.invisible;
+      // console.log(bbox)
+      if (item.tool === "ratio") {
+        cornerstoneTools.addToolState(dicomElement, "length", bbox[0]);
+        cornerstoneTools.addToolState(dicomElement, "length", bbox[1]);
+        return [
+          ...current,
+          {
+            ...item,
+            index: [
+              globalTool["length"].data.length - 2,
+              globalTool["length"].data.length - 1,
+            ],
+            invisible: false,
+          },
+        ];
+      }
       cornerstoneTools.addToolState(dicomElement, item.tool, bbox);
       return [
         ...current,
@@ -672,10 +991,10 @@ export default function AnnotationPanel(props) {
     <div>
       <Row>
         <Col
-          span={16}
+          span={15}
           justify="center"
-          align="middle"
-          style={{ paddingRight: "18px", height: "640px" }}
+          align="start"
+          style={{ height: "640px" }}
         >
           {!imgLoaded && (
             <div className="loading-dicom" style={{ textAlign: "center" }}>
@@ -689,12 +1008,10 @@ export default function AnnotationPanel(props) {
             id="annotate-dicom-image"
             className="dicomImage"
             onClick={imageOnClick}
-            onScroll={imageOnScroll}
-            onMouseDown={imageOnMoseDown}
-            style={{ display: "relative", width: "750px", height: "640px" }}
+            style={{ display: "relative", width: "790px", height: "640px" }}
           />
         </Col>
-        <Col span={8}>
+        <Col span={9}>
           <Col>
             <Row>
               <label className="annotate-tool-label"> Window Level </label>
@@ -754,7 +1071,7 @@ export default function AnnotationPanel(props) {
             justify="space-between"
             style={{ marginTop: "10px" }}
           >
-            <Col span={4} justify="center" align="start">
+            <Col span={8} justify="center" align="start">
               <Checkbox
                 onChange={onViewerChange("invert")}
                 checked={viewerState.invert}
@@ -762,7 +1079,7 @@ export default function AnnotationPanel(props) {
                 Invert
               </Checkbox>
             </Col>
-            <Col span={8}>
+            <Col span={8} justify="center" align="center">
               <div
                 style={{
                   display: "flex",
@@ -792,7 +1109,7 @@ export default function AnnotationPanel(props) {
                 />
               </div>
             </Col>
-            <Col span={10}>
+            <Col span={8} align="end">
               <Button className="reset-vp-btn" onClick={resetViewPort}>
                 Reset Viewport
                 <RedoOutlined />
@@ -865,7 +1182,6 @@ export default function AnnotationPanel(props) {
                 className={`annotate-tool-btn ${
                   tool === "ratio" ? "selected-tool" : ""
                 }`}
-                //style={{ visibility: "hidden" }}
                 onClick={() => {
                   selectTool("ratio");
                 }}
@@ -887,11 +1203,6 @@ export default function AnnotationPanel(props) {
                   Last Saved: {savedTime}
                 </span>
               )}
-              {/* <Button
-                className="reset-vp-btn"
-                icon={<PlusCircleOutlined />}
-                onClick={addNewLabels}
-              /> */}
             </Col>
             <Table
               className="annotate-table clickable-table"
@@ -900,7 +1211,7 @@ export default function AnnotationPanel(props) {
               }
               columns={columns}
               dataSource={labels}
-              showHeader={false}
+              // showHeader={false}
               pagination={false}
               size="small"
               // onRow={(record, rowIndex) => {

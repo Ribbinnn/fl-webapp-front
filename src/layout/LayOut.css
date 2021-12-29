@@ -1049,6 +1049,9 @@ label.clickable-label:hover {
 }
 
 /* modal ------------- */
+.ant-modal{
+  padding-bottom: 0px;
+}
 
 .ant-modal-header {
   border-bottom: none;
@@ -1273,24 +1276,34 @@ table tr td.ant-table-selection-column {
 
 .annotate-table tbody {
   overflow: scroll;
-  height: 250px;
+  height: 210px;
   background-color: rgb(229 229 229);
 }
 
 .annotate-table .ant-table-tbody > tr > td {
   padding: 4px 4px !important;
 }
-.annotate-table .ant-table-tbody > tr > td:nth-child(even) {
+.annotate-table .ant-table-thead > tr > th:nth-child(3) {
+  width: 150px;
+}
+.annotate-table .ant-table-thead > tr > th:nth-child(2) {
+  width: 65px;
+}
+.annotate-table .ant-table-tbody > tr > td:nth-child(3) {
   width: 150px;
   text-align: right;
 }
-.annotate-table .ant-table-tbody > tr > td:nth-child(odd) {
+.annotate-table .ant-table-tbody > tr > td:nth-child(2) {
+  width: 65px;
+  text-align: center;
+}
+.annotate-table .ant-table-tbody > tr > td:nth-child(1) {
   text-align: left;
   padding: 0 15px !important;
 }
 
 .annotate-table .ant-table-empty .ant-table-tbody > tr.ant-table-placeholder {
-  height: 250px;
+  height: 210px;
 }
 
 .selected-layer {
