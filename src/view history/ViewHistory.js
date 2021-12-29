@@ -68,7 +68,7 @@ function HistoryLog(props) {
                     color = "default"
                 } else if (status === "finalized") {
                     color = "success"
-                    status = "4_" + status
+                    status = "4 Finalized"
                 } else if (status === "annotated") {
                     color = "warning"
                     status = "2 AI-Annotated"
@@ -77,7 +77,7 @@ function HistoryLog(props) {
                     status = "3 Human-Annotated"
                 } else {
                     color = "processing"
-                    status = "1_" + status
+                    status = "1 In Progress"
                 }
                 const isLongTag = status.length > 10;
                 const renderStatus = status.charAt(0).toUpperCase() + status.slice(1).split("_").join(" ");

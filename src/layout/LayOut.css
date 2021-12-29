@@ -1379,3 +1379,17 @@ table tr td.ant-table-selection-column {
   background-color: #de5c8e;
 }
 /* checkbox ------- */
+
+
+/* rate ------------- */
+
+.rating-text{
+  margin-left: 20px;
+  color: #58595b;
+  font-size: large;
+}
+
+.rating{
+  color: #e9c869;
+  font-size: 40px;
+}
