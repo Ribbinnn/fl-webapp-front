@@ -183,62 +183,60 @@ function HistoryLog(props) {
             dataIndex: "action",
             render: (_, report) => {
                 return(
-                    <div>
-                        {uploadedItem.status === "in_progress" ?
-                            <EditOutlined className="clickable-icon" /> :
-                            <div className="center-div">
-                                <ImageModal
-                                    AccessionNo={report.accession_no}
-                                    ProcDescription=""
-                                    StudyDateTime="" />
-                                {/* <DownloadOutlined
-                                    className="clickable-icon"
-                                    onClick={() => {
-                                        // download image api
-                                    }}
-                                /> */}
-                <EditOutlined
-                  className="clickable-icon"
-                  // style={{marginLeft: "8px"}}
-                  onClick={() => {
-                    let role = JSON.parse(sessionStorage.getItem("user")).role;
-                    console.log(
-                      JSON.parse(sessionStorage.getItem("user")).role,
-                      report
-                    );
-                    /* SHOW REPORT */
-                    history.push(
-                      `/viewhistory/${role === "clinician" ? "view" : "edit"}/${
-                        report.pred_result_id
-                      }/?${queryString}`
-                    );
-                  }}
-                />
-                <Popconfirm
-                  title="Delete this report?"
-                  onConfirm={() => {
-                    deleteReport(report.pred_result_id).then((res) => {
-                        window.location.reload();
-                    }).catch((err) => {
-                        console.log(err);
-                    })
-                  }}
-                  okButtonProps={{ className: "primary-btn popconfirm" }}
-                  cancelButtonProps={{ style: { display: "none" } }}
-                >
-                  <DeleteOutlined
-                    className="clickable-icon"
-                    style={{ marginLeft: "8px" }}
-                    // onClick={() => {
-                    //     /* delete report api */
+                    report.status === "in_progress" ?
+                    // <EditOutlined className="clickable-icon" /> :
+                    null :
+                    <div className="center-div">
+                        <ImageModal
+                            AccessionNo={report.accession_no}
+                            ProcDescription=""
+                            StudyDateTime="" />
+                        {/* <DownloadOutlined
+                            className="clickable-icon"
+                            onClick={() => {
+                                // download image api
+                            }}
+                        /> */}
+                        <EditOutlined
+                            className="clickable-icon"
+                            // style={{marginLeft: "8px"}}
+                            onClick={() => {
+                                let role = JSON.parse(sessionStorage.getItem("user")).role;
+                                console.log(
+                                JSON.parse(sessionStorage.getItem("user")).role,
+                                report
+                                );
+                                /* SHOW REPORT */
+                                history.push(
+                                `/viewhistory/${role === "clinician" ? "view" : "edit"}/${
+                                    report.pred_result_id
+                                }/?${queryString}`
+                                );
+                            }}
+                        />
+                        <Popconfirm
+                            title="Delete this report?"
+                            onConfirm={() => {
+                                deleteReport(report.pred_result_id).then((res) => {
+                                    window.location.reload();
+                                }).catch((err) => {
+                                    console.log(err);
+                                })
+                            }}
+                            okButtonProps={{ className: "primary-btn popconfirm" }}
+                            cancelButtonProps={{ style: { display: "none" } }}
+                        >
+                            <DeleteOutlined
+                                className="clickable-icon"
+                                style={{ marginLeft: "8px" }}
+                                // onClick={() => {
+                                //     /* delete report api */
 
-                    // }}
-                  />
-                </Popconfirm>
-              </div>
-            }
-          </div>
-        );
+                                // }}
+                            />
+                        </Popconfirm>
+                    </div>
+                );
       },
       align: "center",
     },
