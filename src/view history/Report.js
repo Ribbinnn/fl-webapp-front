@@ -13,6 +13,7 @@ import ProjectInfo from "../component/ProjectInfo";
 import ResultsTable from "./ResultsTable";
 import { getGradCam, getDicomByAccessionNo } from "../api/image";
 import { getReport } from "../api/report";
+import { saveAs } from 'file-saver'
 const { Panel } = Collapse;
 
 const LoadingIcon = (
@@ -31,6 +32,10 @@ export default function Report(props) {
       setLoaded(true);
     });
   }, []);
+
+  const downloadImage = () => {
+    saveAs(getGradCam(rid, gradCam), `${info.result.project_id.name}_${gradCam}.png`) // Put your image url here.
+  }
 
   return (
     <div className="content">
@@ -58,7 +63,7 @@ export default function Report(props) {
         />
       )}
       {loaded && (
-        <Row justify="center" align="top">
+        <Row justify="center" align="top" style={{marginBottom: "10px"}}>
           <Col xs={24} sm={24} md={24} lg={12} xl={12} align="middle">
             <DicomViewOnly
               img_url={getDicomByAccessionNo(info.result.image_id.accession_no)}
@@ -80,7 +85,7 @@ export default function Report(props) {
             md={24}
             lg={12}
             xl={12}
-            style={{ textAlign: "right" }}
+            align="center"
           >
             <div
               style={{
@@ -110,10 +115,15 @@ export default function Report(props) {
               style={{
                 color: "#de5c8e",
                 fontSize: "medium",
-                visibility: "hidden",
+                visibility: gradCam ? "visible" : "hidden",
+                fontWeight: "bold",
+                stroke: "#de5c8e",
+                strokeWidth: 30
               }}
+              onClick={downloadImage}
+              icon={<CloudDownloadOutlined className="clickable-icon"/>}
             >
-              Download <CloudDownloadOutlined />
+              Download Image
             </Button>
           </Col>
         </Row>
@@ -168,10 +178,10 @@ const ReportHeader = (props) => {
           style={{ marginLeft: "10px" }}
         >
           {props.status === "annotated"
-            ? "AI-Annotated"
+            ? "2 AI-Annotated"
             : props.status === "reviewed"
-            ? "Human-Annotated"
-            : "Finalized"}
+            ? "3 Human-Annotated"
+            : "4 Finalized"}
         </Tag>
       </div>
       <label
