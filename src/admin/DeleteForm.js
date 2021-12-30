@@ -53,12 +53,15 @@ export default function DeleteForm(props) {
 
   const deleteAPI = () => {
     if (cfmMessage === keyword.children) {
+      const key = 'updatable';
+      message.loading({ content: 'Loading...', key });
       if (props.mode === "user") {
         deleteUserById(keyword.value)
           .then((res) => {
+            console.log(res)
             res.success
-              ? message.success(res.message, 5)
-              : message.error(res.message, 5);
+              ? message.success({ content: res.message, key, duration: 5})
+              : message.error({ content: res.message, key, duration: 5});
             initializePage();
           })
           .catch((err) => message.error(err.response));
@@ -67,8 +70,8 @@ export default function DeleteForm(props) {
         deleteProjectById(keyword.value)
           .then((res) => {
             res.success
-              ? message.success(res.message, 5)
-              : message.error(res.message, 5);
+              ? message.success({ content: res.message, key, duration: 5})
+              : message.error({ content: res.message, key, duration: 5});
               initializePage();
           })
           .catch((err) => message.error(err.response));
