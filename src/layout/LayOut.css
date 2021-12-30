@@ -1302,6 +1302,16 @@ table tr td.ant-table-selection-column {
   font-weight: bold;
 }
 
+.view-history-table .ant-table-thead > tr > th:first-child,
+.view-history-table .ant-table-tbody > tr > td:first-child {
+  width: 180px;
+}
+
+.view-history-table .ant-table-thead > tr > th:last-child,
+.view-history-table .ant-table-tbody > tr > td:last-child {
+  width: 120px;
+}
+
 /* dot ------------- */
 .dot {
   height: 10px;
