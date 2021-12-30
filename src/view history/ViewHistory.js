@@ -79,20 +79,11 @@ function HistoryLog(props) {
                     color = "processing"
                     status = "1 In Progress"
                 }
-                const isLongTag = status.length > 10;
-                const renderStatus = status.charAt(0).toUpperCase() + status.slice(1).split("_").join(" ");
-                const tagElem = (
+                return(
                     <Tag color={color}  style={{width: "100%"}}>
-                        {isLongTag ? `${renderStatus.slice(0, 10)}...` : renderStatus}
+                        {status.charAt(0).toUpperCase() + status.slice(1).split("_").join(" ")}
                     </Tag>
                 );
-                return isLongTag ? (
-                    <Tooltip title={renderStatus} key={renderStatus}>
-                        {tagElem}
-                    </Tooltip>
-                    ) : (
-                        tagElem
-                    );
             }
         },
         {
@@ -402,7 +393,7 @@ function HistoryLog(props) {
                     dataSource={uploadedItem} 
                     pagination={false} 
                     size="small"
-                    className="seven-rows-table with-tag"
+                    className="view-history-table seven-rows-table with-tag"
                 />}
         </div>
     )
