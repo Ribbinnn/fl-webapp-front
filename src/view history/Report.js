@@ -211,7 +211,7 @@ const ReportHeader = (props) => {
             <br />
             Last Updated: {new Date(props.updated_at).toLocaleString()}
             <br />
-            {props.status === "finalized" ? "Finalized" : "Updated"} By:{" "}
+            Updated By:{" "}
             {`${props.updated_by.first_name} ${props.updated_by.last_name}`}
           </i>
         )}
