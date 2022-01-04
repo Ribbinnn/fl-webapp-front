@@ -29,9 +29,15 @@ export default function Report(props) {
     getReport(rid).then((res) => {
       console.log(res);
       setInfo(res.data);
-      setLoaded(true);
+      // setLoaded(true);
     });
   }, []);
+  useEffect(()=>{
+    if (info){
+      console.log(info)
+      setLoaded(true);
+    }
+  }, [info])
 
   const downloadImage = () => {
     saveAs(getGradCam(rid, gradCam), `${info.result.project_id.name}_${gradCam}.png`) // Put your image url here.
@@ -51,14 +57,14 @@ export default function Report(props) {
       )}
       {loaded && (
         <ReportHeader
-          HN={info.result.hn}
+          HN={info.result.HN}
           patient={info.patient}
           status={info.result.status}
           medrec={info.record}
           project={info.result.project_id}
           created_at={info.result.createdAt}
           created_by={info.result.created_by}
-          finalized_by={info.result.finalized_by}
+          updated_by={info.result.updated_by}
           updated_at={info.result.updatedAt}
         />
       )}
@@ -205,8 +211,8 @@ const ReportHeader = (props) => {
             <br />
             Last Modified: {new Date(props.updated_at).toLocaleString()}
             <br />
-            Finalized By:{" "}
-            {`${props.finalized_by.first_name} ${props.finalized_by.last_name}`}
+            {props.status === "finalized" ? "Finalized" : "Updated"} By:{" "}
+            {`${props.updated_by.first_name} ${props.updated_by.last_name}`}
           </i>
         )}
       </label>
