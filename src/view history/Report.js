@@ -209,7 +209,7 @@ const ReportHeader = (props) => {
         {props.status !== "annotated" && (
           <i>
             <br />
-            Last Modified: {new Date(props.updated_at).toLocaleString()}
+            Last Updated: {new Date(props.updated_at).toLocaleString()}
             <br />
             {props.status === "finalized" ? "Finalized" : "Updated"} By:{" "}
             {`${props.updated_by.first_name} ${props.updated_by.last_name}`}
