@@ -52,6 +52,7 @@ function ProjectForm() {
     const [inputVisible, setInputVisible] = useState(true);
     useEffect(() => {
         setLoaded(false);
+        setSubmit(false);
         form.resetFields();
         setClasses([]);
         if (mode === "editproject") {
@@ -172,7 +173,7 @@ function ProjectForm() {
                 >
                     <div 
                         className={submit ? "input-text tag-wrapper disabled" : "input-text tag-wrapper"} 
-                        style={{borderColor: classesError ? "red" : "#58595b"}}
+                        style={{borderColor: classesError ? "red" : submit ? "#d9d9d9" : "#58595b"}}
                     >
                         <>
                             {classes.map((tag, index) => {
@@ -220,7 +221,7 @@ function ProjectForm() {
                                         </span>
                                     </Tag>
                                 );
-                                return isLongTag ? (
+                                return isLongTag && !submit ? (
                                     <Tooltip title={tag} key={tag}>
                                         {tagElem}
                                     </Tooltip>
@@ -245,7 +246,7 @@ function ProjectForm() {
                             )}
                             {!tagInputVisible && (
                                 <Tag 
-                                    className={submit ? "site-tag-plus disabled" : "site-tag-plus"} 
+                                    className={submit ? "site-tag-plus disabled no-select" : "site-tag-plus no-select"} 
                                     disabled={submit ? true : false} 
                                     onClick={() => {
                                         if (!submit) {
@@ -256,19 +257,26 @@ function ProjectForm() {
                                     <PlusOutlined /> add class
                                 </Tag>
                             )}
-                            {classes.length > 1 && <Popconfirm
-                                title="Remove all classes?"
-                                onConfirm={() => setClasses([])}
-                                okButtonProps={{ className: "primary-btn popconfirm" }}
-                                cancelButtonProps={{ style: { display: "none" } }}
-                            >
+                            {classes.length > 1 && (submit ?
                                 <label
-                                    className="clickable-label"
-                                    style={{fontSize: "small", color: "red"}}
+                                    className="no-select"
+                                    style={{fontSize: "small", color: "#bfbfbf", cursor: "not-allowed"}}
                                 >
                                     remove all classes
-                                </label>
-                            </Popconfirm>}
+                                </label> :
+                                <Popconfirm
+                                    title="Remove all classes?"
+                                    onConfirm={() => setClasses([])}
+                                    okButtonProps={{ className: "primary-btn popconfirm" }}
+                                    cancelButtonProps={{ style: { display: "none" } }}
+                                >
+                                    <label
+                                        className="clickable-label no-select"
+                                        style={{fontSize: "small", color: "red"}}
+                                    >
+                                        remove all classes
+                                    </label>
+                                </Popconfirm>)}
                         </>
                     </div>
                 </Form.Item>}
@@ -389,7 +397,7 @@ function ProjectForm() {
                     )}
                 </Form.List> */}
                 {inputVisible && <Form.Item
-                    style={{marginTop: "30px"}}
+                    style={{marginTop: "54px"}}
                 >
                     {submit ?
                         <Button
