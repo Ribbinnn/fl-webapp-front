@@ -61,16 +61,16 @@ function Home() {
                             </Card>
                         ))}
                     </Col>
-                    {!projectId &&
+                    {!globalProject.projectId &&
                         <Col span={12} style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
                             <label style={{fontWeight: "bold"}}>
                                 Please Select Project
                             </label>
                         </Col>
                     }
-                    {projectId &&
+                    {globalProject.projectId &&
                         <Col span={12}>
-                            <ProjectInfo project_id={projectId}/>
+                            <ProjectInfo project_id={globalProject.projectId}/>
                         </Col>
                     }
                 </Row>
