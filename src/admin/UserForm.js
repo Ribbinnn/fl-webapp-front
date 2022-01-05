@@ -20,6 +20,7 @@ function UserForm() {
     const [inputVisible, setInputVisible] = useState(true);
     useEffect(() => {
         setLoaded(false);
+        setSubmit(false);
         form.resetFields();
         if (mode === "edituser") {
             getAllUsers()
