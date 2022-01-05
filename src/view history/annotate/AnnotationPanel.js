@@ -639,6 +639,7 @@ export default function AnnotationPanel(props) {
     } else {
       let count = labels.reduce(
         (counter, item) => {
+          if (item.invisible) return counter;
           if (item.tool === "ratio") counter["length"] = counter["length"] + 2;
           else counter[item.tool] = counter[item.tool] + 1;
           return counter;
@@ -649,12 +650,12 @@ export default function AnnotationPanel(props) {
         dicomElement,
         tool === "ratio" ? "length" : tool
       );
-      // console.log(count["length"]);
+      console.log(count["length"],toolState.data.length);
       if (
         tool === "ratio" &&
         toolState.data &&
         toolState.data.length > count["length"] &&
-        !toolState.data[toolState.data.length - 1].active
+        !toolState.data[toolState.data.length - 1].active 
       ) {
         if (labelBuffer) {
           // setLabelBuffer({
@@ -665,6 +666,7 @@ export default function AnnotationPanel(props) {
           //   ).toFixed(4),
           //   index: [...labelBuffer.index, toolState.data.length - 1],
           // });
+          if (toolState.data.length <= count["length"]+1) return
           addNewLabel(undefined,undefined,{
             ...labelBuffer,
             ratio: (
@@ -701,10 +703,13 @@ export default function AnnotationPanel(props) {
       cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState();
     globalTool = globalTool[Object.keys(globalTool)[0]];
     let checker = labels.map((item, i) => {
+      console.log(item)
+      if (item.invisible) return item;
       if (item.tool === "ratio") {
         let first_line = globalTool["length"].data[item.index[0]];
         let second_line = globalTool["length"].data[item.index[1]];
         let ratio = (first_line["length"] / second_line["length"]).toFixed(4);
+        console.log(first_line,second_line,ratio)
         if (ratio !== item.ratio) { //edit here
           return {
             ...item,
