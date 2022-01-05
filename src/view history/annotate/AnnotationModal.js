@@ -22,7 +22,7 @@ export default function AnnotationModal (props){
                 stroke: "#de5c8e",
                 strokeWidth: 30
               }}>
-            Annotate Image
+            Annotate
         </Button>
         <Modal
           centered

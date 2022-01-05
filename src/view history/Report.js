@@ -13,7 +13,7 @@ import ProjectInfo from "../component/ProjectInfo";
 import ResultsTable from "./ResultsTable";
 import { getGradCam, getDicomByAccessionNo } from "../api/image";
 import { getReport } from "../api/report";
-import { saveAs } from 'file-saver'
+import { saveAs } from "file-saver";
 const { Panel } = Collapse;
 
 const LoadingIcon = (
@@ -29,13 +29,29 @@ export default function Report(props) {
     getReport(rid).then((res) => {
       console.log(res);
       setInfo(res.data);
-      setLoaded(true);
+      // setLoaded(true);
     });
   }, []);
+  useEffect(() => {
+    if (info) {
+      console.log(info);
+      setLoaded(true);
+    }
+  }, [info]);
 
   const downloadImage = () => {
-    saveAs(getGradCam(rid, gradCam), `${info.result.project_id.name}_${gradCam}.png`) // Put your image url here.
-  }
+    saveAs(
+      getGradCam(rid, gradCam),
+      `${info.result.project_id.name}_${gradCam}.png`
+    ); // Put your image url here.
+  };
+
+  const updateTimestamp = (updatedAt, updated_by) => {
+    setInfo({
+      ...info,
+      result: { ...info.result, updatedAt: updatedAt, updated_by: updated_by },
+    });
+  };
 
   return (
     <div className="content">
@@ -63,8 +79,9 @@ export default function Report(props) {
         />
       )}
       {loaded && (
-        <Row justify="center" align="top" style={{marginBottom: "10px"}}>
+        <Row justify="center" align="top" style={{ marginBottom: "10px" }}>
           <Col xs={24} sm={24} md={24} lg={12} xl={12} align="middle">
+          <label style={{fontWeight: "bold"}}> Original Image </label>
             <DicomViewOnly
               img_url={getDicomByAccessionNo(info.result.image_id.accession_no)}
               img_source="wado"
@@ -75,25 +92,25 @@ export default function Report(props) {
                 accession_no={info.result.image_id.accession_no}
                 labelList={info.classes.map((item) => {
                   return item.finding;
-                })}
+                })} 
               />
             )}
           </Col>
-          <Col
-            xs={24}
-            sm={24}
-            md={24}
-            lg={12}
-            xl={12}
-            align="center"
-          >
-            <div
-              style={{
-                height: "400px",
-                textAlign: "center",
-              }}
-            >
-              {gradCam ? (
+          {gradCam && (
+            <Col xs={24} sm={24} md={24} lg={12} xl={12} align="center">
+              <label style={{fontWeight: "bold"}}> Gradcam Image </label>
+              <div
+                style={{
+                  height: "400px",
+                  textAlign: "center",
+                }}
+              >
+                <Image
+                  preview={false}
+                  height={400}
+                  src={getGradCam(rid, gradCam)}
+                />
+                {/* {gradCam ? (
                 <Image
                   preview={false}
                   height={400}
@@ -108,38 +125,40 @@ export default function Report(props) {
                   size={400}
                   div_id="gradcam"
                 />
-              )}
-            </div>
-            <Button
-              type="link"
-              style={{
-                color: "#de5c8e",
-                fontSize: "medium",
-                visibility: gradCam ? "visible" : "hidden",
-                fontWeight: "bold",
-                stroke: "#de5c8e",
-                strokeWidth: 30
-              }}
-              onClick={downloadImage}
-              icon={<CloudDownloadOutlined className="clickable-icon"/>}
-            >
-              Download Image
-            </Button>
-          </Col>
+              )} */}
+              </div>
+              <Button
+                type="link"
+                style={{
+                  color: "#de5c8e",
+                  fontSize: "medium",
+                  visibility: gradCam ? "visible" : "hidden",
+                  fontWeight: "bold",
+                  stroke: "#de5c8e",
+                  strokeWidth: 30,
+                }}
+                onClick={downloadImage}
+                icon={<CloudDownloadOutlined className="clickable-icon" />}
+              >
+                Download
+              </Button>
+            </Col>
+          )}
         </Row>
       )}
       {loaded && (
         <ResultsTable
-          rate={info.result.rating}
-          head={info.result.project_id.head}
+          rate={info.result.rating} //
+          head={info.result.project_id.head} //
           rid={rid}
           gradCam={gradCam}
           setGradCam={setGradCam}
-          classes={info.classes}
+          classes={info.classes} //
           mode={mode}
-          status={info.result.status}
-          gradCamList={info.gradCam}
-          note={info.result.note}
+          status={info.result.status} //
+          gradCamList={info.gradCam} //
+          note={info.result.note} //
+          updateTimestamp={updateTimestamp}
         />
       )}
     </div>
@@ -203,7 +222,7 @@ const ReportHeader = (props) => {
         {props.status !== "annotated" && (
           <i>
             <br />
-            Last Modified: {new Date(props.updated_at).toLocaleString()}
+            Last Updated: {new Date(props.updated_at).toLocaleString()}
             <br />
             Updated By:{" "}
             {`${props.updated_by.first_name} ${props.updated_by.last_name}`}

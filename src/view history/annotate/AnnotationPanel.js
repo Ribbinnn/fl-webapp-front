@@ -109,7 +109,7 @@ export default function AnnotationPanel(props) {
               (record.tool === "rectangleRoi" && <BorderOutlined />) ||
               (record.tool === "freehand" && <StarOutlined />) ||
               (record.tool === "ratio" && <VerticalAlignBottomOutlined />)}
-            {record.label}
+            {record.label}{record.tool === "ratio" && ` (${record.ratio})`}
             {record.updated_by.username !== user.username && (
               <ExclamationOutlined
                 style={{ color: "#de5c8e", strokeWidth: 30, stroke: "#de5c8e" }}
@@ -302,7 +302,7 @@ export default function AnnotationPanel(props) {
             <Button
               type="link"
               icon={<EditOutlined />}
-              disabled={record.tool === "ratio" || record.invisible}
+              disabled={record.invisible}
               onClick={() => {
                 Modal.confirm({
                   title: "Choose label",
@@ -438,23 +438,26 @@ export default function AnnotationPanel(props) {
           } else return item;
         });
         setLabels(edittedLabels);
-      } else if (labelBuffer.tool === "ratio") {
-        if (labelBuffer.index.length === 1) return;
-        let newLabel = {
-          ...labelBuffer,
-          saved: false,
-          updated_time: new Date(),
-          updated_by: user,
-        };
-        setLabels([...labels, newLabel]);
+      } else if (labelBuffer.tool === "ratio" && labelBuffer.index.length === 1) {
+        // if (labelBuffer.index.length === 1) 
+        return;
+        // let newLabel = {
+        //   ...labelBuffer,
+        //   saved: false,
+        //   updated_time: new Date(),
+        //   updated_by: user,
+        // };
+        // setLabels([...labels, newLabel]);
       } else {
         let newLabel = {
           ...labelBuffer,
-          label: labelBuffer.label ?? selectedLabel,
+          label: selectedLabel,
           saved: false,
           updated_time: new Date(),
           updated_by: user,
         };
+        console.log(labelBuffer)
+        console.log(newLabel)
         setLabels([...labels, newLabel]);
       }
       setLabelBuffer();
@@ -510,6 +513,7 @@ export default function AnnotationPanel(props) {
                     tool: item.tool,
                     index: [current["length"], current["length"] + 1],
                     label: item.label,
+                    ratio: bbox.ratio,
                     saved: true,
                     updated_by: item.updated_by,
                     updated_time: item.updated_time,
@@ -622,9 +626,6 @@ export default function AnnotationPanel(props) {
 
   const imageOnClick = () => {
     console.log(labels);
-    // if (tool === "ratio") {
-    //   return;
-    // }
     if (tool === "pan") {
       return;
     }
@@ -638,6 +639,7 @@ export default function AnnotationPanel(props) {
     } else {
       let count = labels.reduce(
         (counter, item) => {
+          if (item.invisible) return counter;
           if (item.tool === "ratio") counter["length"] = counter["length"] + 2;
           else counter[item.tool] = counter[item.tool] + 1;
           return counter;
@@ -648,29 +650,39 @@ export default function AnnotationPanel(props) {
         dicomElement,
         tool === "ratio" ? "length" : tool
       );
-      // console.log(count["length"]);
+      console.log(count["length"],toolState.data.length);
       if (
         tool === "ratio" &&
         toolState.data &&
         toolState.data.length > count["length"] &&
-        !toolState.data[toolState.data.length - 1].active
+        !toolState.data[toolState.data.length - 1].active 
       ) {
         if (labelBuffer) {
-          setLabelBuffer({
+          // setLabelBuffer({
+          //   ...labelBuffer,
+          //   label: (
+          //     toolState.data[labelBuffer.index[0]]["length"] /
+          //     toolState.data[toolState.data.length - 1]["length"]
+          //   ).toFixed(4),
+          //   index: [...labelBuffer.index, toolState.data.length - 1],
+          // });
+          if (toolState.data.length <= count["length"]+1) return
+          addNewLabel(undefined,undefined,{
             ...labelBuffer,
-            label: (
+            ratio: (
               toolState.data[labelBuffer.index[0]]["length"] /
               toolState.data[toolState.data.length - 1]["length"]
             ).toFixed(4),
             index: [...labelBuffer.index, toolState.data.length - 1],
           });
+          setLabelBuffer();
         } else {
           setLabelBuffer({
             key: labels.length > 0 ? labels[labels.length - 1].key + 1 : 1,
             tool: tool,
             index: [toolState.data.length - 1],
           });
-          setBtnMode("save-cancel");
+          // setBtnMode("save-cancel");
           return;
         }
       }
@@ -691,14 +703,17 @@ export default function AnnotationPanel(props) {
       cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState();
     globalTool = globalTool[Object.keys(globalTool)[0]];
     let checker = labels.map((item, i) => {
+      console.log(item)
+      if (item.invisible) return item;
       if (item.tool === "ratio") {
         let first_line = globalTool["length"].data[item.index[0]];
         let second_line = globalTool["length"].data[item.index[1]];
         let ratio = (first_line["length"] / second_line["length"]).toFixed(4);
-        if (ratio !== item.label) {
+        console.log(first_line,second_line,ratio)
+        if (ratio !== item.ratio) { //edit here
           return {
             ...item,
-            label: ratio,
+            ratio: ratio,
             saved: false,
             updated_time: new Date(),
             updated_by: user,
@@ -809,7 +824,7 @@ export default function AnnotationPanel(props) {
     setViewerState({ ...viewerState, [prop]: value || e });
   };
 
-  const addNewLabel = (tool, index) => {
+  const addNewLabel = (tool, index, buffer) => {
     let key = labels.length > 0 ? labels[labels.length - 1].key + 1 : 1;
     Modal.info({
       title: "Choose label",
@@ -824,7 +839,7 @@ export default function AnnotationPanel(props) {
       className: "label-selector-modal",
       okText: "Submit",
       onOk: () => {
-        setLabelBuffer({
+        buffer ? setLabelBuffer(buffer) : setLabelBuffer({
           key: key,
           tool: tool,
           index: index,
@@ -858,10 +873,11 @@ export default function AnnotationPanel(props) {
           data:
             item.tool === "ratio"
               ? item.index === -1
-                ? { 0: item.invisible[0], 1: item.invisible[1] }
+                ? { 0: item.invisible[0], 1: item.invisible[1], ratio: item.ratio }
                 : {
                     0: lengthState.data[item.index[0]],
                     1: lengthState.data[item.index[1]],
+                    ratio: item.ratio
                   }
               : item.index === -1
               ? item.invisible
@@ -910,6 +926,7 @@ export default function AnnotationPanel(props) {
       content: "All changes you made will not be saved.",
       okText: "Sure",
       onOk: () => {
+        setImgLoaded(false);
         loadDicom(
           getDicomByAccessionNo(props.accession_no ?? "74"),
           "wado",
