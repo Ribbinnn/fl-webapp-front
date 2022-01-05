@@ -139,10 +139,11 @@ export default function ResultsTable(props) {
       .then((res) => {
         console.log(res);
         if (res.success) {
-          message.success({ content: res.message, key, duration: 5 });
           setDefaultRowKeys(selectedRowKeys);
           setDefaultNote(note);
+          props.updateTimestamp(res.data.updatedAt, res.data.updated_by);
           setBtnGroup("back");
+          message.success({ content: res.message, key, duration: 5 });
         } else message.error({ content: res.message, key, duration: 5 });
       })
       .catch((err) => console.log(err.response));
