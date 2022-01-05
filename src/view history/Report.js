@@ -58,7 +58,7 @@ export default function Report(props) {
           project={info.result.project_id}
           created_at={info.result.createdAt}
           created_by={info.result.created_by}
-          finalized_by={info.result.finalized_by}
+          updated_by={info.result.updated_by}
           updated_at={info.result.updatedAt}
         />
       )}
@@ -205,8 +205,8 @@ const ReportHeader = (props) => {
             <br />
             Last Modified: {new Date(props.updated_at).toLocaleString()}
             <br />
-            Finalized By:{" "}
-            {`${props.finalized_by.first_name} ${props.finalized_by.last_name}`}
+            Updated By:{" "}
+            {`${props.updated_by.first_name} ${props.updated_by.last_name}`}
           </i>
         )}
       </label>

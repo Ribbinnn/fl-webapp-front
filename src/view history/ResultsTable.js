@@ -11,7 +11,7 @@ const { TextArea } = Input;
 const GradCamStyle = { fontSize: "x-large" };
 
 export default function ResultsTable(props) {
-  const user = JSON.parse(localStorage.getItem("user")).id;
+  const user = JSON.parse(sessionStorage.getItem("user")).id;
   const mode = props.mode;
   const status = props.status;
   const ratingDesc = [
