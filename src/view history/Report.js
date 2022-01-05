@@ -81,6 +81,7 @@ export default function Report(props) {
       {loaded && (
         <Row justify="center" align="top" style={{ marginBottom: "10px" }}>
           <Col xs={24} sm={24} md={24} lg={12} xl={12} align="middle">
+          <label style={{fontWeight: "bold"}}> Original Image </label>
             <DicomViewOnly
               img_url={getDicomByAccessionNo(info.result.image_id.accession_no)}
               img_source="wado"
@@ -91,12 +92,13 @@ export default function Report(props) {
                 accession_no={info.result.image_id.accession_no}
                 labelList={info.classes.map((item) => {
                   return item.finding;
-                })}
+                })} 
               />
             )}
           </Col>
           {gradCam && (
             <Col xs={24} sm={24} md={24} lg={12} xl={12} align="center">
+              <label style={{fontWeight: "bold"}}> Gradcam Image </label>
               <div
                 style={{
                   height: "400px",
@@ -138,7 +140,7 @@ export default function Report(props) {
                 onClick={downloadImage}
                 icon={<CloudDownloadOutlined className="clickable-icon" />}
               >
-                Download Image
+                Download
               </Button>
             </Col>
           )}
