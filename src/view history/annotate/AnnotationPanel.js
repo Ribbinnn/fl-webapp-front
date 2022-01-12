@@ -462,6 +462,7 @@ export default function AnnotationPanel(props) {
       }
       setLabelBuffer();
       setSelectedLabel();
+      setBtnMode("save-cancel");
     }
   }, [labelBuffer]);
 
