@@ -248,7 +248,7 @@ const ReportHeader = (props) => {
         <Popover
           className="proj-popover"
           placement="rightTop"
-          content={<ProjectInfo notChange={true} />}
+          content={<ProjectInfo notChange={true} collapse={true} />}
           style={{ margin: "0 30px 30px 30px" }}
         >
           <Button type="link" icon={<InfoCircleOutlined />} />

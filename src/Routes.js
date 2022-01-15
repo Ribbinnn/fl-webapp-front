@@ -14,7 +14,6 @@ import Auth from "./Auth";
 import { updateToken } from "./api";
 
 import "./layout/LayOut.css";
-import ProjectInfo from "./component/ProjectInfo";
 import Contexts from "./utils/Contexts";
 
 function Routes() {

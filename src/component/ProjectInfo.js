@@ -52,7 +52,7 @@ export default function ProjectInfo(props) {
           </span>
           </div>
       )}
-      {loaded && pinfo && <Collapse defaultActiveKey={["1"]} expandIconPosition="right" ghost>
+      {loaded && pinfo && <Collapse defaultActiveKey={props.collapse ? ["1"] : null} expandIconPosition="right" ghost>
             <Panel key="1" header="Project information">
             <div className="info" style={{ width: props.width ?? "100%" }}>
         <div>
