@@ -13,8 +13,7 @@ function SelectXRayImage(props) {
 
     const [loaded, setLoaded] = useState(true);
 
-    const fields = ["Patient Name", "Accession No", "Patient ID", "Proc Description", 
-        "Modality", "Study Date Time", "Image Count", "Procedure Code", "Primary location"];
+    const fields = ["Patient Name", "Accession No", "Patient ID", "Modality", "Study Date Time", "Procedure Code"];
     const [columns, setColumns] = useState(null);
     const [tableData, setTableData] = useState(null);
 
