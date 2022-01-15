@@ -70,7 +70,7 @@ function Home() {
                     }
                     {globalProject.projectId &&
                         <Col span={12}>
-                            <ProjectInfo project_id={globalProject.projectId}/>
+                            <ProjectInfo project_id={globalProject.projectId} collapse={true} />
                         </Col>
                     }
                 </Row>

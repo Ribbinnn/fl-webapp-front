@@ -130,7 +130,7 @@ export default function Diagnosis() {
                 >
                   Patient's HN: {HN}
                 </label>
-                <ProjectInfo project_id={globalProject.projectId} />
+                <ProjectInfo project_id={globalProject.projectId} collapse={false} />
               </div>
             </Col>
             <Col span={17}>

@@ -58,7 +58,7 @@ export default function UploadRecord() {
         <div className="steps-content-upload">
           <Row style={{marginBottom:"30px"}}>
             <Col span={7}>
-              <ProjectInfo project_id={globalProject.projectId} />
+              <ProjectInfo project_id={globalProject.projectId} collapse={false} />
             </Col>
             <Col span={17}>
               <UploadRecordForm ref={uploadRecordFormRef} project={globalProject} />
