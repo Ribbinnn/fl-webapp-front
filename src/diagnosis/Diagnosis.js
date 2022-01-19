@@ -65,6 +65,9 @@ export default function Diagnosis() {
   // const [accessionNo, setAccessionNo] = useState("74");
   const [accessionNo, setAccessionNo] = useState(null);
   const [accessionNoIndex, setAccessionNoIndex] = useState([]);
+  const [fromDate, setFromDate] = useState(null);
+  const [toDate, setToDate] = useState(null);
+  const [pacsTableData, setPacsTableData] = useState(null);
   const [current, setCurrent] = useState(0);
   const selectMedicalRecordRef = useRef();
 
@@ -127,7 +130,7 @@ export default function Diagnosis() {
                 >
                   Patient's HN: {HN}
                 </label>
-                <ProjectInfo project_id={globalProject.projectId} />
+                <ProjectInfo project_id={globalProject.projectId} collapse={false} />
               </div>
             </Col>
             <Col span={17}>
@@ -160,6 +163,12 @@ export default function Diagnosis() {
               setAccessionNo={setAccessionNo}
               accessionNoIndex={accessionNoIndex}
               setAccessionNoIndex={setAccessionNoIndex}
+              fromDate={fromDate}
+              setFromDate={setFromDate}
+              toDate={toDate}
+              setToDate={setToDate}
+              pacsTableData={pacsTableData}
+              setPacsTableData={setPacsTableData}
             />
           </div>
         )}
