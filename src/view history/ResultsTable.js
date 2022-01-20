@@ -159,6 +159,7 @@ export default function ResultsTable(props) {
         setSelectedRowKeys(defaultRowKeys);
         setNote(defaultNote);
         setBtnGroup("back");
+        setRating(props.rate);
       },
       cancelText: "No",
     });

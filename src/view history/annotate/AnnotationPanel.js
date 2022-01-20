@@ -70,8 +70,9 @@ export default function AnnotationPanel(props) {
   const [savedData, setSavedData] = useState();
 
   useEffect(() => {
+    console.log(props.accession_no);
     loadDicom(
-      getDicomByAccessionNo(props.accession_no ?? "74"),
+      getDicomByAccessionNo(props.accession_no),
       "wado",
       displayImage
     );
@@ -874,19 +875,19 @@ export default function AnnotationPanel(props) {
           data:
             item.tool === "ratio"
               ? item.index === -1
-                ? { 0: item.invisible[0], 1: item.invisible[1], ratio: item.ratio }
+                ? { 0: {...item.invisible[0], active:false}, 1: {...item.invisible[1], active:false}, ratio: item.ratio }
                 : {
-                    0: lengthState.data[item.index[0]],
-                    1: lengthState.data[item.index[1]],
+                    0: {...lengthState.data[item.index[0]], active:false},
+                    1: {...lengthState.data[item.index[1]], active:false},
                     ratio: item.ratio
                   }
               : item.index === -1
-              ? item.invisible
+              ? {...item.invisible, active:false}
               : item.tool === "freehand"
-              ? freehandState.data[item.index]
+              ? {...freehandState.data[item.index], active:false}
               : item.tool === "length"
-              ? lengthState.data[item.index]
-              : rectangleRoiState.data[item.index],
+              ? {...lengthState.data[item.index], active:false}
+              : {...rectangleRoiState.data[item.index], active:false},
           updated_time: item.updated_time,
         },
       ];
@@ -929,7 +930,7 @@ export default function AnnotationPanel(props) {
       onOk: () => {
         setImgLoaded(false);
         loadDicom(
-          getDicomByAccessionNo(props.accession_no ?? "74"),
+          getDicomByAccessionNo(props.accession_no),
           "wado",
           displayImage
         );
