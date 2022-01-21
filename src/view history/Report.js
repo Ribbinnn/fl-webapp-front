@@ -82,11 +82,19 @@ export default function Report(props) {
         <Row justify="center" align="top" style={{ marginBottom: "10px" }}>
           <Col xs={24} sm={24} md={24} lg={12} xl={12} align="middle">
           <label style={{fontWeight: "bold"}}> Original Image </label>
-            <DicomViewOnly
+            {
+              <div>
+              <Image
+              // preview={false}
+              height={400}
+              src={getGradCam(rid, "original")}
+            />
+            </div>
+            /* <DicomViewOnly
               img_url={getDicomByAccessionNo(info.result.image_id.accession_no)}
               img_source="wado"
               size={400}
-            />
+            /> */}
             {mode === "edit" && (
               <AnnotationModal
                 accession_no={info.result.image_id.accession_no}
@@ -106,7 +114,7 @@ export default function Report(props) {
                 }}
               >
                 <Image
-                  preview={false}
+                  // preview={false}
                   height={400}
                   src={getGradCam(rid, gradCam)}
                 />

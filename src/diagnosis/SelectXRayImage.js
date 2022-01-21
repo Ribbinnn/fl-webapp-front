@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Table, Tooltip, Spin, Form, DatePicker, Button } from "antd";
-import { LoadingOutlined } from "@ant-design/icons";
+import { Table, Tooltip, Spin, Form, DatePicker, Button, Popconfirm, Input } from "antd";
+import { LoadingOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { getPatientData } from "../api/pacs"
 import ImageModal from "../component/ImageModal";
 import * as moment from "moment";
@@ -15,7 +15,12 @@ function SelectXRayImage(props) {
 
     const fields = ["Patient Name", "Accession No", "Patient ID", "Modality", "Study Date Time", "Procedure Code"];
     const [columns, setColumns] = useState(null);
+    const [unchangedData, setUnchangedData] = useState(null);
     const [tableData, setTableData] = useState(null);
+
+    const [HN, setHN] = useState("");
+    const [fromDate, setFromDate] = useState(null);
+    const [toDate, setToDate] = useState(null);
 
     const rowSelection = {
         type: "radio",
@@ -54,6 +59,29 @@ function SelectXRayImage(props) {
                             AccessionNo={record["Accession No"]}
                             ProcDescription={record["Proc Description"]}
                             StudyDateTime={record["Study Date Time"]} />
+                        {props.mode === "annotate" ?
+                            <div className="center-div">
+                                <EditOutlined
+                                    className="clickable-icon"
+                                    // style={{marginLeft: "8px"}}
+                                    onClick={() => {
+                                        /* annotate api */
+                                    }}
+                                />
+                                <Popconfirm
+                                    title="Delete this report?"
+                                    onConfirm={() => {
+                                        /* delete image api */
+                                    }}
+                                    okButtonProps={{ className: "primary-btn popconfirm" }}
+                                    cancelButtonProps={{ style: { display: "none" } }}
+                                >
+                                    <DeleteOutlined
+                                        className="clickable-icon"
+                                        style={{ marginLeft: "8px" }}
+                                    />
+                                </Popconfirm>
+                            </div> : null}
                     </div>
                 );
             },
@@ -69,15 +97,39 @@ function SelectXRayImage(props) {
     }
 
     useEffect(() => {
-        if (props.pacsTableData) {
-            setTableData(prepareTable(props.pacsTableData));
+        if (props.mode === "diagnosis") {
+            if (props.pacsTableData) {
+                setTableData(prepareTable(props.pacsTableData));
+            }
+        } else {
+            setLoaded(false);
+            getPatientData(1234567 /* ,props.fromDate, props.toDate */) // change api for research later
+            .then((res) => {
+                const data = prepareTable(res.data);
+                setTableData(data);
+                setUnchangedData(data);
+                setLoaded(true);
+            }).catch((err) => {
+                console.log(err);
+            });
         }
     }, []);
 
     return(
         <div>
-            <label style={{marginBottom: "8px"}}>Select X-Ray Image</label>
+            <label style={{marginBottom: "8px"}}>{props.mode === "diagnosis" ? "Select X-Ray Image" : "Annotate Images"}</label>
             <Form layout="inline" style={{marginBottom: loaded ? "32px" : 0}}>
+                {props.mode === "annotate" &&
+                    <Form.Item
+                        name="hn"
+                        label="HN"
+                        style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}
+                    >
+                        <Input
+                            className="input-text"
+                            onChange={(item) => setHN(item.target.value)}
+                            style={{width:"200px"}} />
+                    </Form.Item>}
                 <Form.Item
                     name="from"
                     label="From"
@@ -86,7 +138,9 @@ function SelectXRayImage(props) {
                     <DatePicker
                         defaultValue={props.fromDate ? moment(props.fromDate) : null}
                         onChange={(date) => {
-                            props.setFromDate(date? date.startOf('day').toDate(): null) // Moment Object
+                            props.mode === "diagnosis" ?
+                                props.setFromDate(date? date.startOf('day').toDate(): null) // Moment Object
+                                : setFromDate(date? date.startOf('day').toDate(): null)
                         }}
                         style={{width:"200px"}} />
                 </Form.Item>
@@ -98,7 +152,9 @@ function SelectXRayImage(props) {
                     <DatePicker
                         defaultValue={props.toDate ? moment(props.toDate) : null}
                         onChange={(date) => {
-                            props.setToDate(date? date.endOf('day').toDate(): null) // Moment Object
+                            props.mode === "diagnosis" ?
+                                props.setToDate(date? date.endOf('day').toDate(): null) // Moment Object
+                                : setToDate(date? date.endOf('day').toDate(): null)
                         }}
                         style={{width:"200px"}} />
                 </Form.Item>
@@ -108,19 +164,29 @@ function SelectXRayImage(props) {
                         style={{marginTop:"32px"}}
                         onClick={() => {
                             setLoaded(false);
-                            getPatientData(props.HN /* ,props.fromDate, props.toDate */)
-                            .then((res) => {
-                                const data = prepareTable(res.data);
-                                setTableData(data);
-                                props.setPacsTableData(data);
-                                props.setAccessionNoIndex([]);
-                                props.setAccessionNo(null);
+                            if (props.mode === "diagnosis") {
+                                getPatientData(props.HN /* ,props.fromDate, props.toDate */)
+                                .then((res) => {
+                                    const data = prepareTable(res.data);
+                                    setTableData(data);
+                                    props.setPacsTableData(data);
+                                    props.setAccessionNoIndex([]);
+                                    props.setAccessionNo(null);
+                                    setLoaded(true);
+                                }).catch((err) => {
+                                    console.log(err);
+                                });
+                            } else {
+                                let filterData = unchangedData.filter((item, i) => ( // check from/to date filter later
+                                    (HN === "" ? true : item["Patient ID"].includes(HN)) &&
+                                    (fromDate === null ? true : new Date(item["Study Date Time"]) >= fromDate) &&
+                                    (toDate === null ? true : new Date(item["Study Date Time"]) <= toDate)
+                                ))
+                                setTableData(filterData);
                                 setLoaded(true);
-                            }).catch((err) => {
-                                console.log(err);
-                            })
+                            }
                         }}>
-                            Search
+                            {props.mode === "diagnosis" ? "Search" : "Filter"}
                     </Button>
                 </Form.Item>
             </Form>
@@ -139,7 +205,7 @@ function SelectXRayImage(props) {
                     columns={columns} 
                     dataSource={tableData} 
                     pagination={false} 
-                    rowSelection={rowSelection}
+                    rowSelection={props.mode === "diagnosis" ? rowSelection : null}
                     size="small"
                     className="seven-rows-table"
                 />
