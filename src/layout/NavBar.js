@@ -8,7 +8,7 @@ import {
   PlusSquareOutlined,
   DatabaseOutlined,
   HomeOutlined,
-  UserOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 const { SubMenu } = Menu;
 
@@ -72,8 +72,13 @@ export default function NavBar() {
         >
           View History
         </Menu.Item>
-        <Menu.Item key="aboutus" className="menuitem" icon={<UserOutlined />}>
-          About Us
+        <Menu.Item
+          key="annotate"
+          className="menuitem"
+          icon={<EditOutlined />}
+          onClick={() => history.push("/annotate")}
+        >
+          Annotate
         </Menu.Item>
         {JSON.parse(sessionStorage.getItem("user")).role === "admin" &&
           <Menu.Item

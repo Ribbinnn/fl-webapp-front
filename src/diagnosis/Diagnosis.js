@@ -158,7 +158,8 @@ export default function Diagnosis() {
             >
               Patient's HN: {HN}
             </label>
-            <SelectXRayImage 
+            <SelectXRayImage
+              mode="diagnosis" 
               HN={HN}
               setAccessionNo={setAccessionNo}
               accessionNoIndex={accessionNoIndex}
