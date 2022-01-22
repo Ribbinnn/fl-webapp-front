@@ -4,8 +4,10 @@ import axios from 'axios';
 
 export const getPatientData = async (HN) => {
     try {
+        console.log("here")
         const res = (
-            await instance.get("/pacs/HN/" + HN)
+            //await instance.get("/pacs/HN/" + HN)
+            await instance.get(`${serverURL}/pacs/?HN=${HN}&dir=local`)
         ).data;
         return res;
     } catch (e) {
