@@ -35,3 +35,12 @@ export const findPatientOnPACS = async (hn) => {
         throw e
     }
 }
+
+export const findPatientOnLocal = async (hn) => {
+    try {
+        const response = (await instance.get(`/pacs/info/?HN=${hn}&dir=local`));
+        return response.data
+    } catch (e) {
+        throw e
+    }
+}
