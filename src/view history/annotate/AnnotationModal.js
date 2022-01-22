@@ -15,7 +15,7 @@ export default function AnnotationModal (props){
 
   return (
       <div style={{display: "inline-block"}}>
-        <Button type="link" onClick={showModal} icon={<HighlightOutlined className="clickable-icon"/>} style={{
+        <Button type="link" onClick={showModal} icon={<HighlightOutlined className="clickable-icon"/>} style={props.displayText && {
                 color: "#de5c8e",
                 fontSize: "medium",
                 fontWeight: "bold",

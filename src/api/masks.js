@@ -4,7 +4,7 @@ export const getBBox = async (local,req) => {
 
     // local api -> /api/masks/local/?accession_no=0041099&HN=4149&project_id=61eb03676846d3890367bb46
     try {
-        const url = local ? `/api/masks/local/?accession_no=${req.accession_no}` : `/masks/report/${req.rid}`
+        const url = local ? `/masks/local/?accession_no=${req}` : `/masks/report/${req}`
         const response = (await instance.get(url));
         return response.data
     } catch (e) {

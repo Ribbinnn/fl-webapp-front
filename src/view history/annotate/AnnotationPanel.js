@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Button,
   Row,
@@ -41,7 +41,6 @@ import { loadDicom } from "../../component/dicom-viewer/dicomLoader";
 import Label from "./Label";
 import { insertBBox, getBBox } from "../../api/masks";
 import { getGradCam } from "../../api/image";
-import Contexts from "../../utils/Contexts";
 
 const cornerstone = window.cornerstone;
 const cornerstoneTools = window.cornerstoneTools;
@@ -77,13 +76,12 @@ export default function AnnotationPanel(props) {
   const [btnMode, setBtnMode] = useState("close");
   const [savedData, setSavedData] = useState();
   const [gradCam, setGradCam] = useState( props.gradCamList ? props.gradCamList[0] : null)
-  const { globalProject, setGlobalProject } = useContext(Contexts.project);
   const [maskID, setMaskID] = useState();
 
   useEffect(() => {
     // console.log(props.accession_no);
     loadDicom(getDicomByAccessionNo(props.accession_no), "wado", displayImage);
-    getBBox(!rid, rid ? {rid: rid} : {accession_no: props.accession_no, HN: props.HN, project_id: globalProject.projectId}).then((res) => {
+    getBBox(!rid, rid ? rid : props.accession_no).then((res) => {
       // console.log(res);
       if (res.data) {
         setUser({ ...user, ...res.data.user });
@@ -433,7 +431,7 @@ export default function AnnotationPanel(props) {
         ),
       },
     ]);
-  }, [labels]);
+  }, [labels, labelList]);
 
   useEffect(() => {
     if (labelBuffer) {
@@ -512,7 +510,7 @@ export default function AnnotationPanel(props) {
     setDicomElement(element);
     removeAnnotations(element);
     //getBBox
-    getBBox(!rid, rid ? {rid: rid} : {accession_no: props.accession_no, HN: props.HN, project_id: globalProject.projectId}).then((res) => {
+    getBBox(!rid, rid ? rid : props.accession_no).then((res) => {
       if (res.data) {
         let temp = res;
         let loadedData = temp.data.data.reduce(
@@ -576,6 +574,7 @@ export default function AnnotationPanel(props) {
           }
         );
         // console.log(loadedData);
+        console.log(loadedData)
         cornerstone.updateImage(element);
         setLabels(loadedData.initial_lb);
         setImgLoaded(true);
