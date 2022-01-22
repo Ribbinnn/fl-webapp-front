@@ -98,9 +98,11 @@ export default function Report(props) {
             {mode === "edit" && (
               <AnnotationModal
                 accession_no={info.result.image_id.accession_no}
+                gradCamList={info.gradCam.filter((item)=>{return item !== "original"})}
                 labelList={info.classes.map((item) => {
                   return item.finding;
-                })} 
+                })}
+                displayText="Annotate"
               />
             )}
           </Col>
