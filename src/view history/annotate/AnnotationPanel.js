@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Button,
   Row,
@@ -41,6 +41,7 @@ import { loadDicom } from "../../component/dicom-viewer/dicomLoader";
 import Label from "./Label";
 import { insertBBox, getBBox } from "../../api/masks";
 import { getGradCam } from "../../api/image";
+import Contexts from "../../utils/Contexts";
 
 const cornerstone = window.cornerstone;
 const cornerstoneTools = window.cornerstoneTools;
@@ -76,11 +77,13 @@ export default function AnnotationPanel(props) {
   const [btnMode, setBtnMode] = useState("close");
   const [savedData, setSavedData] = useState();
   const [gradCam, setGradCam] = useState( props.gradCamList ? props.gradCamList[0] : null)
+  const { globalProject, setGlobalProject } = useContext(Contexts.project);
+  const [maskID, setMaskID] = useState();
 
   useEffect(() => {
-    console.log(props.accession_no);
+    // console.log(props.accession_no);
     loadDicom(getDicomByAccessionNo(props.accession_no), "wado", displayImage);
-    getBBox(rid).then((res) => {
+    getBBox(!rid, rid ? {rid: rid} : {accession_no: props.accession_no, HN: props.HN, project_id: globalProject.projectId}).then((res) => {
       // console.log(res);
       if (res.data) {
         setUser({ ...user, ...res.data.user });
@@ -509,7 +512,7 @@ export default function AnnotationPanel(props) {
     setDicomElement(element);
     removeAnnotations(element);
     //getBBox
-    getBBox(rid).then((res) => {
+    getBBox(!rid, rid ? {rid: rid} : {accession_no: props.accession_no, HN: props.HN, project_id: globalProject.projectId}).then((res) => {
       if (res.data) {
         let temp = res;
         let loadedData = temp.data.data.reduce(
@@ -579,6 +582,7 @@ export default function AnnotationPanel(props) {
         // setSavedData(res.data.data)
         // console.log(loadedData);
         setLabelList(loadedData.initial_ll);
+        setMaskID(res.data._id);
       }
       res.data.createdAt !== res.data.updatedAt &&
         setSavedTime(new Date(res.data.updatedAt).toLocaleString());
@@ -913,7 +917,7 @@ export default function AnnotationPanel(props) {
         },
       ];
     }, []);
-    insertBBox(rid, bbox_data).then((res) => {
+    insertBBox(maskID, rid, bbox_data).then((res) => {
       console.log(res);
       if (res.success) {
         message.success({
