@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Table, Tooltip, Spin, Form, DatePicker, Button, Popconfirm, Input } from "antd";
 import { LoadingOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { getPatientData } from "../api/pacs"
+import { getPatientData, getPatientDataLocal } from "../api/pacs"
 import ImageModal from "../component/ImageModal";
+import AnnotationModal from "../view history/annotate/AnnotationModal";
 import * as moment from "moment";
 
 const LoadingIcon = (
@@ -61,13 +62,14 @@ function SelectXRayImage(props) {
                             StudyDateTime={record["Study Date Time"]} />
                         {props.mode === "annotate" ?
                             <div className="center-div">
-                                <EditOutlined
+                                {/* <EditOutlined
                                     className="clickable-icon"
                                     // style={{marginLeft: "8px"}}
                                     onClick={() => {
-                                        /* annotate api */
+                                        // annotate api
                                     }}
-                                />
+                                /> */}
+                                <AnnotationModal accession_no={record["Accession No"]} />
                                 <Popconfirm
                                     title="Delete this report?"
                                     onConfirm={() => {
@@ -103,14 +105,14 @@ function SelectXRayImage(props) {
             }
         } else {
             setLoaded(false);
-            getPatientData(1234567 /* ,props.fromDate, props.toDate */) // change api for research later
+            getPatientDataLocal(HN) // edit later
             .then((res) => {
                 const data = prepareTable(res.data);
                 setTableData(data);
                 setUnchangedData(data);
                 setLoaded(true);
             }).catch((err) => {
-                console.log(err);
+                console.log(err.response);
             });
         }
     }, []);
