@@ -26,3 +26,12 @@ export const infer = async (accession_no, project_id, record, user_id) => {
         throw e
     }
 }
+
+export const localInfer = async (accession_no, project_id, record, user_id) => {
+    try {
+        const res = (await instance.post("/infer", {accession_no, project_id, record, user_id, dir:"local"}))
+        return res.data;
+    } catch (e) {
+        throw e
+    }
+}

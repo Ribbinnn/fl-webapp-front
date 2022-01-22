@@ -7,30 +7,25 @@ import SelectXRayImage from "./SelectXRayImage";
 import Completed from "../component/Completed";
 import PreviewEdit from "./PreviewEdit";
 import { findPatientOnLocal } from "../api/pacs";
-import { infer } from "../api/report";
+import { localInfer } from "../api/report";
 import Contexts from '../utils/Contexts';
 const { Step } = Steps;
 
 const steps = [
   {
     title: "Select HN",
-    content: "First-content",
   },
   {
     title: "Select Medical Record",
-    content: "Second-content",
   },
   {
     title: "Select X-Ray Image",
-    content: "Third-content",
   },
   {
     title: "Preview & Edit",
-    content: "Fourth-content",
   },
   {
     title: "Diagnosis Started",
-    content: "Last-content",
   },
 ];
 
@@ -80,7 +75,7 @@ export default function Diagnosis() {
     } else {
       if (current === 3) {
         setLoading(true);
-        infer(accessionNo, globalProject.projectId, MedRec, (JSON.parse(sessionStorage.getItem('user'))).id)
+        localInfer(accessionNo, globalProject.projectId, MedRec, (JSON.parse(sessionStorage.getItem('user'))).id)
         .then((res) => {
           console.log(res);
           setCurrent(current + 1);
