@@ -319,7 +319,7 @@ export default function AnnotationPanel(props) {
                   content: (
                     <Label
                       setSelectedLabel={setSelectedLabel}
-                      labelList={props.labelList}
+                      labelList={labelList}
                       setLabelList={setLabelList}
                       defaultLabel={record.label}
                     />
