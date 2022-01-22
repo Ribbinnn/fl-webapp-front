@@ -4,8 +4,10 @@ import axios from 'axios';
 
 export const getPatientData = async (HN) => {
     try {
+        console.log("here")
         const res = (
-            await instance.get("/pacs/HN/" + HN)
+            //await instance.get("/pacs/HN/" + HN)
+            await instance.get(`${serverURL}/pacs/?HN=${HN}&dir=local`)
         ).data;
         return res;
     } catch (e) {
@@ -30,6 +32,15 @@ export const getPatientDataLocal = async (HN) => {
 export const findPatientOnPACS = async (hn) => {
     try {
         const response = (await instance.get(`/pacs/HN/${hn}/info`));
+        return response.data
+    } catch (e) {
+        throw e
+    }
+}
+
+export const findPatientOnLocal = async (hn) => {
+    try {
+        const response = (await instance.get(`/pacs/info/?HN=${hn}&dir=local`));
         return response.data
     } catch (e) {
         throw e

@@ -6,7 +6,7 @@ import SelectMedicalRecord from "./SelectMedicalRecord";
 import SelectXRayImage from "./SelectXRayImage";
 import Completed from "../component/Completed";
 import PreviewEdit from "./PreviewEdit";
-import { findPatientOnPACS } from "../api/pacs";
+import { findPatientOnLocal } from "../api/pacs";
 import { infer } from "../api/report";
 import Contexts from '../utils/Contexts';
 const { Step } = Steps;
@@ -210,7 +210,7 @@ function SelectHN(props) {
   //const [patientName, setPatientName] = useState();
   const handleSubmit = () => {
     let input_hn = document.getElementById("hn-input").value;
-    findPatientOnPACS(input_hn).then((res) => {
+    findPatientOnLocal(input_hn).then((res) => {
       console.log(input_hn);
       if (res.data) {
         props.setHN(input_hn);
@@ -247,7 +247,7 @@ function SelectHN(props) {
       </Form.Item>
       {props.Patient !== undefined && (
         <label id="search-pacs-result">
-          {props.Patient ? `Patient's Name: ${props.Patient.Name}` : "No sufficient data from PACS for this patient."}
+          {props.Patient ? `Patient's Name: ${props.Patient.Name}` : "No sufficient data from this patient."}
         </label>
       )}
     </Form>

@@ -42,7 +42,7 @@ export default function Label(props) {
       filterOption={(input, option) =>
         option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
       }
-      /* dropdownRender={(menu) => (
+      dropdownRender={(menu) => (
         <div>
           {menu}
           <Divider style={{ margin: "4px 0" }} />
@@ -61,7 +61,7 @@ export default function Label(props) {
             </a>
           </div>
         </div>
-      )} */
+      )}
     >
       {labelList.map((item) => (
         <Option key={item} value={item}>

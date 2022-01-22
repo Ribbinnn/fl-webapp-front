@@ -60,7 +60,7 @@ export default function AnnotationPanel(props) {
   const [columns, setColumns] = useState();
   const { mode, rid } = useParams();
   const [labels, setLabels] = useState([]);
-  //const [labelList, setLabelList] = useState([]);
+  const [labelList, setLabelList] = useState([]);
   const [selectedLabel, setSelectedLabel] = useState();
   const [labelBuffer, setLabelBuffer] = useState();
   const [viewerState, setViewerState] = useState({
@@ -76,11 +76,12 @@ export default function AnnotationPanel(props) {
   const [btnMode, setBtnMode] = useState("close");
   const [savedData, setSavedData] = useState();
   const [gradCam, setGradCam] = useState( props.gradCamList ? props.gradCamList[0] : null)
+  const [maskID, setMaskID] = useState();
 
   useEffect(() => {
-    console.log(props.accession_no);
+    // console.log(props.accession_no);
     loadDicom(getDicomByAccessionNo(props.accession_no), "wado", displayImage);
-    getBBox(rid).then((res) => {
+    getBBox(!rid, rid ? rid : props.accession_no).then((res) => {
       // console.log(res);
       if (res.data) {
         setUser({ ...user, ...res.data.user });
@@ -319,8 +320,8 @@ export default function AnnotationPanel(props) {
                   content: (
                     <Label
                       setSelectedLabel={setSelectedLabel}
-                      labelList={props.labelList}
-                      // setLabelList={setLabelList}
+                      labelList={labelList}
+                      setLabelList={setLabelList}
                       defaultLabel={record.label}
                     />
                   ),
@@ -430,7 +431,7 @@ export default function AnnotationPanel(props) {
         ),
       },
     ]);
-  }, [labels]);
+  }, [labels, labelList]);
 
   useEffect(() => {
     if (labelBuffer) {
@@ -509,7 +510,7 @@ export default function AnnotationPanel(props) {
     setDicomElement(element);
     removeAnnotations(element);
     //getBBox
-    getBBox(rid).then((res) => {
+    getBBox(!rid, rid ? rid : props.accession_no).then((res) => {
       if (res.data) {
         let temp = res;
         let loadedData = temp.data.data.reduce(
@@ -535,6 +536,9 @@ export default function AnnotationPanel(props) {
                   },
                 ],
                 length: current["length"] + 2,
+                initial_ll: current.initial_ll.includes(item.label)
+                ? current.initial_ll
+                : [...current.initial_ll, item.label],
               };
             }
             cornerstoneTools.addToolState(element, item.tool, bbox);
@@ -556,25 +560,28 @@ export default function AnnotationPanel(props) {
               ],
               [item.tool]: current[item.tool] + 1,
               //lastSavedData: [...current.lastSavedData, {key:i+1, data:item.data.handles}]
-              /* initial_ll: current.initial_ll.includes(item.label)
+              initial_ll: current.initial_ll.includes(item.label)
                 ? current.initial_ll
-                : [...current.initial_ll, item.label], */
+                : [...current.initial_ll, item.label],
             };
           },
           {
             initial_lb: [],
             rectangleRoi: 0,
             freehand: 0,
-            length: 0 /* initial_ll: [] */,
+            length: 0,
+            initial_ll: props.labelList ? props.labelList : []
           }
         );
         // console.log(loadedData);
+        console.log(loadedData)
         cornerstone.updateImage(element);
         setLabels(loadedData.initial_lb);
         setImgLoaded(true);
         // setSavedData(res.data.data)
         // console.log(loadedData);
-        // setLabelList(temp.initial_ll);
+        setLabelList(loadedData.initial_ll);
+        setMaskID(res.data._id);
       }
       res.data.createdAt !== res.data.updatedAt &&
         setSavedTime(new Date(res.data.updatedAt).toLocaleString());
@@ -844,8 +851,8 @@ export default function AnnotationPanel(props) {
       content: (
         <Label
           setSelectedLabel={setSelectedLabel}
-          labelList={props.labelList}
-          // setLabelList={setLabelList}
+          labelList={labelList}
+          setLabelList={setLabelList}
         />
       ),
       keyboard: false,
@@ -909,7 +916,7 @@ export default function AnnotationPanel(props) {
         },
       ];
     }, []);
-    insertBBox(rid, bbox_data).then((res) => {
+    insertBBox(maskID, rid, bbox_data).then((res) => {
       console.log(res);
       if (res.success) {
         message.success({
