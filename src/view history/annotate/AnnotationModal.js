@@ -22,7 +22,7 @@ export default function AnnotationModal (props){
                 stroke: "#de5c8e",
                 strokeWidth: 30
               }}>
-            Annotate
+            {props.displayText}
         </Button>
         <Modal
           centered
@@ -32,8 +32,9 @@ export default function AnnotationModal (props){
           onCancel={handleCancel}
           footer={null}
           width="1350px"
+          className="annotation-modal"
         >
-          <AnnotationPanel handleCancel={handleCancel} labelList={props.labelList} accession_no={props.accession_no}/>
+          <AnnotationPanel handleCancel={handleCancel} labelList={props.labelList} accession_no={props.accession_no} gradCamList={props.gradCamList}/>
         </Modal>
       </div>
     )
