@@ -60,7 +60,7 @@ export default function AnnotationPanel(props) {
   const [columns, setColumns] = useState();
   const { mode, rid } = useParams();
   const [labels, setLabels] = useState([]);
-  //const [labelList, setLabelList] = useState([]);
+  const [labelList, setLabelList] = useState([]);
   const [selectedLabel, setSelectedLabel] = useState();
   const [labelBuffer, setLabelBuffer] = useState();
   const [viewerState, setViewerState] = useState({
@@ -320,7 +320,7 @@ export default function AnnotationPanel(props) {
                     <Label
                       setSelectedLabel={setSelectedLabel}
                       labelList={props.labelList}
-                      // setLabelList={setLabelList}
+                      setLabelList={setLabelList}
                       defaultLabel={record.label}
                     />
                   ),
@@ -535,6 +535,9 @@ export default function AnnotationPanel(props) {
                   },
                 ],
                 length: current["length"] + 2,
+                initial_ll: current.initial_ll.includes(item.label)
+                ? current.initial_ll
+                : [...current.initial_ll, item.label],
               };
             }
             cornerstoneTools.addToolState(element, item.tool, bbox);
@@ -556,16 +559,17 @@ export default function AnnotationPanel(props) {
               ],
               [item.tool]: current[item.tool] + 1,
               //lastSavedData: [...current.lastSavedData, {key:i+1, data:item.data.handles}]
-              /* initial_ll: current.initial_ll.includes(item.label)
+              initial_ll: current.initial_ll.includes(item.label)
                 ? current.initial_ll
-                : [...current.initial_ll, item.label], */
+                : [...current.initial_ll, item.label],
             };
           },
           {
             initial_lb: [],
             rectangleRoi: 0,
             freehand: 0,
-            length: 0 /* initial_ll: [] */,
+            length: 0,
+            initial_ll: props.labelList ? props.labelList : []
           }
         );
         // console.log(loadedData);
@@ -574,7 +578,7 @@ export default function AnnotationPanel(props) {
         setImgLoaded(true);
         // setSavedData(res.data.data)
         // console.log(loadedData);
-        // setLabelList(temp.initial_ll);
+        setLabelList(loadedData.initial_ll);
       }
       res.data.createdAt !== res.data.updatedAt &&
         setSavedTime(new Date(res.data.updatedAt).toLocaleString());
@@ -844,8 +848,8 @@ export default function AnnotationPanel(props) {
       content: (
         <Label
           setSelectedLabel={setSelectedLabel}
-          labelList={props.labelList}
-          // setLabelList={setLabelList}
+          labelList={labelList}
+          setLabelList={setLabelList}
         />
       ),
       keyboard: false,
