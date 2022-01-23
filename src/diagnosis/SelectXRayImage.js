@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Table, Tooltip, Spin, Form, DatePicker, Button, Popconfirm, Input } from "antd";
-import { LoadingOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { getPatientData, getPatientDataLocal } from "../api/pacs"
+import { LoadingOutlined, DeleteOutlined } from "@ant-design/icons";
+import { getPatientDataLocal } from "../api/pacs"
 import ImageModal from "../component/ImageModal";
 import AnnotationModal from "../view history/annotate/AnnotationModal";
 import * as moment from "moment";
+import Contexts from '../utils/Contexts';
 
 const LoadingIcon = (
     <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
@@ -12,14 +13,15 @@ const LoadingIcon = (
 
 function SelectXRayImage(props) {
 
+    const { globalProject, setGlobalProject } = useContext(Contexts.project);
     const [loaded, setLoaded] = useState(true);
 
     const fields = ["Patient Name", "Accession No", "Patient ID", "Modality", "Study Date Time", "Procedure Code"];
     const [columns, setColumns] = useState(null);
-    const [unchangedData, setUnchangedData] = useState(null);
     const [tableData, setTableData] = useState(null);
 
     const [HN, setHN] = useState("");
+    const [accessionNo, setAccessionNo] = useState(null);
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
 
@@ -30,6 +32,14 @@ function SelectXRayImage(props) {
             // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
             props.setAccessionNoIndex(selectedRowKeys);
             props.setAccessionNo(selectedRows[0]["Accession No"]);
+            props.setMedRec({
+                ...props.MedRec,
+                age: selectedRows[0]["Age"],
+                gender: selectedRows[0]["Patient Sex"],
+                hn: globalProject.projectReq.length === 0 ? selectedRows[0]["Patient ID"] : props.MedRec.hn,
+                entry_id: globalProject.projectReq.length === 0 ? 1 : props.MedRec.entry_id,
+                measured_time: globalProject.projectReq.length === 0 ? selectedRows[0]["Study Date Time"] : props.MedRec.measured_time
+            })
         },
     };
 
@@ -62,13 +72,6 @@ function SelectXRayImage(props) {
                             StudyDateTime={record["Study Date Time"]} />
                         {props.mode === "annotate" ?
                             <div className="center-div">
-                                {/* <EditOutlined
-                                    className="clickable-icon"
-                                    // style={{marginLeft: "8px"}}
-                                    onClick={() => {
-                                        // annotate api
-                                    }}
-                                /> */}
                                 <AnnotationModal accession_no={record["Accession No"]} />
                                 <Popconfirm
                                     title="Delete this report?"
@@ -103,24 +106,13 @@ function SelectXRayImage(props) {
             if (props.pacsTableData) {
                 setTableData(prepareTable(props.pacsTableData));
             }
-        } else {
-            setLoaded(false);
-            getPatientDataLocal(HN) // edit later
-            .then((res) => {
-                const data = prepareTable(res.data);
-                setTableData(data);
-                setUnchangedData(data);
-                setLoaded(true);
-            }).catch((err) => {
-                console.log(err.response);
-            });
         }
     }, []);
 
     return(
         <div>
             <label style={{marginBottom: "8px"}}>{props.mode === "diagnosis" ? "Select X-Ray Image" : "Annotate Images"}</label>
-            <Form layout="inline" style={{marginBottom: loaded ? "32px" : 0}}>
+            <Form layout="inline" style={{marginBottom: "5px"}}>
                 {props.mode === "annotate" &&
                     <Form.Item
                         name="hn"
@@ -132,6 +124,21 @@ function SelectXRayImage(props) {
                             onChange={(item) => setHN(item.target.value)}
                             style={{width:"200px"}} />
                     </Form.Item>}
+                <Form.Item
+                    name="acc_no"
+                    label="Accession No"
+                    style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}
+                >
+                    <Input
+                        className="input-text"
+                        defaultValue={props.searchAccNo}
+                        onChange={(item) => {
+                            props.mode === "diagnosis" ?
+                                props.setSearchAccNo(item.target.value)
+                                : setAccessionNo(item.target.value);
+                        }}
+                        style={{width:"200px"}} />
+                </Form.Item>
                 <Form.Item
                     name="from"
                     label="From"
@@ -167,7 +174,11 @@ function SelectXRayImage(props) {
                         onClick={() => {
                             setLoaded(false);
                             if (props.mode === "diagnosis") {
-                                getPatientData(props.HN /* ,props.fromDate, props.toDate */)
+                                getPatientDataLocal(
+                                    props.HN, 
+                                    props.searchAccNo === null ? "" : props.searchAccNo, 
+                                    props.fromDate === null ? "" : props.fromDate, 
+                                    props.toDate === null ? "" : props.toDate)
                                 .then((res) => {
                                     const data = prepareTable(res.data);
                                     setTableData(data);
@@ -179,19 +190,27 @@ function SelectXRayImage(props) {
                                     console.log(err);
                                 });
                             } else {
-                                let filterData = unchangedData.filter((item, i) => ( // check from/to date filter later
-                                    (HN === "" ? true : item["Patient ID"].includes(HN)) &&
-                                    (fromDate === null ? true : new Date(item["Study Date Time"]) >= fromDate) &&
-                                    (toDate === null ? true : new Date(item["Study Date Time"]) <= toDate)
-                                ))
-                                setTableData(filterData);
-                                setLoaded(true);
+                                getPatientDataLocal(
+                                    HN, 
+                                    accessionNo === null ? "" : accessionNo, 
+                                    fromDate === null ? "" : fromDate, 
+                                    toDate === null ? "" : toDate)
+                                .then((res) => {
+                                    const data = prepareTable(res.data);
+                                    setTableData(data);
+                                    setLoaded(true);
+                                }).catch((err) => {
+                                    console.log(err);
+                                });
                             }
                         }}>
-                            {props.mode === "diagnosis" ? "Search" : "Filter"}
+                            Search
                     </Button>
                 </Form.Item>
             </Form>
+            <label style={{fontSize: "medium", color: "#de5c8e", marginBottom: loaded ? "32px" : (props.mode === "diagnosis" ? 0 : "32px"), marginLeft: "20px"}}>
+                Press 'Search' button without filling any fields to get all results
+            </label>
             {!loaded && (
                 <div style={{ textAlign: "center", marginTop: "10%" }}>
                 <Spin indicator={LoadingIcon} />
@@ -209,7 +228,7 @@ function SelectXRayImage(props) {
                     pagination={false} 
                     rowSelection={props.mode === "diagnosis" ? rowSelection : null}
                     size="small"
-                    className="seven-rows-table"
+                    className={props.mode === "diagnosis" ? "three-rows-table with-row-selection" : "seven-rows-table with-row-selection"}
                 />
             }
         </div>

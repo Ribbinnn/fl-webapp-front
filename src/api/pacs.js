@@ -2,12 +2,18 @@ import { instance } from '.';
 import { serverURL, PYserverURL } from './config';
 import axios from 'axios';
 
-export const getPatientData = async (HN) => {
+export const getPatientData = async (HN, accession_no, start_date, end_date) => {
     try {
-        console.log("here")
+        const params = {HN: HN};
+        if (accession_no !== "") {
+            params["accession_no"] = accession_no;
+        } if (start_date !== "") {
+            params["start_date"] = start_date;
+        } if (end_date !== "") {
+            params["end_date"] = end_date;
+        }
         const res = (
-            //await instance.get("/pacs/HN/" + HN)
-            await instance.get(`${serverURL}/pacs/?HN=${HN}&dir=local`)
+            await instance.get("/pacs/", { params: params })
         ).data;
         return res;
     } catch (e) {
@@ -15,32 +21,37 @@ export const getPatientData = async (HN) => {
     }
 }
 
-export const getPatientDataLocal = async (HN) => {
+export const getPatientDataLocal = async (HN, accession_no, start_date, end_date) => {
     try {
+        const params = {HN: HN, dir: "local"};
+        if (accession_no !== "") {
+            params["accession_no"] = accession_no;
+        } if (start_date !== "") {
+            params["start_date"] = start_date;
+        } if (end_date !== "") {
+            params["end_date"] = end_date;
+        }
         const res = (
-            // await instance.get("/pacs/", { params: { HN: "4149", dir: "local" } })
-            // await instance.get("/pacs/?HN=4149&dir=local")
-            await axios.get(`${PYserverURL}/local/HN/4149`) // edit later
+            await instance.get("/pacs/", { params: params })
         ).data;
         return res;
     } catch (e) {
         throw e;
     }
-    return `${PYserverURL}/local/HN/4149`
 }
 
-export const findPatientOnPACS = async (hn) => {
+export const findPatientOnPACS = async (HN) => {
     try {
-        const response = (await instance.get(`/pacs/HN/${hn}/info`));
+        const response = (await instance.get("/pacs/info/", { params: { HN: HN } }));
         return response.data
     } catch (e) {
         throw e
     }
 }
 
-export const findPatientOnLocal = async (hn) => {
+export const findPatientOnLocal = async (HN) => {
     try {
-        const response = (await instance.get(`/pacs/info/?HN=${hn}&dir=local`));
+        const response = (await instance.get("/pacs/info/", { params: { HN: HN, dir: "local" } }));
         return response.data
     } catch (e) {
         throw e

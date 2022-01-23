@@ -1228,8 +1228,16 @@ tbody {
   max-height: 288px; /* 7 rows */
 }
 
+.seven-rows-table.with-row-selection tbody {
+  max-height: 336px; /* 7 rows */
+}
+
 .three-rows-table tbody {
   max-height: 123px; /* 3 rows */
+}
+
+.three-rows-table.with-row-selection tbody {
+  max-height: 144px; /* 3 rows */
 }
 
 .four-rows-table tbody {
