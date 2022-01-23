@@ -35,7 +35,7 @@ export default function NavBar() {
   }
 
   function selectMenu(path) {
-    setTab(globalProject.projectId ? getTabKey(path) : "home");
+    setTab(globalProject.projectId || path === "/annotate" ? getTabKey(path) : "home");
     history.push(path);
   }
   return (

@@ -38,9 +38,7 @@
 .ant-menu .ant-menu-highlight {
   color: #de5c8e;
 }
-.ant-menu .ant-menu-item:focus {
-  background-color: white;
-}
+
 .ant-menu .ant-menu-submenu-active {
   color: none !important;
 }
@@ -1004,24 +1002,6 @@ label.clickable-label:hover {
 /* tag ---------------- */
 .ant-tag {
   font-size: medium;
-}
-
-.brown {
-  background-color: #f8cba7;
-  border-color: #ab5814;
-  color: #ab5814;
-}
-
-.pink {
-  background-color: #ffd4e5;
-  border-color: #de5c8e;
-  color: #de5c8e;
-}
-
-.yellow {
-  background-color: #fff1c8;
-  border-color: #c69c25;
-  color: #c69c25;
 }
 
 .site-tag-plus {
