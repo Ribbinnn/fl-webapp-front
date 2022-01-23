@@ -52,7 +52,7 @@ function Home() {
                                     sessionStorage.setItem("project", JSON.stringify({"projectId": item._id, "projectName": item.name, "projectReq": item.requirements}));
                                 }}
                             >
-                                <label style={{ display: "block", fontWeight: "bold" }} className={globalProject.projectId === item._id && "selected-proj-card"}>
+                                <label style={{ display: "block", fontWeight: "bold" }} >
                                     {item.name}
                                 </label>
                                 <Tag color="#e9c869">{item.task}</Tag>
