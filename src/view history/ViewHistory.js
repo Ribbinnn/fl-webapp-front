@@ -174,7 +174,7 @@ function HistoryLog(props) {
             dataIndex: "action",
             render: (_, report) => {
                 return(
-                    report.status === "in_progress" ?
+                    report.status === "in progress" ?
                     // <EditOutlined className="clickable-icon" /> :
                     null :
                     <div className="center-div">
@@ -188,26 +188,29 @@ function HistoryLog(props) {
                                 // download image api
                             }}
                         /> */}
-                        <EditOutlined
-                            className="clickable-icon"
-                            // style={{marginLeft: "8px"}}
-                            onClick={() => {
-                                let role = JSON.parse(sessionStorage.getItem("user")).role;
-                                console.log(
-                                JSON.parse(sessionStorage.getItem("user")).role,
-                                report
-                                );
-                                /* SHOW REPORT */
-                                history.push(
-                                `/viewhistory/${role === "clinician" ? "view" : "edit"}/${
-                                    report.pred_result_id
-                                }/?${queryString}`
-                                );
-                            }}
-                        />
+                        {report.status === "canceled" ?
+                            null : 
+                            <EditOutlined
+                                className="clickable-icon"
+                                // style={{marginLeft: "8px"}}
+                                onClick={() => {
+                                    let role = JSON.parse(sessionStorage.getItem("user")).role;
+                                    console.log(
+                                    JSON.parse(sessionStorage.getItem("user")).role,
+                                    report
+                                    );
+                                    /* SHOW REPORT */
+                                    history.push(
+                                    `/viewhistory/${role === "clinician" ? "view" : "edit"}/${
+                                        report.pred_result_id
+                                    }/?${queryString}`
+                                    );
+                                }}
+                            />}
                         <Popconfirm
                             title="Delete this report?"
                             onConfirm={() => {
+                                setLoaded(false);
                                 deleteReport(report.pred_result_id).then((res) => {
                                     window.location.reload();
                                 }).catch((err) => {
@@ -219,11 +222,7 @@ function HistoryLog(props) {
                         >
                             <DeleteOutlined
                                 className="clickable-icon"
-                                style={{ marginLeft: "8px" }}
-                                // onClick={() => {
-                                //     /* delete report api */
-
-                                // }}
+                                style={{ marginLeft: report.status === "canceled" ? 0 : "8px" }}
                             />
                         </Popconfirm>
                     </div>
