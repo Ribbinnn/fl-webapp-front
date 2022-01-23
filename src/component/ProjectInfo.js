@@ -13,12 +13,10 @@ export default function ProjectInfo(props) {
   const { globalProject, setGlobalProject } = useContext(Contexts.project);
   const [loaded, setLoaded] = useState(false);
   const palette = ["magenta","red","volcano","orange","gold","green","cyan","blue","geekblue","purple"]
-  const [pid, setPid] = useState(globalProject.projectId ?? "618e4a72d1207ca05475ac2c"); // <------ set project id to display here
   const [pinfo, setPinfo] = useState();
 
   useEffect(() => {
     console.log("here")
-    setPid(globalProject.projectId)
     getProjectInfoByID(globalProject.projectId).then((response) => {
       console.log(response)
       setPinfo({
@@ -56,7 +54,7 @@ export default function ProjectInfo(props) {
             <Panel key="1" header="Project information">
             <div className="info" style={{ width: props.width ?? "100%" }}>
         <div>
-          Task : <Tag className="brown">{pinfo.Task}</Tag>
+          Task : <Tag color="#e9c869">{pinfo.Task}</Tag>
         </div>
         <div>
           Classes :{" "}
