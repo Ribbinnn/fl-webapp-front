@@ -30,7 +30,10 @@ function ProjectForm() {
         let tags = classes;
         if (inputVal && tags.indexOf(inputVal) === -1) {
             if (inputVal.includes(",")) {
-                const newClasses = inputVal.split(", ").filter(tag => !tags.includes(tag));
+                const newClasses = inputVal.split(",").filter(tag => !tags.includes(tag));
+                if (newClasses.includes(", ")) {
+                    newClasses = newClasses.split(", ").filter(tag => !tags.includes(tag));
+                }
                 tags = [...tags, ...newClasses];
             } else {
                 tags = [...tags, inputVal];
