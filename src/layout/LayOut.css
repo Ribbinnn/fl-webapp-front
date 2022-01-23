@@ -39,7 +39,7 @@
   color: #de5c8e;
 }
 .ant-menu .ant-menu-item:focus {
-  background-color: #f8e1ea;
+  background-color: white;
 }
 .ant-menu .ant-menu-submenu-active {
   color: none !important;
