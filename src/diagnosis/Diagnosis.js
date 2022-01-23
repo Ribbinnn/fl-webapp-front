@@ -46,7 +46,7 @@ const btnList = [
 ];
 
 export default function Diagnosis() {
-  const { globalProject, setGlobalProject } = useContext(Contexts.project);
+  const { globalProject } = useContext(Contexts.project);
   const [loading, setLoading] = useState(false);
   const [HN, setHN] = useState("");
   const [Patient, setPatient] = useState();

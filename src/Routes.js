@@ -50,7 +50,7 @@ function Routes() {
               <Route path="/diagnosis" exact render={()=>(auth&&globalProject.projectId?<Diagnosis/>:!auth?<Redirect to='/login'/>:<Redirect to='/'/>)}/>
               <Route path="/viewhistory" exact render={()=>(auth&&globalProject.projectId?<ViewHistory/>:!auth?<Redirect to='/login'/>:<Redirect to='/'/>)}/>
               <Route path="/viewhistory/:mode/:rid" exact render={()=>(auth&&globalProject.projectId?<Report/>:!auth?<Redirect to='/login'/>:<Redirect to='/'/>)}/>
-              <Route path="/annotate" exact render={()=>(auth&&globalProject.projectId?<Annotate/>:!auth?<Redirect to='/login'/>:<Redirect to='/'/>)}/>
+              <Route path="/annotate" exact render={()=>(auth?<Annotate/>:<Redirect to='/login'/>)}/>
               <Route path="/admin" exact render={()=>(auth?<Admin/>:<Redirect to='/login'/>)}/>
               <Route path="/admin/:mode" exact render={()=>(auth?<Admin/>:<Redirect to='/login'/>)}/>
               <Route path="/login" render={()=>(auth?<Redirect to='/'/>:<Login/>)}/>
