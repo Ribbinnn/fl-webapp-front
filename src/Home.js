@@ -14,7 +14,6 @@ function Home() {
     const [loaded, setLoaded] = useState(false);
     
     const [projectList, setProjectList] = useState([]);
-    const [projectId, setProjectId] = useState()
 
     useEffect(() => {
         selectProject().then((response) => {
@@ -49,15 +48,14 @@ function Home() {
                                 tabIndex={i}
                                 className={globalProject.projectId === item._id && "selected-proj-card"}
                                 onClick={() => {
-                                    setProjectId(item._id)
                                     setGlobalProject({"projectId": item._id, "projectName": item.name, "projectReq": item.requirements})
                                     sessionStorage.setItem("project", JSON.stringify({"projectId": item._id, "projectName": item.name, "projectReq": item.requirements}));
                                 }}
                             >
-                                <label style={{ display: "block", fontWeight: "bold" }}>
+                                <label style={{ display: "block", fontWeight: "bold" }} className={globalProject.projectId === item._id && "selected-proj-card"}>
                                     {item.name}
                                 </label>
-                                <Tag className="brown">{item.task}</Tag>
+                                <Tag color="#e9c869">{item.task}</Tag>
                                 <div>{item.description}</div>
                             </Card>
                         ))}
