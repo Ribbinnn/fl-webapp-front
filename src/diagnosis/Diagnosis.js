@@ -80,7 +80,6 @@ export default function Diagnosis() {
       selectMedicalRecordRef.current.setMedicalRecord();
     } else if (current === 2 && accessionNo === null) {
         Modal.warning({content: "Please select X-Ray Image."});
-        console.log(MedRec);
     } else {
       if (current === 3) {
         setLoading(true);
