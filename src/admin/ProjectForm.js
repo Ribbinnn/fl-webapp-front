@@ -16,8 +16,8 @@ function ProjectForm() {
     const [loaded, setLoaded] = useState(false);
     const palette = ["magenta","red","volcano","orange","gold","green","cyan","blue","geekblue","purple"];
     const [projects, setProjects] = useState([]);
-    const [projectName, setProjectName] = useState(""); // required ?
-    const tasks = ["classification_pylon_256", "classification_pylon_1024", "covid19_admission"];
+    const [projectName, setProjectName] = useState("");
+    const tasks = ["classification_pylon_1024"];
     const [users, setUsers] = useState([]);
     const [classes, setClasses] = useState([]);
     const [classesError, setClassesError] = useState(false);
@@ -30,7 +30,10 @@ function ProjectForm() {
         let tags = classes;
         if (inputVal && tags.indexOf(inputVal) === -1) {
             if (inputVal.includes(",")) {
-                const newClasses = inputVal.split(", ").filter(tag => !tags.includes(tag));
+                const newClasses = inputVal.split(",").filter(tag => !tags.includes(tag));
+                if (newClasses.includes(", ")) {
+                    newClasses = newClasses.split(", ").filter(tag => !tags.includes(tag));
+                }
                 tags = [...tags, ...newClasses];
             } else {
                 tags = [...tags, inputVal];
@@ -166,7 +169,7 @@ function ProjectForm() {
                     </Form.Item>}
                 </div>
                 {inputVisible && <Form.Item
-                    label={<label>Classes <label style={{fontSize: "medium"}}>(split with ', ' if input more than 1 class at the same time)</label></label>}
+                    label={<label>Classes <label style={{fontSize: "medium"}}>(split with , if input more than 1 class at the same time)</label></label>}
                     validateStatus={classesError ? "error" : "success"}
                     help={classesError ? "'classes' is required" : null}
                     style={{width: "516px"}}
