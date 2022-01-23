@@ -47,6 +47,7 @@ function Home() {
                                 style={{ width: 400, marginBottom: '22px' }}
                                 hoverable={true}
                                 tabIndex={i}
+                                className={globalProject.projectId === item._id && "selected-proj-card"}
                                 onClick={() => {
                                     setProjectId(item._id)
                                     setGlobalProject({"projectId": item._id, "projectName": item.name, "projectReq": item.requirements})

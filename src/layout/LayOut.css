@@ -1432,7 +1432,7 @@ table tr td.ant-table-selection-column {
   background-color: #f0f0f0;
 }
 
-.ant-card:focus {
+.ant-card:focus, .selected-proj-card {
   background-color: #f8e1ea;
 }
 
