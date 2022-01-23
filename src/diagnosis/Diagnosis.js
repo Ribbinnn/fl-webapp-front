@@ -65,6 +65,7 @@ export default function Diagnosis() {
   // const [accessionNo, setAccessionNo] = useState("74");
   const [accessionNo, setAccessionNo] = useState(null);
   const [accessionNoIndex, setAccessionNoIndex] = useState([]);
+  // const [searchAccNo, setSearchAccNo] = useState(null);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [pacsTableData, setPacsTableData] = useState(null);
@@ -163,6 +164,8 @@ export default function Diagnosis() {
               setAccessionNo={setAccessionNo}
               accessionNoIndex={accessionNoIndex}
               setAccessionNoIndex={setAccessionNoIndex}
+              // searchAccNo={searchAccNo}
+              // setSearchAccNo={setSearchAccNo}
               fromDate={fromDate}
               setFromDate={setFromDate}
               toDate={toDate}
