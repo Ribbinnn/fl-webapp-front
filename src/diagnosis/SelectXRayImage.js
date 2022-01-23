@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Table, Tooltip, Spin, Form, DatePicker, Button, Input } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { getPatientData } from "../api/pacs"
 import ImageModal from "../component/ImageModal";
 import * as moment from "moment";
+import Contexts from '../utils/Contexts';
 
 const LoadingIcon = (
     <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
@@ -11,6 +12,7 @@ const LoadingIcon = (
 
 function SelectXRayImage(props) {
 
+    const { globalProject, setGlobalProject } = useContext(Contexts.project);
     const [loaded, setLoaded] = useState(true);
 
     const fields = ["Patient Name", "Accession No", "Patient ID", "Modality", "Study Date Time", "Procedure Code"];
@@ -24,6 +26,14 @@ function SelectXRayImage(props) {
             // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
             props.setAccessionNoIndex(selectedRowKeys);
             props.setAccessionNo(selectedRows[0]["Accession No"]);
+            props.setMedRec({
+                ...props.MedRec,
+                age: selectedRows[0]["Age"],
+                gender: selectedRows[0]["Patient Sex"],
+                hn: globalProject.projectReq.length === 0 ? selectedRows[0]["Patient ID"] : props.MedRec.hn,
+                entry_id: globalProject.projectReq.length === 0 ? 1 : props.MedRec.entry_id,
+                measured_time: globalProject.projectReq.length === 0 ? selectedRows[0]["Study Date Time"] : props.MedRec.measured_time
+            })
         },
     };
 
@@ -121,7 +131,11 @@ function SelectXRayImage(props) {
                         style={{marginTop:"32px"}}
                         onClick={() => {
                             setLoaded(false);
-                            getPatientData(props.HN /* ,props.searchAccNo ,props.fromDate, props.toDate */)
+                            getPatientData(
+                                props.HN, 
+                                props.searchAccNo === null ? "" : props.searchAccNo, 
+                                props.fromDate === null ? "" : props.fromDate, 
+                                props.toDate === null ? "" : props.toDate)
                             .then((res) => {
                                 const data = prepareTable(res.data);
                                 setTableData(data);
@@ -130,7 +144,7 @@ function SelectXRayImage(props) {
                                 props.setAccessionNo(null);
                                 setLoaded(true);
                             }).catch((err) => {
-                                console.log(err);
+                                console.log(err.response);
                             })
                         }}>
                             Search

@@ -65,7 +65,7 @@ export default function Diagnosis() {
   // const [accessionNo, setAccessionNo] = useState("74");
   const [accessionNo, setAccessionNo] = useState(null);
   const [accessionNoIndex, setAccessionNoIndex] = useState([]);
-  // const [searchAccNo, setSearchAccNo] = useState(null);
+  const [searchAccNo, setSearchAccNo] = useState(null);
   const [fromDate, setFromDate] = useState(null);
   const [toDate, setToDate] = useState(null);
   const [pacsTableData, setPacsTableData] = useState(null);
@@ -80,6 +80,7 @@ export default function Diagnosis() {
       selectMedicalRecordRef.current.setMedicalRecord();
     } else if (current === 2 && accessionNo === null) {
         Modal.warning({content: "Please select X-Ray Image."});
+        console.log(MedRec);
     } else {
       if (current === 3) {
         setLoading(true);
@@ -163,11 +164,13 @@ export default function Diagnosis() {
             </label>
             <SelectXRayImage 
               HN={HN}
+              MedRec={MedRec}
+              setMedRec={setMedRec}
               setAccessionNo={setAccessionNo}
               accessionNoIndex={accessionNoIndex}
               setAccessionNoIndex={setAccessionNoIndex}
-              // searchAccNo={searchAccNo}
-              // setSearchAccNo={setSearchAccNo}
+              searchAccNo={searchAccNo}
+              setSearchAccNo={setSearchAccNo}
               fromDate={fromDate}
               setFromDate={setFromDate}
               toDate={toDate}

@@ -1,12 +1,10 @@
-import React, { useContext } from "react";
+import React from "react";
 import { Form, Input } from "antd";
 import Info from "../component/Info";
 import DicomViewOnly from "../component/dicom-viewer/DicomViewOnly";
 import { getDicomByAccessionNo } from "../api/image";
-import Contexts from '../utils/Contexts';
 
 export default function PreviewEdit(props){
-    const { globalProject, setGlobalProject } = useContext(Contexts.project);
     return(
         <div style={{display:"flex", flexDirection:"row"}}>
           <div style={{minWidth:"500px"}}>
@@ -24,10 +22,9 @@ export default function PreviewEdit(props){
             </label>
             <Info Data={props.Patient} style={{marginLeft: "30px"}}/>
             <label style={{ display: "block", margin: "30px 0px 10px 0px" }}>
-              {globalProject.projectReq.length !== 0 ? "Medical Records" : "No Medical Records"}
+              Medical Records
             </label>
-            {globalProject.projectReq.length !== 0 &&
-              <Form layout="vertical">
+            <Form layout="vertical">
               {Object.keys(props.MedRec).map((item, i) => (
                 item === "entry_id" || item === "hn" || item === "measured_time" ? null :
                 <Form.Item key={i} style={{marginLeft: "30px", marginBottom:"10px"}}>
@@ -41,8 +38,8 @@ export default function PreviewEdit(props){
                 />
               </Form.Item>
               ))}
-                
-              </Form>}
+              
+            </Form>
           </div>
           <DicomViewOnly img_url={getDicomByAccessionNo(props.AccessionNo)} img_source="wado" size={500}/>
           </div>
