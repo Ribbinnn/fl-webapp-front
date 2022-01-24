@@ -73,7 +73,7 @@ function SelectXRayImage(props) {
         // add key to each row & change date-time
         for (const i in data) {
             data[i]["key"] = (parseInt(i)+1).toString();
-            data[i]["Study Date Time"] = new Date(data[i]["Study Date Time"]).toLocaleString();
+            data[i]["Study Date Time"] = new Date(data[i]["Study Date Time"]).toLocaleDateString();
         }
         return data;
     }
@@ -137,12 +137,20 @@ function SelectXRayImage(props) {
                                 props.fromDate === null ? "" : props.fromDate, 
                                 props.toDate === null ? "" : props.toDate)
                             .then((res) => {
-                                const data = prepareTable(res.data);
-                                setTableData(data);
-                                props.setPacsTableData(data);
-                                props.setAccessionNoIndex([]);
-                                props.setAccessionNo(null);
-                                setLoaded(true);
+                                if (Object.keys(res.data).length === 0) {
+                                    setTableData([]);
+                                    props.setPacsTableData([]);
+                                    props.setAccessionNoIndex([]);
+                                    props.setAccessionNo(null);
+                                    setLoaded(true);
+                                } else {
+                                    const data = prepareTable(res.data);
+                                    setTableData(data);
+                                    props.setPacsTableData(data);
+                                    props.setAccessionNoIndex([]);
+                                    props.setAccessionNo(null);
+                                    setLoaded(true);
+                                }
                             }).catch((err) => {
                                 console.log(err.response);
                             })
