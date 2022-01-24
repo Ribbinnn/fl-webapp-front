@@ -323,6 +323,7 @@ export default function AnnotationPanel(props) {
                       labelList={labelList}
                       setLabelList={setLabelList}
                       defaultLabel={record.label}
+                      annotateOnly={!rid}
                     />
                   ),
                   keyboard: false,
@@ -853,6 +854,7 @@ export default function AnnotationPanel(props) {
           setSelectedLabel={setSelectedLabel}
           labelList={labelList}
           setLabelList={setLabelList}
+          annotateOnly={!rid}
         />
       ),
       keyboard: false,
