@@ -13,7 +13,7 @@ export const getBBox = async (local,req) => {
 }
 
 export const insertBBox = async (mask_id, report_id, data) => {
-    console.log(mask_id, report_id, data)
+    // console.log(mask_id, report_id, data)
     try {
         const response = report_id ? (
             await instance.patch("/masks/", {report_id, data})
