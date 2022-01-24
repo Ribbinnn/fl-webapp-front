@@ -21,7 +21,6 @@ export default function Label(props) {
   const [name, setName] = useState("");
 
   useEffect(() => {
-    console.log(props.labelList);
     if (props.labelList.length > 0) {
       props.setSelectedLabel(props.labelList[0]);
     } else props.setSelectedLabel("label");
