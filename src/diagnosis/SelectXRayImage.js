@@ -73,10 +73,10 @@ function SelectXRayImage(props) {
                         {props.mode === "annotate" ?
                             <div className="center-div">
                                 <AnnotationModal accession_no={record["Accession No"]} />
-                                <Popconfirm
+                                {/* <Popconfirm
                                     title="Delete this report?"
                                     onConfirm={() => {
-                                        /* delete image api */
+                                        // delete image api
                                     }}
                                     okButtonProps={{ className: "primary-btn popconfirm" }}
                                     cancelButtonProps={{ style: { display: "none" } }}
@@ -85,7 +85,7 @@ function SelectXRayImage(props) {
                                         className="clickable-icon"
                                         style={{ marginLeft: "8px" }}
                                     />
-                                </Popconfirm>
+                                </Popconfirm> */}
                             </div> : null}
                     </div>
                 );
@@ -96,7 +96,7 @@ function SelectXRayImage(props) {
         // add key to each row & change date-time
         for (const i in data) {
             data[i]["key"] = (parseInt(i)+1).toString();
-            data[i]["Study Date Time"] = new Date(data[i]["Study Date Time"]).toLocaleString();
+            data[i]["Study Date Time"] = new Date(data[i]["Study Date Time"]).toLocaleDateString();
         }
         return data;
     }
@@ -180,12 +180,20 @@ function SelectXRayImage(props) {
                                     props.fromDate === null ? "" : props.fromDate, 
                                     props.toDate === null ? "" : props.toDate)
                                 .then((res) => {
-                                    const data = prepareTable(res.data);
-                                    setTableData(data);
-                                    props.setPacsTableData(data);
-                                    props.setAccessionNoIndex([]);
-                                    props.setAccessionNo(null);
-                                    setLoaded(true);
+                                    if (Object.keys(res.data).length === 0) {
+                                        setTableData([]);
+                                        props.setPacsTableData([]);
+                                        props.setAccessionNoIndex([]);
+                                        props.setAccessionNo(null);
+                                        setLoaded(true);
+                                    } else {
+                                        const data = prepareTable(res.data);
+                                        setTableData(data);
+                                        props.setPacsTableData(data);
+                                        props.setAccessionNoIndex([]);
+                                        props.setAccessionNo(null);
+                                        setLoaded(true);
+                                    }
                                 }).catch((err) => {
                                     console.log(err);
                                 });
@@ -196,9 +204,14 @@ function SelectXRayImage(props) {
                                     fromDate === null ? "" : fromDate, 
                                     toDate === null ? "" : toDate)
                                 .then((res) => {
-                                    const data = prepareTable(res.data);
-                                    setTableData(data);
-                                    setLoaded(true);
+                                    if (Object.keys(res.data).length === 0) {
+                                        setTableData([]);
+                                        setLoaded(true);
+                                    } else {
+                                        const data = prepareTable(res.data);
+                                        setTableData(data);
+                                        setLoaded(true);
+                                    }
                                 }).catch((err) => {
                                     console.log(err);
                                 });
