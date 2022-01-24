@@ -32,7 +32,7 @@ export default function Label(props) {
 
   const addItem = () => {
     console.log("addItem");
-    if (name !== "") {
+    if (name !== "" && !labelList.map((item)=>{return item.toLowerCase()}).includes(name.toLowerCase())) {
       props.setLabelList([...labelList, name]);
       setLabelList([...labelList, name]);
     }
