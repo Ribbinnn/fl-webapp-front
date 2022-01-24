@@ -9,9 +9,10 @@ export default function Label(props) {
   const [name, setName] = useState("");
 
   useEffect(() => {
+    console.log(props.labelList)
     if (props.labelList.length > 0) {
       props.setSelectedLabel(props.labelList[0]);
-    }
+    } else props.setSelectedLabel('label');
   }, []);
 
   const onNameChange = (event) => {
@@ -29,7 +30,7 @@ export default function Label(props) {
 
   function handleChange(value) {
     props.setSelectedLabel(value);
-    console.log("Label: ", value);
+    // console.log("Label: ", value);
   }
 
   return (
@@ -38,7 +39,7 @@ export default function Label(props) {
       onChange={handleChange}
       style={{ width: 300 }}
       className="label-selector"
-      defaultValue={props.defaultLabel ?? labelList[0] ?? ""}
+      defaultValue={props.defaultLabel ?? labelList[0] ?? "label"}
       filterOption={(input, option) =>
         option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
       }
@@ -63,7 +64,7 @@ export default function Label(props) {
         </div>
       )}
     >
-      {labelList.map((item) => (
+      {(labelList.length > 0 ? labelList : ['label']).map((item) => (
         <Option key={item} value={item}>
           {item}
         </Option>
