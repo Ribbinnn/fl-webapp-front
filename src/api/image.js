@@ -6,6 +6,6 @@ export const getGradCam = (rid, finding) => {
 
 export const getDicomByAccessionNo = (ano) =>{
     // return `${serverURL}/image/?accession_no=${ano}`
-    console.log(`${PYserverURL}/pacs/acc_no/${ano}`)
+    // console.log(`${PYserverURL}/pacs/acc_no/${ano}`)
     return `${PYserverURL}/pacs/acc_no/${ano}`
 } //http://localhost:7000/api/pacs/acc_no/20211018CR0846

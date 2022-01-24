@@ -21,7 +21,7 @@ export const getPatientData = async (HN, accession_no, start_date, end_date) => 
 
 export const findPatientOnPACS = async (HN) => {
     try {
-        const response = (await instance.get("/pacs/info/", { params: { HN: HN } }));
+        const response = (await instance.get("/pacs/info/?HN="+HN));
         return response.data
     } catch (e) {
         throw e
