@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState, useContext } from "react";
+import { useParams, useHistory } from "react-router-dom";
 import { Collapse, Popover, Button, Row, Col, Image, Spin, Tag } from "antd";
 import Info from "../component/Info";
-import DicomViewOnly from "../component/dicom-viewer/DicomViewOnly";
 import {
   InfoCircleOutlined,
   CloudDownloadOutlined,
@@ -11,9 +10,10 @@ import {
 import AnnotationModal from "./annotate/AnnotationModal";
 import ProjectInfo from "../component/ProjectInfo";
 import ResultsTable from "./ResultsTable";
-import { getGradCam, getDicomByAccessionNo } from "../api/image";
+import { getGradCam } from "../api/image";
 import { getReport } from "../api/report";
 import { saveAs } from "file-saver";
+import Contexts from "../utils/Contexts";
 const { Panel } = Collapse;
 
 const LoadingIcon = (
@@ -21,23 +21,26 @@ const LoadingIcon = (
 );
 
 export default function Report(props) {
+  const { globalProject } = useContext(Contexts.project);
   const { mode, rid } = useParams();
+  const history = useHistory();
   const [loaded, setLoaded] = useState(false);
   const [info, setInfo] = useState();
   const [gradCam, setGradCam] = useState();
   useEffect(() => {
     getReport(rid).then((res) => {
-      console.log(res);
+      // console.log(res);
       setInfo(res.data);
-      // setLoaded(true);
+      setLoaded(true);
     });
   }, []);
+
   useEffect(() => {
-    if (info) {
-      console.log(info);
-      setLoaded(true);
+    if (info && info.result.project_id._id !== globalProject.projectId) {
+      // console.log(info);
+      history.push("/viewhistory");
     }
-  }, [info]);
+  }, [globalProject]);
 
   const downloadImage = () => {
     saveAs(
@@ -100,7 +103,7 @@ export default function Report(props) {
                 accession_no={info.result.image_id.accession_no}
                 labelList={info.classes.map((item) => {
                   return item.finding;
-                })} 
+                })}
               />
             )}
           </Col>

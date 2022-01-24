@@ -1,6 +1,7 @@
 import React, { useState, useRef, useContext } from "react";
-import { Steps, Button, Form, Input, Row, Col, Modal } from "antd";
+import { Steps, Button, Form, Input, Row, Col, Modal, Spin } from "antd";
 import "antd/dist/antd.css";
+import { LoadingOutlined } from "@ant-design/icons";
 import ProjectInfo from "../component/ProjectInfo";
 import SelectMedicalRecord from "./SelectMedicalRecord";
 import SelectXRayImage from "./SelectXRayImage";
@@ -11,26 +12,25 @@ import { infer } from "../api/report";
 import Contexts from '../utils/Contexts';
 const { Step } = Steps;
 
+const LoadingIcon = (
+  <LoadingOutlined style={{ fontSize: 30, color: "#de5c8e", marginRight: 5 }} spin />
+);
+
 const steps = [
   {
     title: "Select HN",
-    content: "First-content",
   },
   {
     title: "Select Medical Record",
-    content: "Second-content",
   },
   {
     title: "Select X-Ray Image",
-    content: "Third-content",
   },
   {
     title: "Preview & Edit",
-    content: "Fourth-content",
   },
   {
     title: "Diagnosis Started",
-    content: "Last-content",
   },
 ];
 
@@ -51,7 +51,7 @@ const btnList = [
 ];
 
 export default function Diagnosis() {
-  const { globalProject, setGlobalProject } = useContext(Contexts.project);
+  const { globalProject } = useContext(Contexts.project);
   const [loading, setLoading] = useState(false);
   const [HN, setHN] = useState("");
   const [Patient, setPatient] = useState();
@@ -118,6 +118,8 @@ export default function Diagnosis() {
             setMedRecIndex={setMedRecIndex}
             setAccessionNo={setAccessionNo}
             setAccessionNoIndex={setAccessionNoIndex}
+            loading={loading}
+            setLoading={setLoading}
           />
         )}
         {current === 1 && (
@@ -133,7 +135,10 @@ export default function Diagnosis() {
                 >
                   Patient's HN: {HN}
                 </label>
-                <ProjectInfo project_id={globalProject.projectId} collapse={false} />
+                <ProjectInfo
+                  project_id={globalProject.projectId}
+                  collapse={false}
+                />
               </div>
             </Col>
             <Col span={17}>
@@ -161,7 +166,7 @@ export default function Diagnosis() {
             >
               Patient's HN: {HN}
             </label>
-            <SelectXRayImage 
+            <SelectXRayImage
               HN={HN}
               MedRec={MedRec}
               setMedRec={setMedRec}
@@ -216,6 +221,8 @@ function SelectHN(props) {
   //const [patientName, setPatientName] = useState();
   const handleSubmit = () => {
     let input_hn = document.getElementById("hn-input").value;
+    if (!input_hn) return
+    props.setLoading(true);
     findPatientOnPACS(input_hn).then((res) => {
       console.log(input_hn);
       if (res.data) {
@@ -226,6 +233,7 @@ function SelectHN(props) {
         props.setAccessionNo(null);
         props.setAccessionNoIndex([]);
       } else props.setPatient(false);
+      props.setLoading(false);
     });
   };
   return (
@@ -251,11 +259,13 @@ function SelectHN(props) {
           Submit
         </Button>
       </Form.Item>
-      {props.Patient !== undefined && (
-        <label id="search-pacs-result">
-          {props.Patient ? `Patient's Name: ${props.Patient.Name}` : "No sufficient data from PACS for this patient."}
-        </label>
-      )}
+      
+        <div>
+        {props.loading ? <span><Spin indicator={LoadingIcon} /> <label>Searching ...</label></span>: <label id="search-pacs-result">
+          {props.Patient !== undefined && (props.Patient ? `Patient's Name: ${props.Patient.Name}` : "No sufficient data from this patient.")}
+        </label>}
+        </div>
+      
     </Form>
   );
 }

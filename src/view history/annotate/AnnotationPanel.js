@@ -66,7 +66,7 @@ export default function AnnotationPanel(props) {
     defaultWindowLevel: 0,
   });
   const [savedTime, setSavedTime] = useState();
-  const [btnMode, setBtnMode] = useState("close");
+  // const [btnMode, setBtnMode] = useState("close");
   const [savedData, setSavedData] = useState();
 
   useEffect(() => {
@@ -323,7 +323,7 @@ export default function AnnotationPanel(props) {
                     setLabelBuffer({
                       key: record.key,
                     });
-                    setBtnMode("save-cancel");
+                    // setBtnMode("save-cancel");
                   },
                   okButtonProps: {
                     style: {
@@ -406,7 +406,7 @@ export default function AnnotationPanel(props) {
                   return [...current, item];
                 }, []);
                 setLabels(update);
-                if (btnMode === "close") setBtnMode("save-cancel");
+                // if (btnMode === "close") setBtnMode("save-cancel");
               }}
               okButtonProps={{ className: "primary-btn popconfirm" }}
               cancelButtonProps={{ style: { display: "none" } }}
@@ -463,7 +463,7 @@ export default function AnnotationPanel(props) {
       }
       setLabelBuffer();
       setSelectedLabel();
-      setBtnMode("save-cancel");
+      // setBtnMode("save-cancel");
     }
   }, [labelBuffer]);
 
@@ -697,7 +697,7 @@ export default function AnnotationPanel(props) {
         //   return;
         // }
         addNewLabel(tool, toolState.data.length - 1);
-        setBtnMode("save-cancel");
+        // setBtnMode("save-cancel");
         return;
       }
     }
@@ -789,7 +789,7 @@ export default function AnnotationPanel(props) {
       })
     ) {
       setLabels(checker);
-      setBtnMode("save-cancel");
+      // setBtnMode("save-cancel");
     }
   };
 
@@ -900,7 +900,7 @@ export default function AnnotationPanel(props) {
           key,
           duration: 5,
         });
-        setBtnMode("close");
+        // setBtnMode("close");
         setLabels(
           labels.map((item) => {
             return { ...item, saved: true };
@@ -934,7 +934,7 @@ export default function AnnotationPanel(props) {
           "wado",
           displayImage
         );
-        setBtnMode("close");
+        // setBtnMode("close");
       },
       cancelText: "No",
     });
@@ -1278,7 +1278,9 @@ export default function AnnotationPanel(props) {
               </Button>
             )}
 
-            {btnMode === "save-cancel" && (
+            {/* btnMode === "save-cancel" */ labels.some((member) => {
+              return !member.saved;
+            }) && (
               <Button
                 className="primary-btn smaller"
                 style={{ marginRight: "10px" }}
@@ -1287,13 +1289,17 @@ export default function AnnotationPanel(props) {
                 Cancel
               </Button>
             )}
-            {btnMode === "save-cancel" && (
+            {labels.some((member) => {
+              return !member.saved;
+            }) && (
               <Button className="primary-btn smaller" onClick={saveAnnotations}>
                 Save
               </Button>
             )}
 
-            {btnMode === "close" && (
+            {labels.every((member) => {
+              return member.saved;
+            }) && (
               <Button
                 className="primary-btn smaller"
                 onClick={props.handleCancel}
