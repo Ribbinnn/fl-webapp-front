@@ -180,12 +180,20 @@ function SelectXRayImage(props) {
                                     props.fromDate === null ? "" : props.fromDate, 
                                     props.toDate === null ? "" : props.toDate)
                                 .then((res) => {
-                                    const data = prepareTable(res.data);
-                                    setTableData(data);
-                                    props.setPacsTableData(data);
-                                    props.setAccessionNoIndex([]);
-                                    props.setAccessionNo(null);
-                                    setLoaded(true);
+                                    if (Object.keys(res.data).length === 0) {
+                                        setTableData([]);
+                                        props.setPacsTableData([]);
+                                        props.setAccessionNoIndex([]);
+                                        props.setAccessionNo(null);
+                                        setLoaded(true);
+                                    } else {
+                                        const data = prepareTable(res.data);
+                                        setTableData(data);
+                                        props.setPacsTableData(data);
+                                        props.setAccessionNoIndex([]);
+                                        props.setAccessionNo(null);
+                                        setLoaded(true);
+                                    }
                                 }).catch((err) => {
                                     console.log(err);
                                 });
@@ -196,9 +204,14 @@ function SelectXRayImage(props) {
                                     fromDate === null ? "" : fromDate, 
                                     toDate === null ? "" : toDate)
                                 .then((res) => {
-                                    const data = prepareTable(res.data);
-                                    setTableData(data);
-                                    setLoaded(true);
+                                    if (Object.keys(res.data).length === 0) {
+                                        setTableData([]);
+                                        setLoaded(true);
+                                    } else {
+                                        const data = prepareTable(res.data);
+                                        setTableData(data);
+                                        setLoaded(true);
+                                    }
                                 }).catch((err) => {
                                     console.log(err);
                                 });
