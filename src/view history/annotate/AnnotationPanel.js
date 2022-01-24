@@ -79,10 +79,10 @@ export default function AnnotationPanel(props) {
   const [maskID, setMaskID] = useState();
 
   useEffect(() => {
-    // console.log(props.accession_no);
+    // // console.log(props.accession_no);
     loadDicom(getDicomByAccessionNo(props.accession_no), "wado", displayImage);
     getBBox(!rid, rid ? rid : props.accession_no).then((res) => {
-      // console.log(res);
+      // // console.log(res);
       if (res.data) {
         setUser({ ...user, ...res.data.user });
         setSavedData(
@@ -100,7 +100,7 @@ export default function AnnotationPanel(props) {
   }, []);
 
   useEffect(() => {
-    // console.log(labels);
+    // // console.log(labels);
     setColumns([
       {
         title: "Label",
@@ -323,6 +323,7 @@ export default function AnnotationPanel(props) {
                       labelList={labelList}
                       setLabelList={setLabelList}
                       defaultLabel={record.label}
+                      annotateOnly={!rid}
                     />
                   ),
                   keyboard: false,
@@ -365,7 +366,7 @@ export default function AnnotationPanel(props) {
                     target[record.index[0]]
                   );
                 } else {
-                  // console.log(target[record.index]);
+                  // // console.log(target[record.index]);
                   cornerstoneTools.removeToolState(
                     dicomElement,
                     record.tool,
@@ -375,8 +376,8 @@ export default function AnnotationPanel(props) {
                 cornerstone.updateImage(dicomElement);
                 update.splice(ind, 1);
                 update = update.reduce((current, item) => {
-                  // console.log(record);
-                  // console.log(item);
+                  // // console.log(record);
+                  // // console.log(item);
                   if (
                     record.tool === "ratio" &&
                     item.tool === "ratio" &&
@@ -435,7 +436,7 @@ export default function AnnotationPanel(props) {
 
   useEffect(() => {
     if (labelBuffer) {
-      // console.log(labelBuffer);
+      // // console.log(labelBuffer);
       if (labelBuffer.key <= labels.length) {
         let edittedLabels = labels.map((item) => {
           if (item.key === labelBuffer.key) {
@@ -470,8 +471,8 @@ export default function AnnotationPanel(props) {
           updated_time: new Date(),
           updated_by: user,
         };
-        console.log(labelBuffer);
-        console.log(newLabel);
+        // console.log(labelBuffer);
+        // console.log(newLabel);
         setLabels([...labels, newLabel]);
       }
       setLabelBuffer();
@@ -484,7 +485,7 @@ export default function AnnotationPanel(props) {
     var element = document.getElementById("annotate-dicom-image");
     cornerstone.enable(element);
     var viewport = cornerstone.getDefaultViewportForImage(element, image);
-    // console.log(viewport);
+    // // console.log(viewport);
     cornerstone.displayImage(element, image, viewport);
     setViewerState({
       ...viewerState,
@@ -542,7 +543,7 @@ export default function AnnotationPanel(props) {
               };
             }
             cornerstoneTools.addToolState(element, item.tool, bbox);
-            // console.log(item);
+            // // console.log(item);
             return {
               ...current,
               initial_lb: [
@@ -573,13 +574,13 @@ export default function AnnotationPanel(props) {
             initial_ll: props.labelList ? props.labelList : []
           }
         );
-        // console.log(loadedData);
-        console.log(loadedData)
+        // // console.log(loadedData);
+        // console.log(loadedData)
         cornerstone.updateImage(element);
         setLabels(loadedData.initial_lb);
         setImgLoaded(true);
         // setSavedData(res.data.data)
-        // console.log(loadedData);
+        // // console.log(loadedData);
         setLabelList(loadedData.initial_ll);
         setMaskID(res.data._id);
       }
@@ -598,7 +599,7 @@ export default function AnnotationPanel(props) {
       labelBuffer.index.length === 1
     ) {
       let index = labelBuffer.index[0];
-      // console.log(index);
+      // // console.log(index);
       let toolState = cornerstoneTools.getToolState(dicomElement, "length")
         .data[index];
       cornerstoneTools.removeToolState(dicomElement, "length", toolState);
@@ -646,7 +647,7 @@ export default function AnnotationPanel(props) {
   };
 
   const imageOnClick = () => {
-    console.log(labels);
+    // console.log(labels);
     if (tool === "pan") {
       return;
     }
@@ -671,7 +672,7 @@ export default function AnnotationPanel(props) {
         dicomElement,
         tool === "ratio" ? "length" : tool
       );
-      console.log(count["length"], toolState.data.length);
+      // // console.log(count["length"], toolState.data.length);
       if (
         tool === "ratio" &&
         toolState.data &&
@@ -853,12 +854,14 @@ export default function AnnotationPanel(props) {
           setSelectedLabel={setSelectedLabel}
           labelList={labelList}
           setLabelList={setLabelList}
+          annotateOnly={!rid}
         />
       ),
       keyboard: false,
       className: "label-selector-modal",
       okText: "Submit",
       onOk: () => {
+        // console.log(labelList)
         buffer
           ? setLabelBuffer(buffer)
           : setLabelBuffer({
@@ -917,7 +920,7 @@ export default function AnnotationPanel(props) {
       ];
     }, []);
     insertBBox(maskID, rid, bbox_data).then((res) => {
-      console.log(res);
+      // console.log(res);
       if (res.success) {
         message.success({
           content: "Bounding boxes successfully saved.",
@@ -977,7 +980,7 @@ export default function AnnotationPanel(props) {
           const second_line = globalTool["length"].data[item.index[1]];
           cornerstoneTools.removeToolState(dicomElement, "length", second_line);
           cornerstoneTools.removeToolState(dicomElement, "length", first_line);
-          // console.log(first_line, second_line)
+          // // console.log(first_line, second_line)
           return [
             ...current,
             { ...item, index: -1, invisible: [first_line, second_line] },
@@ -1000,7 +1003,7 @@ export default function AnnotationPanel(props) {
     update = update.reduce((current, item, i) => {
       if (!item.invisible) return [...current, item];
       const bbox = item.invisible;
-      // console.log(bbox)
+      // // console.log(bbox)
       if (item.tool === "ratio") {
         cornerstoneTools.addToolState(dicomElement, "length", bbox[0]);
         cornerstoneTools.addToolState(dicomElement, "length", bbox[1]);

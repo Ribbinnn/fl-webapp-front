@@ -85,7 +85,7 @@ export default function Diagnosis() {
         setLoading(true);
         localInfer(accessionNo, globalProject.projectId, MedRec, (JSON.parse(sessionStorage.getItem('user'))).id)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setCurrent(current + 1);
           setLoading(false);
         }).catch((err) => console.log(err.response));
