@@ -47,6 +47,7 @@ function HistoryLog(props) {
     const queryString = useQuery();
     const [uploadedItem, setUploadedItem] = useState([])
     const [status, setStatus] = useState([]);
+    const [shownStatus, setShownStatus] = useState([]);
     const [findings, setFindings] = useState([]);
     const [reload, setReload] = useState("");
 
@@ -261,6 +262,7 @@ function HistoryLog(props) {
         );
         // add key to each row & change date-time & add status, findings list
         const status = ["all"];
+        const shownStatus = [];
         const findings = ["all"];
         for (const i in filter_data) {
           filter_data[i]["key"] = (parseInt(i) + 1).toString();
@@ -277,8 +279,22 @@ function HistoryLog(props) {
             findings.push(filter_data[i]["finding"]);
           }
         }
+        for (const i in status) {
+            if (status[i] === "finalized") {
+                shownStatus.push("4 Finalized");
+            } else if (status[i] === "annotated") {
+                shownStatus.push("2 AI-Annotated");
+            } else if (status[i] === "reviewed") {
+                shownStatus.push("3 Human-Annotated");
+            } else if (status[i] === "in progress") {
+                shownStatus.push("1 In Progress");
+            } else {
+                shownStatus.push(status[i]);
+            }
+        }
             setUploadedItem(filter_data);
             setStatus(status);
+            setShownStatus(shownStatus)
             setFindings(findings);
             setLoaded(true);
         }).catch((err) => console.log(err.response));
@@ -303,7 +319,7 @@ function HistoryLog(props) {
                         onChange={(value) => {
                             status[value] === "all" ? queryString.delete("status") : queryString.set("status", status[value]);
                         }}>
-                            {status.map((status, i) => (
+                            {shownStatus.map((status, i) => (
                                 <Option key={i} value={i}>
                                     {status.charAt(0).toUpperCase() + status.slice(1).split("_").join(" ")}
                                 </Option>
