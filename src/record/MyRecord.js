@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Table, Button, Form, Input, Select, DatePicker, Spin } from "antd";
+import { Table, Button, Form, Input, DatePicker, Spin } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { searchVitlasProject, deleteRecord } from "../api/vitals";
 import ShowAllRecords from "./ShowAllRecords";
@@ -9,8 +9,6 @@ import Contexts from '../utils/Contexts';
 const LoadingIcon = (
     <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
 );
-
-const { Option } = Select;
 
 function MyRecord () {
     const { globalProject, setGlobalProject } = useContext(Contexts.project);

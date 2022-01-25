@@ -66,7 +66,7 @@ function ShowAllRecords(props) {
             delete update_data["key"];
             update_data["measured_time"] = new Date(update_data["measured_time"]);
             update_data["updated_time"] = new Date(update_data["updated_time"]);
-            update_data["age"] = parseInt(update_data["age"]); // check other number field !
+            // update_data["age"] = parseInt(update_data["age"]); // check other number field !
             updateRecordRow(recordId.current, [update_data])
             .then((res) => {
                 console.log(res);

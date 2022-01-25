@@ -22,7 +22,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                     const data = await requirementForm.validateFields();
                     data["hn"] = parseInt(props.HN); // add HN
                     data["entry_id"] = parseInt(data["entry_id"]);
-                    data["age"] = parseInt(data["age"]); // check other number field !
+                    // data["age"] = parseInt(data["age"]); // check other number field !
                     data["measured_time"] = new Date(data["measured_time"]);
                     props.setMedRec(data);
                 }
@@ -40,7 +40,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
     const [tableForm] = Form.useForm();
     const [data, setData] = useState([]);
     const currentData = useRef([]);
-    const columns = ["measured_time", "updated_time", "age", "gender"];
+    const columns = ["measured_time", "updated_time"];
     const [mergedColumns, setMergeColumns] = useState([]);
     const [editingKey, setEditingKey] = useState("");
 
@@ -111,7 +111,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             }
             update_data["measured_time"] = new Date(update_data["measured_time"]);
             update_data["updated_time"] = new Date(update_data["updated_time"]);
-            update_data["age"] = parseInt(update_data["age"]); // check other number field !
+            // update_data["age"] = parseInt(update_data["age"]); // check other number field !
             updateRecordRow(record_id, [update_data])
             .then((res) => {
                 console.log(res);
@@ -232,8 +232,8 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                 setLoaded(true);
             } else {
                 setHasRecord(false);
-                const fields = ["entry_id", "measured_time", "age", "gender"];
-                const fieldsLabel = {entry_id: "Entry id", measured_time: "Measured time (yyyy-MM-ddTHH:mm:ssZ)", age: "Age (year)", gender: "Gender (male/female)"};
+                const fields = ["entry_id", "measured_time"];
+                const fieldsLabel = {entry_id: "Entry id", measured_time: "Measured time (yyyy-MM-ddTHH:mm:ssZ)"}; 
                 // add additional required field of each project
                 for (const i in globalProject.projectReq) {
                     const field = globalProject.projectReq[i]["name"];
