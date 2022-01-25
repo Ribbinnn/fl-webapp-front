@@ -285,9 +285,9 @@ export default function ResultsTable(props) {
               onChange={onChangeRating}
               value={rating}
             />
-            <span className="rating-text">
+            <label className="rating-text" style={{marginLeft: "20px"}}>
               {rating ? ratingDesc[rating - 1] : "No Rating"}
-            </span>
+            </label>
           </span>
         </Col>
       </Row>
