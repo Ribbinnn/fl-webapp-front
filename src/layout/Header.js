@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import { Button } from "antd";
+import { Button, Image } from "antd";
 import "antd/dist/antd.css";
 import {
     LogoutOutlined
@@ -18,9 +18,11 @@ export default function Header(){
                 <div style={{marginLeft: 10, height: 50}}>
                     <SelectProject Project={globalProject} Class="select-header"/>
                 </div>
-                <div id="logo" style={{height: 25, width:200, backgroundColor:'#E5E5E5', textAlign:'center'}}>
-                    Temp Logo Image
-                </div>
+                <Image
+            preview={false}
+            height={40}
+            src="/logos/DeepMed Header Logo.png"
+          />
 
                 <div id="right-pane">
                     Hi, {username}.
