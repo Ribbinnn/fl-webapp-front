@@ -915,6 +915,25 @@ label.clickable-label:hover {
   padding-top: 2px;
 }
 
+/* annotate with gradcam dropdown -----------*/
+
+.annotation-gc-select:not(.ant-select-customize-input) .ant-select-selector,
+.annotation-gc-select .ant-select:not(.ant-select-customize-input) .ant-select-selector{
+  /* border: none !important; */
+  padding: 0;
+  height: 30px;
+  width: 250px;
+}
+
+.annotation-gc-select{
+  font-size: medium;
+  margin-right: 15px;
+}
+
+.annotation-gc-select > div.ant-select-selector > span.ant-select-selection-search {
+  top: 0px;
+}
+
 /* collapse ------------------*/
 
 .ant-collapse-icon-position-right
@@ -940,6 +959,53 @@ label.clickable-label:hover {
   > .ant-collapse-content
   > .ant-collapse-content-box {
   padding-top: 0;
+}
+
+.annotation-collapse .ant-collapse-content > .ant-collapse-content-box {
+  padding: 0;
+}
+
+.annotation-collapse {
+  border: none;
+  background-color: transparent;
+  height: 590px;
+  max-height: 590px;
+  overflow-y: scroll;
+}
+
+.annotation-collapse .ant-collapse-content {
+  color: inherit;
+  background-color: none;
+  border-top: none;
+}
+
+.annotation-collapse > .ant-collapse-item {
+  border-bottom: none;
+}
+
+.annotation-collapse > .ant-collapse-item > .ant-collapse-header {
+  padding: 6px;
+  font-size: large !important;
+  font-weight: bold;
+  color: #58595b;
+  text-align: left;
+}
+
+.annotation-collapse > .ant-collapse-item > .ant-collapse-header:hover {
+  color: #de5c8e;
+}
+
+.annotation-collapse > .ant-collapse-item-active > .ant-collapse-header {
+  text-align: center;
+}
+
+.annotation-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
+  right: auto;
+  left: 240px;
+}
+
+.annotation-collapse > .ant-collapse-item-active > .ant-collapse-header .ant-collapse-arrow {
+  left: 350px;
 }
 
 /* tag ---------------- */
@@ -1387,7 +1453,14 @@ table tr td.ant-table-selection-column {
   background-color: #de5c8e;
 }
 /* checkbox ------- */
+.annotation-gc-checkbox{
+  font-size: small;
+  font-weight: normal;
+  line-height: normal;
+  align-items: center;
+}
 
+.annotation-gc-checkbox
 
 /* rate ------------- */
 

@@ -12,6 +12,9 @@ import {
   Modal,
   Popconfirm,
   Popover,
+  Collapse,
+  Image,
+  Select,
 } from "antd";
 import {
   ZoomInOutlined,
@@ -37,6 +40,7 @@ import { getDicomByAccessionNo } from "../../api/image";
 import { loadDicom } from "../../component/dicom-viewer/dicomLoader";
 import Label from "./Label";
 import { insertBBox, getBBox } from "../../api/masks";
+import { getGradCam } from "../../api/image";
 
 const cornerstone = window.cornerstone;
 const cornerstoneTools = window.cornerstoneTools;
@@ -44,6 +48,9 @@ const cornerstoneTools = window.cornerstoneTools;
 const LoadingIcon = (
   <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
 );
+
+const { Panel } = Collapse;
+const { Option } = Select;
 
 export default function AnnotationPanel(props) {
   const [tool, setTool] = useState();
@@ -66,20 +73,24 @@ export default function AnnotationPanel(props) {
     defaultWindowLevel: 0,
   });
   const [savedTime, setSavedTime] = useState();
-  // const [btnMode, setBtnMode] = useState("close");
+  const [gradCam, setGradCam] = useState({
+    selected:
+      props.gradCamList.filter((item) => {
+        return item.isPositive;
+      })[0]?.finding || null, 
+      //props.gradCamList.length ? props.gradCamList[0].finding : null,
+    onlyPositive: true,
+  });
   const [savedData, setSavedData] = useState();
 
   useEffect(() => {
-    console.log(props.accession_no);
-    loadDicom(
-      getDicomByAccessionNo(props.accession_no),
-      "wado",
-      displayImage
-    );
+    // console.log(props.accession_no);
+    // console.log(props.gradCamList);
+    loadDicom(getDicomByAccessionNo(props.accession_no), "wado", displayImage);
     getBBox(rid).then((res) => {
       // console.log(res);
       if (res.data) {
-        setUser({...user, ...res.data.user});
+        setUser({ ...user, ...res.data.user });
         setSavedData(
           res.data.data.map((item, i) => {
             if (item.tool === "ratio")
@@ -110,7 +121,8 @@ export default function AnnotationPanel(props) {
               (record.tool === "rectangleRoi" && <BorderOutlined />) ||
               (record.tool === "freehand" && <StarOutlined />) ||
               (record.tool === "ratio" && <VerticalAlignBottomOutlined />)}
-            {record.label}{record.tool === "ratio" && ` (${record.ratio})`}
+            {record.label}
+            {record.tool === "ratio" && ` (${record.ratio})`}
             {record.updated_by.username !== user.username && (
               <ExclamationOutlined
                 style={{ color: "#de5c8e", strokeWidth: 30, stroke: "#de5c8e" }}
@@ -122,8 +134,12 @@ export default function AnnotationPanel(props) {
       {
         title: "Editor",
         key: "editor",
-        render: (text, record) =>
-          <span style={record.saved ? {} : { color: "#de5c8e" }}>{record.updated_by.first_name[0] ?? "-"}{record.updated_by.last_name[0] ?? "-"}</span>
+        render: (text, record) => (
+          <span style={record.saved ? {} : { color: "#de5c8e" }}>
+            {record.updated_by.first_name[0] ?? "-"}
+            {record.updated_by.last_name[0] ?? "-"}
+          </span>
+        ),
       },
       {
         title: "Action",
@@ -439,8 +455,11 @@ export default function AnnotationPanel(props) {
           } else return item;
         });
         setLabels(edittedLabels);
-      } else if (labelBuffer.tool === "ratio" && labelBuffer.index.length === 1) {
-        // if (labelBuffer.index.length === 1) 
+      } else if (
+        labelBuffer.tool === "ratio" &&
+        labelBuffer.index.length === 1
+      ) {
+        // if (labelBuffer.index.length === 1)
         return;
         // let newLabel = {
         //   ...labelBuffer,
@@ -457,8 +476,8 @@ export default function AnnotationPanel(props) {
           updated_time: new Date(),
           updated_by: user,
         };
-        console.log(labelBuffer)
-        console.log(newLabel)
+        console.log(labelBuffer);
+        console.log(newLabel);
         setLabels([...labels, newLabel]);
       }
       setLabelBuffer();
@@ -652,12 +671,12 @@ export default function AnnotationPanel(props) {
         dicomElement,
         tool === "ratio" ? "length" : tool
       );
-      console.log(count["length"],toolState.data.length);
+      console.log(count["length"], toolState.data.length);
       if (
         tool === "ratio" &&
         toolState.data &&
         toolState.data.length > count["length"] &&
-        !toolState.data[toolState.data.length - 1].active 
+        !toolState.data[toolState.data.length - 1].active
       ) {
         if (labelBuffer) {
           // setLabelBuffer({
@@ -668,8 +687,8 @@ export default function AnnotationPanel(props) {
           //   ).toFixed(4),
           //   index: [...labelBuffer.index, toolState.data.length - 1],
           // });
-          if (toolState.data.length <= count["length"]+1) return
-          addNewLabel(undefined,undefined,{
+          if (toolState.data.length <= count["length"] + 1) return;
+          addNewLabel(undefined, undefined, {
             ...labelBuffer,
             ratio: (
               toolState.data[labelBuffer.index[0]]["length"] /
@@ -705,14 +724,15 @@ export default function AnnotationPanel(props) {
       cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState();
     globalTool = globalTool[Object.keys(globalTool)[0]];
     let checker = labels.map((item, i) => {
-      console.log(item)
+      console.log(item);
       if (item.invisible) return item;
       if (item.tool === "ratio") {
         let first_line = globalTool["length"].data[item.index[0]];
         let second_line = globalTool["length"].data[item.index[1]];
         let ratio = (first_line["length"] / second_line["length"]).toFixed(4);
-        console.log(first_line,second_line,ratio)
-        if (ratio !== item.ratio) { //edit here
+        console.log(first_line, second_line, ratio);
+        if (ratio !== item.ratio) {
+          //edit here
           return {
             ...item,
             ratio: ratio,
@@ -841,11 +861,13 @@ export default function AnnotationPanel(props) {
       className: "label-selector-modal",
       okText: "Submit",
       onOk: () => {
-        buffer ? setLabelBuffer(buffer) : setLabelBuffer({
-          key: key,
-          tool: tool,
-          index: index,
-        });
+        buffer
+          ? setLabelBuffer(buffer)
+          : setLabelBuffer({
+              key: key,
+              tool: tool,
+              index: index,
+            });
       },
       okButtonProps: {
         style: {
@@ -875,23 +897,28 @@ export default function AnnotationPanel(props) {
           data:
             item.tool === "ratio"
               ? item.index === -1
-                ? { 0: {...item.invisible[0], active:false}, 1: {...item.invisible[1], active:false}, ratio: item.ratio }
+                ? {
+                    0: { ...item.invisible[0], active: false },
+                    1: { ...item.invisible[1], active: false },
+                    ratio: item.ratio,
+                  }
                 : {
-                    0: {...lengthState.data[item.index[0]], active:false},
-                    1: {...lengthState.data[item.index[1]], active:false},
-                    ratio: item.ratio
+                    0: { ...lengthState.data[item.index[0]], active: false },
+                    1: { ...lengthState.data[item.index[1]], active: false },
+                    ratio: item.ratio,
                   }
               : item.index === -1
-              ? {...item.invisible, active:false}
+              ? { ...item.invisible, active: false }
               : item.tool === "freehand"
-              ? {...freehandState.data[item.index], active:false}
+              ? { ...freehandState.data[item.index], active: false }
               : item.tool === "length"
-              ? {...lengthState.data[item.index], active:false}
-              : {...rectangleRoiState.data[item.index], active:false},
+              ? { ...lengthState.data[item.index], active: false }
+              : { ...rectangleRoiState.data[item.index], active: false },
           updated_time: item.updated_time,
         },
       ];
     }, []);
+
     insertBBox(rid, bbox_data).then((res) => {
       console.log(res);
       if (res.success) {
@@ -937,6 +964,26 @@ export default function AnnotationPanel(props) {
         // setBtnMode("close");
       },
       cancelText: "No",
+    });
+  };
+
+  const onChangeGradcam = (value) => {
+    setGradCam({ ...gradCam, selected: value });
+  };
+
+  const onCheckPositiveGradcam = (e) => {
+    console.log(e.target.checked);
+    let positiveGradcam = props.gradCamList.filter((item) => {
+      return item.isPositive;
+    });
+    setGradCam({
+      selected: e.target.checked
+        ? positiveGradcam.includes(gradCam.selected)
+          ? gradCam.selected
+          : positiveGradcam[0]?.finding
+          || undefined
+        : gradCam.selected ?? props.gradCamList[0].finding,
+      onlyPositive: e.target.checked,
     });
   };
 
@@ -1030,265 +1077,328 @@ export default function AnnotationPanel(props) {
             style={{ display: "relative", width: "790px", height: "640px" }}
           />
         </Col>
-        <Col span={9}>
-          <Col>
-            <Row>
-              <label className="annotate-tool-label"> Window Level </label>
-            </Row>
-            <Row>
-              <Col span={20}>
-                <Slider
-                  min={
-                    viewerState.defaultWindowLevel > 2000
-                      ? viewerState.defaultWindowLevel - 2000
-                      : 0
-                  }
-                  max={viewerState.defaultWindowLevel + 2000}
-                  onChange={onViewerChange("windowLevel")}
-                  value={viewerState.windowLevel}
-                />
-              </Col>
-              <Col span={4}>
-                <Input
-                  className="input-text smaller"
-                  style={{ height: "30px" }}
-                  value={viewerState.windowLevel}
-                  onChange={onViewerChange("windowLevel")}
-                />
-              </Col>
-            </Row>
-          </Col>
-          <Col>
-            <Row>
-              <label className="annotate-tool-label"> Window Width </label>
-            </Row>
-            <Row>
-              <Col span={20}>
-                <Slider
-                  min={
-                    viewerState.defaultWindowWidth > 2000
-                      ? viewerState.defaultWindowWidth - 2000
-                      : 0
-                  }
-                  max={viewerState.defaultWindowWidth + 2000}
-                  onChange={onViewerChange("windowWidth")}
-                  value={viewerState.windowWidth}
-                />
-              </Col>
-              <Col span={4}>
-                <Input
-                  className="input-text smaller"
-                  style={{ height: "30px" }}
-                  onChange={onViewerChange("windowWidth")}
-                  value={viewerState.windowWidth}
-                />
-              </Col>
-            </Row>
-          </Col>
-          <Row
-            align="middle"
-            justify="space-between"
-            style={{ marginTop: "10px" }}
+        <Col span={9} style={{ height: "640px" }}>
+          <Collapse
+            className="annotation-collapse"
+            expandIconPosition="right"
+            defaultActiveKey={[1, 2, 3]}
           >
-            <Col span={8} justify="center" align="start">
-              <Checkbox
-                onChange={onViewerChange("invert")}
-                checked={viewerState.invert}
-              >
-                Invert
-              </Checkbox>
-            </Col>
-            <Col span={8} justify="center" align="center">
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <label
-                  className="annotate-tool-label"
-                  style={{ marginRight: "5px" }}
-                >
-                  Zoom
-                </label>
-
-                <Button
-                  className="zoom-btn"
-                  icon={<ZoomOutOutlined />}
-                  style={{ marginRight: "2px" }}
-                  onClick={onViewerChange("zoomout")}
-                />
-
-                <Button
-                  className="zoom-btn"
-                  icon={<ZoomInOutlined />}
-                  onClick={onViewerChange("zoomin")}
-                />
-              </div>
-            </Col>
-            <Col span={8} align="end">
-              <Button className="reset-vp-btn" onClick={resetViewPort}>
-                Reset Viewport
-                <RedoOutlined />
-              </Button>
-            </Col>
-          </Row>
-          <Row style={{ marginTop: "5px", marginBottom: "15px" }}>
-            <Col span={8} className="annotate-tool-btn-ctn">
-              <Button
-                className={`annotate-tool-btn ${
-                  tool === "mouse" ? "selected-tool" : ""
-                }`}
-                onClick={() => {
-                  selectTool("mouse");
-                }}
-              >
-                Mouse {<SelectOutlined />}
-              </Button>
-            </Col>
-            <Col span={8} className="annotate-tool-btn-ctn">
-              <Button
-                className={`annotate-tool-btn ${
-                  tool === "pan" ? "selected-tool" : ""
-                }`}
-                onClick={() => {
-                  selectTool("pan");
-                }}
-              >
-                Pan {<DragOutlined />}
-              </Button>
-            </Col>
-            <Col span={8} className="annotate-tool-btn-ctn">
-              <Button
-                className={`annotate-tool-btn ${
-                  tool === "length" ? "selected-tool" : ""
-                }`}
-                onClick={() => {
-                  selectTool("length");
-                }}
-              >
-                Ruler {<ColumnHeightOutlined />}
-              </Button>
-            </Col>
-            <Col span={8} className="annotate-tool-btn-ctn">
-              <Button
-                className={`annotate-tool-btn ${
-                  tool === "rectangleRoi" ? "selected-tool" : ""
-                }`}
-                onClick={() => {
-                  selectTool("rectangleRoi");
-                }}
-              >
-                Rectangle {<BorderOutlined />}
-              </Button>
-            </Col>
-            <Col span={8} className="annotate-tool-btn-ctn">
-              <Button
-                className={`annotate-tool-btn ${
-                  tool === "freehand" ? "selected-tool" : ""
-                }`}
-                onClick={() => {
-                  selectTool("freehand");
-                }}
-              >
-                Polygon {<StarOutlined />}
-              </Button>
-            </Col>
-            <Col span={8} className="annotate-tool-btn-ctn">
-              <Button
-                className={`annotate-tool-btn ${
-                  tool === "ratio" ? "selected-tool" : ""
-                }`}
-                onClick={() => {
-                  selectTool("ratio");
-                }}
-              >
-                Ratio {<VerticalAlignBottomOutlined />}
-              </Button>
-            </Col>
-          </Row>
-          <Row align="space-between" style={{ marginTop: "10px" }}>
-            {/* <Col span={24} align="space-between" style={{ marginTop: "10px" }}> */}
-              <Col span={8} align="start">
-              <label
-                className="annotate-tool-label"
-                style={{ marginLeft: "5px" }}
-              >
-                Bounding Boxes
-              </label>
+            {props.gradCamList.length && (
+              <Panel header="Gradcam" key="1">
+                <Row align="center" style={{ marginBottom: "10px" }}>
+                  <span style={{ marginBottom: "5px" }}>
+                    <Select
+                      showArrow={false}
+                      showSearch
+                      optionFilterProp="children"
+                      onChange={onChangeGradcam}
+                      value={gradCam.selected}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                      bordered={false}
+                      className="annotation-gc-select"
+                    >
+                      {props.gradCamList.reduce((current, item) => {
+                        if (gradCam.onlyPositive && !item.isPositive)
+                          return current;
+                        return [
+                          ...current,
+                          <Option value={item.finding} key={item.finding}>
+                            {item.finding}
+                          </Option>,
+                        ];
+                      }, [])}
+                    </Select>
+                    <Checkbox
+                      className="annotation-gc-checkbox"
+                      defaultChecked
+                      onChange={onCheckPositiveGradcam}
+                    >
+                      Show only <br /> positive findings
+                    </Checkbox>
+                  </span>
+                  {gradCam.selected ? (
+                    <Image
+                      height={400}
+                      src={getGradCam(rid, gradCam.selected)}
+                    />
+                  ) : (
+                    <label style={{ margin: "120px 0 120px 0" }}>
+                      {" "}
+                      No Gradcam Data{" "}
+                    </label>
+                  )}
+                </Row>
+              </Panel>
+            )}
+            <Panel header="Toolbar" key="2">
+              <Col style={{ marginTop: "10px" }}>
+                <Row>
+                  <label className="annotate-tool-label"> Window Level </label>
+                </Row>
+                <Row>
+                  <Col span={20}>
+                    <Slider
+                      min={
+                        viewerState.defaultWindowLevel > 2000
+                          ? viewerState.defaultWindowLevel - 2000
+                          : 0
+                      }
+                      max={viewerState.defaultWindowLevel + 2000}
+                      onChange={onViewerChange("windowLevel")}
+                      value={viewerState.windowLevel}
+                    />
+                  </Col>
+                  <Col span={4}>
+                    <Input
+                      className="input-text smaller"
+                      style={{ height: "30px" }}
+                      value={viewerState.windowLevel}
+                      onChange={onViewerChange("windowLevel")}
+                    />
+                  </Col>
+                </Row>
               </Col>
-              {savedTime && (
-                <Col span={16} align="end">
-                <span style={{ fontSize: "small", marginLeft: "10px" }}>
-                  Last Saved: {savedTime}
-                </span>
+              <Col>
+                <Row>
+                  <label className="annotate-tool-label"> Window Width </label>
+                </Row>
+                <Row>
+                  <Col span={20}>
+                    <Slider
+                      min={
+                        viewerState.defaultWindowWidth > 2000
+                          ? viewerState.defaultWindowWidth - 2000
+                          : 0
+                      }
+                      max={viewerState.defaultWindowWidth + 2000}
+                      onChange={onViewerChange("windowWidth")}
+                      value={viewerState.windowWidth}
+                    />
+                  </Col>
+                  <Col span={4}>
+                    <Input
+                      className="input-text smaller"
+                      style={{ height: "30px" }}
+                      onChange={onViewerChange("windowWidth")}
+                      value={viewerState.windowWidth}
+                    />
+                  </Col>
+                </Row>
+              </Col>
+              <Row
+                align="middle"
+                justify="space-between"
+                style={{ marginTop: "10px" }}
+              >
+                <Col span={8} justify="center" align="start">
+                  <Checkbox
+                    onChange={onViewerChange("invert")}
+                    checked={viewerState.invert}
+                  >
+                    Invert
+                  </Checkbox>
                 </Col>
-              )}
-            {/* </Col> */}
-            <Table
-              className="annotate-table clickable-table"
-              rowClassName={(record, index) =>
-                record.saved ? "" : "unsaved-label"
-              }
-              columns={columns}
-              dataSource={labels}
-              // showHeader={false}
-              pagination={false}
-              size="small"
-              // onRow={(record, rowIndex) => {
-              //   return {
-              //     onClick: (event) => {
-              //       // labelsOnSelect(record.key);
-              //       //setCurrentLabels(record.key);
-              //     }, // click row
-              //   };
-              // }}
-            />
-          </Row>
-          <Row justify="end">
-            {labels.some((member) => {
-              return member.invisible;
-            }) && (
-              <Button
-                type="link"
-                style={{ padding: 0, paddingRight: 10 }}
-                onClick={showAll}
-              >
-                Show All
-              </Button>
-            )}
-            {labels.some((member) => {
-              return !member.invisible;
-            }) && (
-              <Button
-                type="link"
-                style={{ padding: 0, paddingLeft: 10 }}
-                onClick={hideAll}
-              >
-                Hide All
-              </Button>
-            )}
-          </Row>
-          <Row justify="end" style={{ marginTop: "13px" }}>
+                <Col span={8} justify="center" align="center">
+                  <div
+                    style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <label
+                      className="annotate-tool-label"
+                      style={{ marginRight: "5px" }}
+                    >
+                      Zoom
+                    </label>
+
+                    <Button
+                      className="zoom-btn"
+                      icon={<ZoomOutOutlined />}
+                      style={{ marginRight: "2px" }}
+                      onClick={onViewerChange("zoomout")}
+                    />
+
+                    <Button
+                      className="zoom-btn"
+                      icon={<ZoomInOutlined />}
+                      onClick={onViewerChange("zoomin")}
+                    />
+                  </div>
+                </Col>
+                <Col span={8} align="end">
+                  <Button className="reset-vp-btn" onClick={resetViewPort}>
+                    Reset Viewport
+                    <RedoOutlined />
+                  </Button>
+                </Col>
+              </Row>
+              <Row style={{ marginTop: "5px", marginBottom: "15px" }}>
+                <Col span={8} className="annotate-tool-btn-ctn">
+                  <Button
+                    className={`annotate-tool-btn ${
+                      tool === "mouse" ? "selected-tool" : ""
+                    }`}
+                    onClick={() => {
+                      selectTool("mouse");
+                    }}
+                  >
+                    Mouse {<SelectOutlined />}
+                  </Button>
+                </Col>
+                <Col span={8} className="annotate-tool-btn-ctn">
+                  <Button
+                    className={`annotate-tool-btn ${
+                      tool === "pan" ? "selected-tool" : ""
+                    }`}
+                    onClick={() => {
+                      selectTool("pan");
+                    }}
+                  >
+                    Pan {<DragOutlined />}
+                  </Button>
+                </Col>
+                <Col span={8} className="annotate-tool-btn-ctn">
+                  <Button
+                    className={`annotate-tool-btn ${
+                      tool === "length" ? "selected-tool" : ""
+                    }`}
+                    onClick={() => {
+                      selectTool("length");
+                    }}
+                  >
+                    Ruler {<ColumnHeightOutlined />}
+                  </Button>
+                </Col>
+                <Col span={8} className="annotate-tool-btn-ctn">
+                  <Button
+                    className={`annotate-tool-btn ${
+                      tool === "rectangleRoi" ? "selected-tool" : ""
+                    }`}
+                    onClick={() => {
+                      selectTool("rectangleRoi");
+                    }}
+                  >
+                    Rectangle {<BorderOutlined />}
+                  </Button>
+                </Col>
+                <Col span={8} className="annotate-tool-btn-ctn">
+                  <Button
+                    className={`annotate-tool-btn ${
+                      tool === "freehand" ? "selected-tool" : ""
+                    }`}
+                    onClick={() => {
+                      selectTool("freehand");
+                    }}
+                  >
+                    Polygon {<StarOutlined />}
+                  </Button>
+                </Col>
+                <Col span={8} className="annotate-tool-btn-ctn">
+                  <Button
+                    className={`annotate-tool-btn ${
+                      tool === "ratio" ? "selected-tool" : ""
+                    }`}
+                    onClick={() => {
+                      selectTool("ratio");
+                    }}
+                  >
+                    Ratio {<VerticalAlignBottomOutlined />}
+                  </Button>
+                </Col>
+              </Row>
+            </Panel>
+            <Panel header="Boundind Boxes Table" key="3">
+              <Row align="space-between" style={{ marginTop: "10px" }}>
+                {/* <Col span={24} align="space-between" style={{ marginTop: "10px" }}> */}
+                <Col span={8} align="start">
+                  <label
+                    className="annotate-tool-label"
+                    style={{ marginLeft: "5px" }}
+                  >
+                    Bounding Boxes
+                  </label>
+                </Col>
+                {savedTime && (
+                  <Col span={16} align="end">
+                    <span style={{ fontSize: "small", marginLeft: "10px" }}>
+                      Last Saved: {savedTime}
+                    </span>
+                  </Col>
+                )}
+                {/* </Col> */}
+                <Table
+                  className="annotate-table clickable-table"
+                  rowClassName={(record, index) =>
+                    record.saved ? "" : "unsaved-label"
+                  }
+                  columns={columns}
+                  dataSource={labels}
+                  // showHeader={false}
+                  pagination={false}
+                  size="small"
+                  // onRow={(record, rowIndex) => {
+                  //   return {
+                  //     onClick: (event) => {
+                  //       // labelsOnSelect(record.key);
+                  //       //setCurrentLabels(record.key);
+                  //     }, // click row
+                  //   };
+                  // }}
+                />
+              </Row>
+              <Row justify="end">
+                {labels.some((member) => {
+                  return member.invisible;
+                }) && (
+                  <Button
+                    type="link"
+                    style={{ padding: 0, paddingRight: 10 }}
+                    onClick={showAll}
+                  >
+                    Show All
+                  </Button>
+                )}
+                {labels.some((member) => {
+                  return !member.invisible;
+                }) && (
+                  <Button
+                    type="link"
+                    style={{ padding: 0, paddingLeft: 10 }}
+                    onClick={hideAll}
+                  >
+                    Hide All
+                  </Button>
+                )}
+              </Row>
+            </Panel>
+          </Collapse>
+          <Row justify="end" style={{ marginTop: "12px" }}>
             {false && (
               <Button className="primary-btn smaller" onClick={() => {}}>
                 Close
               </Button>
             )}
 
-            {/* btnMode === "save-cancel" */ labels.some((member) => {
-              return !member.saved;
-            }) && (
-              <Button
-                className="primary-btn smaller"
-                style={{ marginRight: "10px" }}
-                onClick={onCancelAnnotations}
-              >
-                Cancel
-              </Button>
-            )}
+            {
+              /* btnMode === "save-cancel" */ labels.some((member) => {
+                return !member.saved;
+              }) && (
+                <Button
+                  className="primary-btn smaller"
+                  style={{ marginRight: "10px" }}
+                  onClick={onCancelAnnotations}
+                >
+                  Cancel
+                </Button>
+              )
+            }
             {labels.some((member) => {
               return !member.saved;
             }) && (

@@ -81,7 +81,6 @@ export default function ResultsTable(props) {
         key: "confidence",
         sorter: {
           compare: (a, b) => a.confidence - b.confidence,
-          multiple: 2,
         },
       },
       {
@@ -90,7 +89,6 @@ export default function ResultsTable(props) {
         key: "isPositive",
         sorter: {
           compare: (a, b) => a.isPositive - b.isPositive,
-          multiple: 1,
         },
         render: (text, record) => record.isPositive ? 1 : 0
       },
