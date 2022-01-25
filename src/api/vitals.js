@@ -69,10 +69,10 @@ export const deleteRecordRow = async (record_id, entry_id) => {
     }
 }
 
-export const updateRecordRow = async (record_id, update_data) => {
+export const updateRecordRow = async (project_id, record_id, update_data) => {
     try {
         const response = (
-            await instance.patch("/vitals/records/updaterow/", {record_id, update_data})
+            await instance.patch("/vitals/records/updaterow/", {project_id, record_id, update_data})
         ).data;
         return response;
     } catch (e) {

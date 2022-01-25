@@ -1,26 +1,16 @@
 import React, { useState, forwardRef, useImperativeHandle } from "react";
 import { Button, Input, Table, Modal, Tooltip } from "antd";
-import { CloudDownloadOutlined, WarningOutlined } from '@ant-design/icons';
+import { CloudDownloadOutlined } from '@ant-design/icons';
 import XLSX from "xlsx";
 import { uploadVitalsRecord, downloadTemplate } from "../api/vitals";
 
 const UploadRecordForm = forwardRef((props, ref) => {
-    const required_field = ["entry_id", "hn", "gender(male/female)", "age(year)", "measured_time(yyyy-MM-ddTHH:mm:ssZ)"]; // required in every project
+    const required_field = ["entry_id", "hn", "measured_time(yyyy-MM-ddTHH:mm:ssZ)"]; // required in every project
     // const required_field = ["entry_id", "hn", "gender", "age", "measured_time"];
 
     const [uploadedRecordName, setUploadedRecordName] = useState({with_ext: null, without_ext: null});
     const [uploadedRecord ,setUploadedRecord] = useState({with_key: null, without_key: null});
     const [columns, setColumns] = useState(null);
-
-    const [missingField, setMissingField] = useState(null);
-    const printMissingField = () => {
-        var string = ""
-        for (const i in missingField) {
-            (i === missingField.length - 1 || missingField.length === 1) ? 
-                string += missingField[i] + " " : string += missingField[i] + ", ";
-        }
-        return <label>{string}</label>;
-    }
 
     useImperativeHandle(ref, () => ({
         uploadRecord: () => {
@@ -79,12 +69,14 @@ const UploadRecordForm = forwardRef((props, ref) => {
             }
         }
         if (missing_field.length !== 0) {
-            setMissingField(missing_field);
+            Modal.warning({
+                title: "Some fields are missing",
+                content: "Please upload new file with all required fields (listed in template file).",
+            });
             setUploadedRecordName({with_ext: null, without_ext: null});
             setColumns(null);
             setUploadedRecord({with_key: null, without_key: null});
         } else {
-            setMissingField(null);
             // create columns for table
             let column_list = (uploaded_field).map((column) => ({
                 title: column === "hn" ? 
@@ -170,17 +162,6 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     *accepted file type: .xlsx, .csv
                 </label>
             </div>
-            {missingField &&
-                <div className="upload-record-grid">
-                    <label style={{display: "flex", alignItems: "center"}}>
-                        <WarningOutlined style={{marginRight: "5px"}} />
-                        Some fields are missing!
-                    </label>
-                    <label style={{display: "block", marginLeft: "30px", color: "#de5c8e"}}>
-                        Missing Field: {printMissingField()}
-                    </label>
-                    <label>Please upload new file with all required fields.</label>
-                </div>}
             {uploadedRecord.with_key && 
                 <div>
                     <label style={{display: "block"}}>Preview</label>

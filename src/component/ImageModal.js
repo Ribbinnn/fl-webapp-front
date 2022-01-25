@@ -22,7 +22,8 @@ export default function ImageModal (props){
           destroyOnClose
           className="img-modal"
           visible={visible}
-          title={`${props.ProcDescription} ${props.StudyDateTime}`}
+          // title={`${props.ProcDescription} ${props.StudyDateTime}`}
+          title={props.StudyDateTime}
           onCancel={handleCancel}
           footer={null}
           width="800px"

@@ -21,8 +21,11 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                 if (!hasRecord) {
                     const data = await requirementForm.validateFields();
                     data["hn"] = parseInt(props.HN); // add HN
-                    data["entry_id"] = parseInt(data["entry_id"]);
-                    data["age"] = parseInt(data["age"]); // check other number field !
+                    for (const i in data) {
+                        if (!isNaN(data[i])) {
+                            data[i] = parseInt(data[i]);
+                        }
+                    }
                     data["measured_time"] = new Date(data["measured_time"]);
                     props.setMedRec(data);
                 }
@@ -40,7 +43,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
     const [tableForm] = Form.useForm();
     const [data, setData] = useState([]);
     const currentData = useRef([]);
-    const columns = ["measured_time", "updated_time", "age", "gender"];
+    const columns = ["measured_time", "updated_time"];
     const [mergedColumns, setMergeColumns] = useState([]);
     const [editingKey, setEditingKey] = useState("");
 
@@ -109,15 +112,20 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             for (const i in remove_field) {
                 delete update_data[remove_field[i]];
             }
+            for (const i in update_data) {
+                if (!isNaN(update_data[i])) {
+                    update_data[i] = parseInt(update_data[i]);
+                }
+            }
             update_data["measured_time"] = new Date(update_data["measured_time"]);
             update_data["updated_time"] = new Date(update_data["updated_time"]);
-            update_data["age"] = parseInt(update_data["age"]); // check other number field !
-            updateRecordRow(record_id, [update_data])
+            updateRecordRow(globalProject.projectId, record_id, [update_data])
             .then((res) => {
                 console.log(res);
                 setEditingKey("");
             }).catch((err) => {
-                console.log(err);
+                console.log(err.response);
+                Modal.warning({content: err.response.data.error});
             });
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
@@ -232,8 +240,8 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                 setLoaded(true);
             } else {
                 setHasRecord(false);
-                const fields = ["entry_id", "measured_time", "age", "gender"];
-                const fieldsLabel = {entry_id: "Entry id", measured_time: "Measured time (yyyy-MM-ddTHH:mm:ssZ)", age: "Age (year)", gender: "Gender (male/female)"};
+                const fields = ["entry_id", "measured_time"];
+                const fieldsLabel = {entry_id: "Entry id", measured_time: "Measured time (yyyy-MM-ddTHH:mm:ssZ)"}; 
                 // add additional required field of each project
                 for (const i in globalProject.projectReq) {
                     const field = globalProject.projectReq[i]["name"];
@@ -272,7 +280,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
     };
     const onClickFilter = () => {
         let filter_data = currentData.current.filter((item, i) => (
-            clinician === "" ? true : item.clinician_first_name.includes(clinician)
+            clinician === "" ? true : item.clinician_first_name.toLowerCase().includes(clinician.toLowerCase())
         ));
         setData(filter_data);
     };
