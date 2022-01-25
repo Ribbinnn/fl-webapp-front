@@ -1,6 +1,16 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { Collapse, Popover, Button, Row, Col, Image, Spin, Tag } from "antd";
+import {
+  Collapse,
+  Popover,
+  Button,
+  Row,
+  Col,
+  Image,
+  Spin,
+  Tag,
+  Modal,
+} from "antd";
 import Info from "../component/Info";
 import {
   InfoCircleOutlined,
@@ -28,11 +38,15 @@ export default function Report(props) {
   const [info, setInfo] = useState();
   const [gradCam, setGradCam] = useState();
   useEffect(() => {
-    getReport(rid).then((res) => {
-      // console.log(res);
-      setInfo(res.data);
-      setLoaded(true);
-    });
+    getReport(rid)
+      .then((res) => {
+        // console.log(res);
+        setInfo(res.data);
+        setLoaded(true);
+      })
+      .catch((err) => {
+        return Modal.error({ title: "Report not Found", onOk:  () => history.push("/viewhistory")});
+      });
   }, []);
 
   useEffect(() => {
@@ -84,59 +98,44 @@ export default function Report(props) {
       {loaded && (
         <Row justify="center" align="top" style={{ marginBottom: "10px" }}>
           <Col xs={24} sm={24} md={24} lg={12} xl={12} align="middle">
-          <label style={{fontWeight: "bold"}}> Original Image </label>
-            {
-              <div>
-              <Image
-              // preview={false}
-              height={400}
-              src={getGradCam(rid, "original")}
-            />
+            <label style={{ fontWeight: "bold" }}> Original Image </label>
+            <div>
+              <Image height={400} src={getGradCam(rid, "original")} />
             </div>
-            /* <DicomViewOnly
-              img_url={getDicomByAccessionNo(info.result.image_id.accession_no)}
-              img_source="wado"
-              size={400}
-            /> */}
             {mode === "edit" && (
               <AnnotationModal
                 accession_no={info.result.image_id.accession_no}
+                /* gradCamList={info.gradCam.reduce((current,item)=>{
+                  if (item === "original") return current
+                  return [...current, {}]
+              },[])} */
+                gradCamList={info.classes.reduce((current, item) => {
+                  if (!info.gradCam.includes(item.finding)) return current;
+                  return [
+                    ...current,
+                    {
+                      finding: item.finding,
+                      isPositive: item.isPositive,
+                    },
+                  ];
+                }, [])}
                 labelList={info.classes.map((item) => {
                   return item.finding;
                 })}
+                displayText="Annotate"
               />
             )}
           </Col>
           {gradCam && (
             <Col xs={24} sm={24} md={24} lg={12} xl={12} align="center">
-              <label style={{fontWeight: "bold"}}> Gradcam Image </label>
+              <label style={{ fontWeight: "bold" }}> Gradcam Image </label>
               <div
                 style={{
                   height: "400px",
                   textAlign: "center",
                 }}
               >
-                <Image
-                  // preview={false}
-                  height={400}
-                  src={getGradCam(rid, gradCam)}
-                />
-                {/* {gradCam ? (
-                <Image
-                  preview={false}
-                  height={400}
-                  src={getGradCam(rid, gradCam)}
-                />
-              ) : (
-                <DicomViewOnly
-                  img_url={getDicomByAccessionNo(
-                    info.result.image_id.accession_no
-                  )}
-                  img_source="wado"
-                  size={400}
-                  div_id="gradcam"
-                />
-              )} */}
+                <Image height={400} src={getGradCam(rid, gradCam)} />
               </div>
               <Button
                 type="link"

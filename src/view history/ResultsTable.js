@@ -51,11 +51,12 @@ export default function ResultsTable(props) {
             key: i,
             class: item.finding,
             confidence: item.confidence.toFixed(4),
+            isPositive: item.isPositive,
             gradCam: props.gradCamList.includes(item.finding),
           },
         ];
       }, []);
-      filtered_data.sort((a, b) => b.confidence - a.confidence);
+      filtered_data.sort((a, b) => b.isPositive - a.isPositive || b.confidence - a.confidence);
       setData(filtered_data);
       setSelectedRowKeys(defaultSelectedRowKeys);
       setDefaultRowKeys(defaultSelectedRowKeys);
@@ -80,8 +81,16 @@ export default function ResultsTable(props) {
         key: "confidence",
         sorter: {
           compare: (a, b) => a.confidence - b.confidence,
-          multiple: 1,
         },
+      },
+      {
+        title: "Positiveness",
+        dataIndex: "isPositive",
+        key: "isPositive",
+        sorter: {
+          compare: (a, b) => a.isPositive - b.isPositive,
+        },
+        render: (text, record) => record.isPositive ? 1 : 0
       },
       {
         title: "Gradcam",
@@ -276,9 +285,9 @@ export default function ResultsTable(props) {
               onChange={onChangeRating}
               value={rating}
             />
-            <span className="rating-text">
+            <label className="rating-text" style={{marginLeft: "20px"}}>
               {rating ? ratingDesc[rating - 1] : "No Rating"}
-            </span>
+            </label>
           </span>
         </Col>
       </Row>
