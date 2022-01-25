@@ -21,8 +21,11 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                 if (!hasRecord) {
                     const data = await requirementForm.validateFields();
                     data["hn"] = parseInt(props.HN); // add HN
-                    data["entry_id"] = parseInt(data["entry_id"]);
-                    // data["age"] = parseInt(data["age"]); // check other number field !
+                    for (const i in data) {
+                        if (!isNaN(data[i])) {
+                            data[i] = parseInt(data[i]);
+                        }
+                    }
                     data["measured_time"] = new Date(data["measured_time"]);
                     props.setMedRec(data);
                 }
@@ -109,15 +112,20 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             for (const i in remove_field) {
                 delete update_data[remove_field[i]];
             }
+            for (const i in update_data) {
+                if (!isNaN(update_data[i])) {
+                    update_data[i] = parseInt(update_data[i]);
+                }
+            }
             update_data["measured_time"] = new Date(update_data["measured_time"]);
             update_data["updated_time"] = new Date(update_data["updated_time"]);
-            // update_data["age"] = parseInt(update_data["age"]); // check other number field !
-            updateRecordRow(record_id, [update_data])
+            updateRecordRow(globalProject.projectId, record_id, [update_data])
             .then((res) => {
                 console.log(res);
                 setEditingKey("");
             }).catch((err) => {
-                console.log(err);
+                console.log(err.response);
+                Modal.warning({content: err.response.data.error});
             });
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
