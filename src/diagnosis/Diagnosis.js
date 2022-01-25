@@ -88,7 +88,11 @@ export default function Diagnosis() {
           console.log(res);
           setCurrent(current + 1);
           setLoading(false);
-        }).catch((err) => console.log(err.response));
+        }).catch((err) => {
+          console.log(err.response);
+          Modal.warning({content: err.response.data.message});
+          setLoading(false);
+        });
       } else {
         setCurrent(current + 1);
       }  
