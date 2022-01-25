@@ -107,7 +107,7 @@ function MyRecord () {
 
     function onClickSearch() {
         let filterList = vitalsList.filter((item, i) => (
-            (name===""? true: item.rec_name.includes(name)) &&
+            (name===""? true: item.rec_name.toLowerCase().includes(name.toLowerCase())) &&
             (firstDate==="none"? true: new Date(item.updated) >= firstDate) &&
             (lastDate==="none"? true: new Date(item.updated) <= lastDate)
         ))

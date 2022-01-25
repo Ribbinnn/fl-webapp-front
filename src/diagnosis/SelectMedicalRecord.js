@@ -272,7 +272,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
     };
     const onClickFilter = () => {
         let filter_data = currentData.current.filter((item, i) => (
-            clinician === "" ? true : item.clinician_first_name.includes(clinician)
+            clinician === "" ? true : item.clinician_first_name.toLowerCase().includes(clinician.toLowerCase())
         ));
         setData(filter_data);
     };

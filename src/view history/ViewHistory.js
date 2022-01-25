@@ -242,7 +242,7 @@ function HistoryLog(props) {
           (item, i) =>
             (queryString.get("patient_HN") === null
               ? true
-              : item.hn === parseInt(queryString.get("patient_HN"))) &&
+              : item.hn.includes(queryString.get("patient_HN"))) &&
             (queryString.get("status") === null
               ? true
               : item.status === queryString.get("status")) &&
@@ -251,7 +251,7 @@ function HistoryLog(props) {
               : item.finding === queryString.get("findings")) &&
             (queryString.get("clinician") === null
               ? true
-              : item.clinician_name === queryString.get("clinician")) &&
+              : item.clinician_name.toLowerCase().includes(queryString.get("clinician").toLowerCase())) &&
             (queryString.get("from") === null
               ? true
               : new Date(item.createdAt) >=
