@@ -1,19 +1,10 @@
 import React, { useState } from "react";
-import { Row, Col, Form, Input, Button, Image } from "antd";
+import { Row, Col, Form, Input, Button, Image, Modal } from "antd";
 import { login } from "./api/login";
 
 function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [form] = Form.useForm();
   const [remember, setRemember] = useState(false);
-
-  function usernameOnChange(item) {
-    setUsername(item.target.value);
-  }
-
-  function passwordOnChange(item) {
-    setPassword(item.target.value);
-  }
 
   function rememberOnChange(item) {
     setRemember(item.target.checked);
@@ -31,17 +22,27 @@ function Login() {
         </Col>
         <Col span={12}>
           <div className="center-div">
-            <Form layout="vertical">
+            <Form form={form} layout="vertical" requiredMark={false}>
               <Form.Item
-                onChange={usernameOnChange}
+                name="username"
                 label="Username"
+                rules={[
+                    {
+                        required: true,
+                    },
+                ]}
                 style={{ marginBottom: "10px" }}
               >
                 <Input className="input-text" style={{ width: "300px" }} />
               </Form.Item>
               <Form.Item
-                onChange={passwordOnChange}
+                name="password"
                 label="Password"
+                rules={[
+                    {
+                        required: true,
+                    },
+                ]}
                 style={{ marginBottom: "10px" }}
               >
                 <Input
@@ -62,11 +63,11 @@ function Login() {
                   </label>
                 </div>
                 {/* <label 
-                                    id="smaller-label" 
-                                    className="clickable-label" 
-                                    style={{float: "right", color: "#de5c8e"}}>
-                                        Forgot password?
-                                </label> */}
+                    id="smaller-label" 
+                    className="clickable-label" 
+                    style={{float: "right", color: "#de5c8e"}}>
+                        Forgot password?
+                </label> */}
               </Form.Item>
               <Form.Item>
                 <Button
@@ -75,12 +76,13 @@ function Login() {
                   style={{ width: "100%" }}
                   onClick={async () => {
                     /* call sign in api */
-                    login(username, password, remember)
+                    const data = await form.validateFields();
+                    login(data.username, data.password, remember)
                       .then((respond) => {
                         window.location.reload();
                       })
                       .catch((e) => {
-                        console.log(e);
+                        Modal.warning({content: e.response.data.message});
                       });
                   }}
                 >
