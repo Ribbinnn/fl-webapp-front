@@ -180,8 +180,8 @@ function HistoryLog(props) {
                     <div className="center-div">
                         <ImageModal
                             AccessionNo={report.accession_no}
-                            ProcDescription=""
-                            StudyDateTime="" />
+                            // ProcDescription=""
+                            StudyDateTime=" " />
                         {/* <DownloadOutlined
                             className="clickable-icon"
                             onClick={() => {
