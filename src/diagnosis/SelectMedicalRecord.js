@@ -126,7 +126,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                 setEditingKey("");
             }).catch((err) => {
                 console.log(err.response);
-                Modal.warning({content: err.response.data.error});
+                Modal.error({content: err.response.data.error});
             });
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
