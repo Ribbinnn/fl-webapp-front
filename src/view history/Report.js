@@ -102,7 +102,7 @@ export default function Report(props) {
             <div>
               <Image height={400} src={getGradCam(rid, "original")} />
             </div>
-            {mode === "edit" && (
+            {mode === "edit" && info.result.status !== "finalized" && (
               <AnnotationModal
                 accession_no={info.result.image_id.accession_no}
                 /* gradCamList={info.gradCam.reduce((current,item)=>{
