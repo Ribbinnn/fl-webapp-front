@@ -82,7 +82,11 @@ function Login() {
                         window.location.reload();
                       })
                       .catch((e) => {
-                        Modal.warning({content: e.response.data.message});
+                        if (e.response !== undefined) {
+                          Modal.warning({content: e.response.data.message});
+                        } else {
+                          Modal.warning({content: "Cannot connect to the server."});
+                        }
                       });
                   }}
                 >
