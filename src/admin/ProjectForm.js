@@ -118,8 +118,9 @@ function ProjectForm() {
                                     getProjectInfoByID(id)
                                     .then((res) => {
                                         const data = res.data;
+                                        let head = res.data.head.map((head) => head._id);
                                         setProjectName(data.name);
-                                        form.setFieldsValue({task: data.task, description: data.description, head: data.head});
+                                        form.setFieldsValue({task: data.task, description: data.description, head: head});
                                         setClasses(data.predClasses);
                                         setSubmit(false);
                                         setInputVisible(true);
