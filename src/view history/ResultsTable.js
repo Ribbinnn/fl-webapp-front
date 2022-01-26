@@ -6,6 +6,7 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { updateReport } from "../api/report";
+import { saveToPACS } from "../api/pacs";
 
 const { TextArea } = Input;
 const GradCamStyle = { fontSize: "x-large" };
@@ -118,16 +119,19 @@ export default function ResultsTable(props) {
   const onSavetoPACS = () => {
     /* save to PACS api */
     const key = "updatable";
-    message.loading({ content: "Loading...", key, duration: 2.5}).then(() => message.success({ content: "Successfully save to PACS. This report can no longer edit.", key, duration: 5 }));
+    message.loading({ content: "Loading...", key, duration: 0 });
     
-    // SaveToPACS()
-    //   .then((res) => {
-    //     console.log(res);
-    //     if (res.success) {
-    //       message.success({ content: res.message, key, duration: 5 });
-    //     } else message.error({ content: res.message, key, duration: 5 });
-    //   })
-    //   .catch((err) => console.log(err.response));
+    saveToPACS(props.rid)
+      .then((res) => {
+        console.log(res);
+        if (res.success) {
+          message.success({ content: res.message, key, duration: 5 });
+        } else message.error({ content: res.message, key, duration: 5 });
+      })
+      .catch((err) => {
+        console.log(err.response)
+        message.error({ content: err.response.data.message, key, duration: 5 });
+      });
   };
 
   const onSaveReport = () => {
