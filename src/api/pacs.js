@@ -27,3 +27,12 @@ export const findPatientOnPACS = async (HN) => {
         throw e
     }
 }
+
+export const saveToPACS = async (report_id) => {
+    try {
+        const response = (await instance.post("/pacs/save/"+report_id));
+        return response.data
+    } catch (e) {
+        throw e
+    }
+}
