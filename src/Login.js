@@ -83,9 +83,9 @@ function Login() {
                       })
                       .catch((e) => {
                         if (e.response !== undefined) {
-                          Modal.warning({content: e.response.data.message});
+                          Modal.error({content: e.response.data.message});
                         } else {
-                          Modal.warning({content: "Cannot connect to the server."});
+                          Modal.error({content: "Cannot connect to the server."});
                         }
                       });
                   }}

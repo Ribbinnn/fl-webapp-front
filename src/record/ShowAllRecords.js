@@ -59,6 +59,7 @@ function ShowAllRecords(props) {
     };
     const save = async (key) => {
         try {
+            setLoaded(false);
             const row = await form.validateFields();
             const newData = [...currentData.current];
             const index = newData.findIndex((item) => key === item.key);
@@ -77,13 +78,14 @@ function ShowAllRecords(props) {
                 setEditingKey("");
             }).catch((err) => {
                 console.log(err.response);
-                Modal.warning({content: err.response.data.error});
+                Modal.error({content: err.response.data.error});
             });
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
         }
     };
     const deleteRow = (key) => {
+        setLoaded(false);
         const newData = [...currentData.current];
         const index = newData.findIndex((item) => key === item.key);
         deleteRecordRow(recordId.current, newData[index].entry_id)

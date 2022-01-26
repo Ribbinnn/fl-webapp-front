@@ -90,7 +90,7 @@ export default function Diagnosis() {
           setLoading(false);
         }).catch((err) => {
           console.log(err.response);
-          Modal.warning({content: err.response.data.message});
+          Modal.error({content: err.response.data.message});
           setLoading(false);
         });
       } else {
@@ -238,7 +238,7 @@ function SelectHN(props) {
         props.setAccessionNoIndex([]);
       } else props.setPatient(false);
       props.setLoading(false);
-    });
+    }).catch((err) => console.log(err.response));
   };
   return (
     <Form layout="vertical">
