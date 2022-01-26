@@ -103,6 +103,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
     };
     const save = async (key) => {
         try {
+            setLoaded(false);
             const row = await tableForm.validateFields();
             const newData = [...currentData.current];
             const index = newData.findIndex((item) => key === item.key);
@@ -132,6 +133,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
         }
     };
     const deleteRow = (key) => {
+        setLoaded(false);
         const newData = [...currentData.current];
         const index = newData.findIndex((item) => key === item.key);
         deleteRecordRow(newData[index].record_id, newData[index].entry_id)
@@ -288,6 +290,17 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
     return(
         <div>
             <label style={{marginBottom: "10px"}}>Medical Records</label>
+            <Form layout="vertical" style={{margin: "8px 0 5px 0"}}>
+                <label style={{display: "block", marginBottom: "8px"}}>Clinician</label>
+                <Form.Item style={{display: "inline-block"}}>
+                    <Input className="input-text" style={{width: "200px"}} onChange={onChangeClinician} />
+                </Form.Item>
+                <Form.Item style={{display: "inline-block", marginLeft: "18px"}}>
+                    <Button className="primary-btn smaller" onClick={onClickFilter}>
+                        Filter
+                    </Button>
+                </Form.Item>
+            </Form>
             {!loaded && (
                 <div style={{ textAlign: "center", marginTop: "20%" }}>
                 <Spin indicator={LoadingIcon} />
@@ -299,34 +312,21 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                 </div>
             )}
             {loaded && hasRecord &&
-                <div>
-                    <Form layout="vertical" style={{margin: "8px 0 5px 0"}}>
-                        <label style={{display: "block", marginBottom: "8px"}}>Clinician</label>
-                        <Form.Item style={{display: "inline-block"}}>
-                            <Input className="input-text" style={{width: "200px"}} onChange={onChangeClinician} />
-                        </Form.Item>
-                        <Form.Item style={{display: "inline-block", marginLeft: "18px"}}>
-                            <Button className="primary-btn smaller" onClick={onClickFilter}>
-                                Filter
-                            </Button>
-                        </Form.Item>
-                    </Form>
-                    <Form form={tableForm} component={false}>
-                        <Table 
-                            components={{
-                                body: {
-                                    cell: EditableCell,
-                                },
-                            }}
-                            columns={mergedColumns} 
-                            dataSource={data} 
-                            pagination={false} 
-                            rowSelection={rowSelection}
-                            size="small"
-                            className="seven-rows-table"
-                        />
-                    </Form>
-                </div>}
+                <Form form={tableForm} component={false}>
+                    <Table 
+                        components={{
+                            body: {
+                                cell: EditableCell,
+                            },
+                        }}
+                        columns={mergedColumns} 
+                        dataSource={data} 
+                        pagination={false} 
+                        rowSelection={rowSelection}
+                        size="small"
+                        className="seven-rows-table"
+                    />
+                </Form>}
             {loaded && !hasRecord &&
                 <div style={{marginLeft: "40px"}}>
                     <label style={{marginBottom: "12px"}}>No record found. Please fill in the boxes below.</label>
