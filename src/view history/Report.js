@@ -40,7 +40,7 @@ export default function Report(props) {
   useEffect(() => {
     getReport(rid)
       .then((res) => {
-        // console.log(res);
+        console.log(res);
         setInfo(res.data);
         setLoaded(true);
       })
@@ -239,7 +239,7 @@ const ReportHeader = (props) => {
           </i>
         )}
       </label>
-      <label
+      {props.HN && <label
         style={{
           display: "block",
           color: "#de5c8e",
@@ -247,7 +247,7 @@ const ReportHeader = (props) => {
         }}
       >
         Patient's HN: {props.HN}
-      </label>
+      </label>}
       <label
         style={{
           display: "block",
