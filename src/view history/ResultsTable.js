@@ -57,7 +57,9 @@ export default function ResultsTable(props) {
           },
         ];
       }, []);
-      filtered_data.sort((a, b) => b.isPositive - a.isPositive || b.confidence - a.confidence);
+      filtered_data.sort(
+        (a, b) => b.isPositive - a.isPositive || b.confidence - a.confidence
+      );
       setData(filtered_data);
       setSelectedRowKeys(defaultSelectedRowKeys);
       setDefaultRowKeys(defaultSelectedRowKeys);
@@ -91,7 +93,7 @@ export default function ResultsTable(props) {
         sorter: {
           compare: (a, b) => a.isPositive - b.isPositive,
         },
-        render: (text, record) => record.isPositive ? 1 : 0
+        render: (text, record) => (record.isPositive ? 1 : 0),
       },
       {
         title: "Gradcam",
@@ -120,7 +122,7 @@ export default function ResultsTable(props) {
     /* save to PACS api */
     const key = "updatable";
     message.loading({ content: "Loading...", key, duration: 0 });
-    
+
     saveToPACS(props.rid)
       .then((res) => {
         console.log(res);
@@ -129,7 +131,7 @@ export default function ResultsTable(props) {
         } else message.error({ content: res.message, key, duration: 5 });
       })
       .catch((err) => {
-        console.log(err.response)
+        console.log(err.response);
         message.error({ content: err.response.data.message, key, duration: 5 });
       });
   };
@@ -179,10 +181,10 @@ export default function ResultsTable(props) {
   };
 
   const onChangeRating = (e) => {
-    console.log(e)
+    console.log(e);
     setRating(e);
     btnGroup !== "save" && setBtnGroup("save");
-  }
+  };
   const rowSelection = {
     type: "checkbox",
     selectedRowKeys,
@@ -203,7 +205,7 @@ export default function ResultsTable(props) {
 
   return (
     <div>
-      {mode === "edit" && (
+      {mode === "edit" && status !== "finalized" && (
         <Table
           className="report-table"
           rowSelection={{
@@ -223,18 +225,14 @@ export default function ResultsTable(props) {
         />
       )}
       <Row align="space-between">
-        <Col  xs={24}
-            sm={24}
-            md={24}
-            lg={11}
-            xl={11}>
+        <Col xs={24} sm={24} md={24} lg={11} xl={11}>
           <label
             style={{
               display: "block",
               color: "#58595b",
               marginBottom: "10px",
               fontWeight: "bold",
-              marginTop: "20px"
+              marginTop: "20px",
             }}
           >
             Note
@@ -251,7 +249,7 @@ export default function ResultsTable(props) {
               {props.note === "" ? "-" : props.note}
             </label>
           )}
-          {mode === "edit" && (
+          {mode === "edit" && status !== "finalized" && (
             <TextArea
               id="report-note"
               className="input-text"
@@ -265,18 +263,14 @@ export default function ResultsTable(props) {
             />
           )}
         </Col>
-        <Col xs={24}
-            sm={24}
-            md={24}
-            lg={11}
-            xl={11}>
+        <Col xs={24} sm={24} md={24} lg={11} xl={11}>
           <label
             style={{
               display: "block",
               color: "#58595b",
               marginBottom: "10px",
               fontWeight: "bold",
-              marginTop: "20px"
+              marginTop: "20px",
             }}
           >
             Rate this AI
@@ -289,7 +283,7 @@ export default function ResultsTable(props) {
               onChange={onChangeRating}
               value={rating}
             />
-            <label className="rating-text" style={{marginLeft: "20px"}}>
+            <label className="rating-text" style={{ marginLeft: "20px" }}>
               {rating ? ratingDesc[rating - 1] : "No Rating"}
             </label>
           </span>

@@ -40,7 +40,7 @@ export default function Report(props) {
   useEffect(() => {
     getReport(rid)
       .then((res) => {
-        // console.log(res);
+        console.log(res);
         setInfo(res.data);
         setLoaded(true);
       })
@@ -102,7 +102,7 @@ export default function Report(props) {
             <div>
               <Image height={400} src={getGradCam(rid, "original")} />
             </div>
-            {mode === "edit" && (
+            {mode === "edit" && info.result.status !== "finalized" && (
               <AnnotationModal
                 accession_no={info.result.image_id.accession_no}
                 /* gradCamList={info.gradCam.reduce((current,item)=>{
@@ -239,7 +239,7 @@ const ReportHeader = (props) => {
           </i>
         )}
       </label>
-      <label
+      {props.HN && <label
         style={{
           display: "block",
           color: "#de5c8e",
@@ -247,7 +247,7 @@ const ReportHeader = (props) => {
         }}
       >
         Patient's HN: {props.HN}
-      </label>
+      </label>}
       <label
         style={{
           display: "block",
