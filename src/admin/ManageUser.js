@@ -64,6 +64,8 @@ export default function ManageUser(props) {
               optionFilterProp="label"
               onChange={(id) => {
                 getProjectInfoByID(id).then((res) => {
+                  let head = res.data.head.map(item => item._id)
+                  res.data.head = head
                   setProject(res.data)
                   setSubmit(false);
                 }).catch((err) => {
