@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { getAllRecords, deleteRecordRow, updateRecordRow } from "../api/vitals";
-import { Table, Button, Input, Form, Popconfirm, Tooltip, Spin } from "antd";
+import { Table, Button, Input, Form, Popconfirm, Tooltip, Spin, Modal } from "antd";
 import { EditOutlined, DeleteOutlined, SaveOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
 const LoadingIcon = (
@@ -59,26 +59,33 @@ function ShowAllRecords(props) {
     };
     const save = async (key) => {
         try {
+            setLoaded(false);
             const row = await form.validateFields();
             const newData = [...currentData.current];
             const index = newData.findIndex((item) => key === item.key);
             const update_data = { ...newData[index], ...row };
             delete update_data["key"];
+            for (const i in update_data) {
+                if (!isNaN(update_data[i])) {
+                    update_data[i] = parseInt(update_data[i]);
+                }
+            }
             update_data["measured_time"] = new Date(update_data["measured_time"]);
             update_data["updated_time"] = new Date(update_data["updated_time"]);
-            update_data["age"] = parseInt(update_data["age"]); // check other number field !
             updateRecordRow(recordId.current, [update_data])
             .then((res) => {
                 console.log(res);
                 setEditingKey("");
             }).catch((err) => {
-                console.log(err);
+                console.log(err.response);
+                Modal.error({content: err.response.data.error});
             });
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
         }
     };
     const deleteRow = (key) => {
+        setLoaded(false);
         const newData = [...currentData.current];
         const index = newData.findIndex((item) => key === item.key);
         deleteRecordRow(recordId.current, newData[index].entry_id)
