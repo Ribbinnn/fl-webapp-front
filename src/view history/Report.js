@@ -110,21 +110,16 @@ export default function Report(props) {
             {mode === "edit" && info.result.status !== "finalized" && (
               <AnnotationModal
                 accession_no={info.result.image_id.accession_no}
-                gradCamList={info.gradCam.filter((item)=>{return item !== "original"})}
-                /* gradCamList={info.gradCam.reduce((current,item)=>{
-                  if (item === "original") return current
-                  return [...current, {}]
-              },[])} */
-                // gradCamList={info.classes.reduce((current, item) => {
-                //   if (!info.gradCam.includes(item.finding)) return current;
-                //   return [
-                //     ...current,
-                //     {
-                //       finding: item.finding,
-                //       isPositive: item.isPositive,
-                //     },
-                //   ];
-                // }, [])}
+                gradCamList={info.classes.reduce((current, item) => {
+                  if (!info.gradCam.includes(item.finding)) return current;
+                  return [
+                    ...current,
+                    {
+                      finding: item.finding,
+                      isPositive: item.isPositive,
+                    },
+                  ];
+                }, [])}
                 labelList={info.classes.map((item) => {
                   return item.finding;
                 })}

@@ -29,7 +29,6 @@ export default function ProjectInfo(props) {
           Classes: response.data.predClasses,
           Owner: response.data.users,
           Task: response.data.task,
-          Head: response.data.head
         })
       setLoaded(true);
       })
@@ -59,12 +58,6 @@ export default function ProjectInfo(props) {
             <div className="info" style={{ width: props.width ?? "100%" }}>
         <div>
           Task : <Tag color="#e9c869">{pinfo.Task}</Tag>
-        </div>
-        <div>
-          Head : 
-          {pinfo.Head.map((item, i) => (
-            <ol key={i}>{`${item.first_name} ${item.last_name}`}</ol>
-          ))}
         </div>
         <div>
           Classes :{" "}

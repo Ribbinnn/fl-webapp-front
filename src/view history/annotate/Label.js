@@ -21,7 +21,6 @@ export default function Label(props) {
   const [name, setName] = useState("");
 
   useEffect(() => {
-    console.log(props.labelList);
     if (props.labelList.length > 0) {
       props.setSelectedLabel(props.labelList[0]);
     } else props.setSelectedLabel("label");
@@ -33,7 +32,7 @@ export default function Label(props) {
 
   const addItem = () => {
     console.log("addItem");
-    if (name !== "") {
+    if (name !== "" && !labelList.map((item)=>{return item.toLowerCase()}).includes(name.toLowerCase())) {
       props.setLabelList([...labelList, name]);
       setLabelList([...labelList, name]);
     }

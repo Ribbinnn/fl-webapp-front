@@ -27,8 +27,6 @@ export default function NavBar() {
     switch (path[0]) {
       case "":
         return "home";
-      case "record":
-        return path[1];
       default:
         return path[0];
     }
@@ -65,7 +63,6 @@ export default function NavBar() {
     >
       <Menu
         selectedKeys={[tab]}
-        defaultOpenKeys={["record"]}
         mode="inline"
         style={{ height: "calc(100vh - 50px)", paddingTop: 40 }}
       >
@@ -78,22 +75,6 @@ export default function NavBar() {
         >
           Home
         </Menu.Item>
-        <SubMenu
-          key="record"
-          className="submenu"
-          icon={<DatabaseOutlined />}
-          title="Record"
-        >
-          <Menu.Item key="upload" onClick={() => selectMenu("/record/upload")}>
-            Upload
-          </Menu.Item>
-          <Menu.Item
-            key="myrecord"
-            onClick={() => selectMenu("/record/myrecord")}
-          >
-            My Record
-          </Menu.Item>
-        </SubMenu>
         <Menu.Item
           key="diagnosis"
           className="menuitem"
