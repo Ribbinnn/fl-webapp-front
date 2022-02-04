@@ -10,15 +10,17 @@ const LoadingIcon = (
 const { Panel } = Collapse;
 
 export default function ProjectInfo(props) {
-  const { globalProject, setGlobalProject } = useContext(Contexts.project);
-  const [loaded, setLoaded] = useState(false);
+  const { globalProject } = useContext(Contexts.project);
+  const [loaded, setLoaded] = useState();
   const palette = ["magenta","red","volcano","orange","gold","green","cyan","blue","geekblue","purple"]
   const [pinfo, setPinfo] = useState();
 
   useEffect(() => {
-    console.log("here")
+    // console.log("here")
+    setLoaded(false);
     getProjectInfoByID(globalProject.projectId).then((response) => {
       console.log(response)
+      console.log(typeof(response.data.head))
       setPinfo({
           ProjectID: response.data._id,
           ProjectName: response.data.name,
@@ -26,10 +28,12 @@ export default function ProjectInfo(props) {
           Requirement: response.data.requirements,
           Classes: response.data.predClasses,
           Owner: response.data.users,
-          Task: response.data.task
+          Task: response.data.task,
+          Head: response.data.head
         })
       setLoaded(true);
       })
+      
     .catch((err) => {
       console.error(err);
     });
@@ -57,6 +61,12 @@ export default function ProjectInfo(props) {
           Task : <Tag color="#e9c869">{pinfo.Task}</Tag>
         </div>
         <div>
+          Head : 
+          {pinfo.Head.map((item, i) => (
+            <ol key={i}>{`${item.first_name} ${item.last_name}`}</ol>
+          ))}
+        </div>
+        <div>
           Classes :{" "}
           {pinfo.Classes.map((item, i) => (
             <Tag key={i} color={palette[(item.charCodeAt(0))%palette.length]}>
@@ -66,7 +76,7 @@ export default function ProjectInfo(props) {
         </div>
         <div>Description: {pinfo.Description}</div>
         <div>
-          Requirement :
+          Requirement : {!pinfo.Requirement.length && "-"}
           {pinfo.Requirement.map((item, i) => (
             <ol key={i}>{item.name}</ol>
           ))}
