@@ -86,7 +86,13 @@ export default function AnnotationPanel(props) {
   useEffect(() => {
     // console.log(props.accession_no);
     // console.log(props.gradCamList);
-    loadDicom(getDicomByAccessionNo(props.accession_no), "wado", displayImage);
+    // console.log(props.mode)
+    try {
+      loadDicom(getDicomByAccessionNo(props.accession_no), "wado", displayImage);
+    } catch(e){
+      Modal.error({content: "Error on loading image."})
+      props.handleCancel();
+    }
     getBBox(rid).then((res) => {
       // console.log(res);
       if (res.data) {
@@ -316,7 +322,7 @@ export default function AnnotationPanel(props) {
             >
               <Button type="link" icon={<InfoCircleOutlined />} />
             </Popover>
-            <Button
+            {props.mode === "editable" && <Button
               type="link"
               icon={<EditOutlined />}
               disabled={record.invisible}
@@ -349,8 +355,8 @@ export default function AnnotationPanel(props) {
                   },
                 });
               }}
-            />
-            <Popconfirm
+            />}
+            {props.mode === "editable" && <Popconfirm
               title="Delete this label?"
               onConfirm={() => {
                 let update = labels;
@@ -432,7 +438,7 @@ export default function AnnotationPanel(props) {
                 disabled={record.invisible}
                 icon={<DeleteOutlined />}
               />
-            </Popconfirm>
+            </Popconfirm>}
           </span>
         ),
       },
@@ -507,11 +513,12 @@ export default function AnnotationPanel(props) {
     cornerstoneTools.pan.activate(element, 2); // pan is the default tool for middle mouse button
     cornerstoneTools.zoom.activate(element, 4); // zoom is the default tool for right mouse button
     cornerstoneTools.zoomWheel.activate(element); // zoom is the default tool for middle mouse wheel
-    cornerstoneTools.freehand.enable(element);
-    cornerstoneTools.length.enable(element);
-    cornerstoneTools.rectangleRoi.enable(element);
-    cornerstoneTools.pan.enable(element);
-
+    if (props.mode === "editable"){
+      cornerstoneTools.freehand.enable(element);
+      cornerstoneTools.length.enable(element);
+      cornerstoneTools.rectangleRoi.enable(element);
+      cornerstoneTools.pan.enable(element);
+    }
     setTool("mouse");
     setDicomElement(element);
     removeAnnotations(element);
@@ -1083,7 +1090,7 @@ export default function AnnotationPanel(props) {
             expandIconPosition="right"
             defaultActiveKey={[1, 2, 3]}
           >
-            {props.gradCamList.length && (
+            {props.mode === "editable" && props.gradCamList.length && (
               <Panel header="Gradcam" key="1">
                 <Row align="center" style={{ marginBottom: "10px" }}>
                   <span style={{ marginBottom: "5px" }}>
@@ -1240,7 +1247,7 @@ export default function AnnotationPanel(props) {
                 </Col>
               </Row>
               <Row style={{ marginTop: "5px", marginBottom: "15px" }}>
-                <Col span={8} className="annotate-tool-btn-ctn">
+                <Col span={props.mode === "editable" ? 8 : 12} className="annotate-tool-btn-ctn">
                   <Button
                     className={`annotate-tool-btn ${
                       tool === "mouse" ? "selected-tool" : ""
@@ -1252,7 +1259,7 @@ export default function AnnotationPanel(props) {
                     Mouse {<SelectOutlined />}
                   </Button>
                 </Col>
-                <Col span={8} className="annotate-tool-btn-ctn">
+                <Col span={props.mode === "editable" ? 8 : 12} className="annotate-tool-btn-ctn">
                   <Button
                     className={`annotate-tool-btn ${
                       tool === "pan" ? "selected-tool" : ""
@@ -1264,7 +1271,7 @@ export default function AnnotationPanel(props) {
                     Pan {<DragOutlined />}
                   </Button>
                 </Col>
-                <Col span={8} className="annotate-tool-btn-ctn">
+                {props.mode === "editable" && <Col span={8} className="annotate-tool-btn-ctn">
                   <Button
                     className={`annotate-tool-btn ${
                       tool === "length" ? "selected-tool" : ""
@@ -1275,8 +1282,8 @@ export default function AnnotationPanel(props) {
                   >
                     Ruler {<ColumnHeightOutlined />}
                   </Button>
-                </Col>
-                <Col span={8} className="annotate-tool-btn-ctn">
+                </Col>}
+                {props.mode === "editable" && <Col span={8} className="annotate-tool-btn-ctn">
                   <Button
                     className={`annotate-tool-btn ${
                       tool === "rectangleRoi" ? "selected-tool" : ""
@@ -1287,8 +1294,8 @@ export default function AnnotationPanel(props) {
                   >
                     Rectangle {<BorderOutlined />}
                   </Button>
-                </Col>
-                <Col span={8} className="annotate-tool-btn-ctn">
+                </Col>}
+                {props.mode === "editable" && <Col span={8} className="annotate-tool-btn-ctn">
                   <Button
                     className={`annotate-tool-btn ${
                       tool === "freehand" ? "selected-tool" : ""
@@ -1299,8 +1306,8 @@ export default function AnnotationPanel(props) {
                   >
                     Polygon {<StarOutlined />}
                   </Button>
-                </Col>
-                <Col span={8} className="annotate-tool-btn-ctn">
+                </Col>}
+                {props.mode === "editable" && <Col span={8} className="annotate-tool-btn-ctn">
                   <Button
                     className={`annotate-tool-btn ${
                       tool === "ratio" ? "selected-tool" : ""
@@ -1311,7 +1318,7 @@ export default function AnnotationPanel(props) {
                   >
                     Ratio {<VerticalAlignBottomOutlined />}
                   </Button>
-                </Col>
+                </Col>}
               </Row>
             </Panel>
             <Panel header="Boundind Boxes Table" key="3">
@@ -1380,12 +1387,6 @@ export default function AnnotationPanel(props) {
             </Panel>
           </Collapse>
           <Row justify="end" style={{ marginTop: "12px" }}>
-            {false && (
-              <Button className="primary-btn smaller" onClick={() => {}}>
-                Close
-              </Button>
-            )}
-
             {
               /* btnMode === "save-cancel" */ labels.some((member) => {
                 return !member.saved;

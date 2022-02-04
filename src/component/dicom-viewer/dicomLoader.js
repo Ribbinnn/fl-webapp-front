@@ -7,7 +7,7 @@ function loadLocalImage(url, display_image_function) {
     cornerstone.loadImage(imageId).then(
         display_image_function,
         function (err) {
-            alert(err);
+            throw err;
         });
 }
 
@@ -21,12 +21,12 @@ function loadWADOImage(url, display_image_function) {
             display_image_function,
             function (err) {
 
-                alert(err);
+                throw err;
 
             });
     }
     catch (err) {
-        alert(err);
+        throw err;
     }
 }
 
