@@ -1,0 +1,76 @@
+import React, { useState } from "react";
+import { Modal, Button, Checkbox, Tag } from "antd";
+
+export default function SaveToPACSButton(props) {
+  const [visible, setVisible] = useState(false);
+  const [agree, setAgree] = useState(false);
+  const showModal = () => {
+    setVisible(true);
+  };
+
+  const handleCancel = () => {
+    setVisible(false);
+  };
+
+  const onAgree = (e) => {
+    setAgree(e.target.checked);
+  };
+
+  return (
+    <div>
+      <Button className="primary-btn" onClick={showModal}>
+        Save to PACS
+      </Button>
+      <Modal
+        centered
+        destroyOnClose
+        maskClosable={false}
+        visible={visible}
+        width={800}
+        onCancel={handleCancel}
+        title="Term of Save to PACS"
+        onOk={() => {
+          props.onSavetoPACS();
+          handleCancel();
+        }}
+        cancelText="Cancel"
+        okText="Proceed"
+        className="save-2-pacs-modal"
+        okButtonProps={{
+          disabled: !agree,
+        }}
+      >
+        <tr/><p>Please read terms of Save to PACS below carefully before proceed Save to PACS. If you agree, these terms will be applied.</p>
+        <p>1. This action is CANNOT be undone.</p>
+        <p>
+          2. The X-Ray image used in this report will be marked as annonymous
+          (Patient's HN and name will be removed).
+        </p>
+        <p>
+          3. The X-Ray image used in this report CANNOT be later inferred by AI.
+        </p>
+        <p>4. The Gradcams from AI will remain only selected classes.</p>
+        <p>
+          5. Annotations on image can no longer be edited and displayed in
+          view-only mode.
+        </p>
+        <p>
+          6. If there are other reports also referring to this X-Ray Image, they
+          will be automatically applied term no.2 - 5 and their report cannot be
+          proceeded Save to PACS.
+        </p>
+        <p>
+          7. This report status will be marked as{" "}
+          <Tag color={"success"} style={{ marginLeft: "10px" }}>
+            4 Finalized
+          </Tag>{" "}
+          once Save to PACS process is done.
+        </p>
+
+        <Checkbox onChange={onAgree}>
+          I agree to all terms of Save to PACS stated above.
+        </Checkbox>
+      </Modal>
+    </div>
+  );
+}

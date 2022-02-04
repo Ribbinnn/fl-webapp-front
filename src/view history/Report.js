@@ -161,6 +161,7 @@ export default function Report(props) {
           rate={info.result.rating} //
           head={info.result.project_id.head} //
           rid={rid}
+          HN={info.result.hn}
           gradCam={gradCam}
           setGradCam={setGradCam}
           classes={info.classes} //

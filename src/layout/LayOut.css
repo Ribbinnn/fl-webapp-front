@@ -1123,6 +1123,24 @@ label.clickable-label:hover {
   color: #58595b;
 }
 
+.save-2-pacs-modal .ant-modal-title{
+  font-weight: bold;
+}
+
+.save-2-pacs-modal .ant-modal-header{
+  padding-bottom: 0px;
+}
+
+.save-2-pacs-modal .ant-modal-body{
+  text-align: left;
+  font-size: medium;
+}
+
+.save-2-pacs-modal .ant-modal-footer{
+  border: none;
+  padding: 0 20px 20px 0;
+}
+
 .ant-modal-confirm-warning .ant-modal-body,
 .ant-modal-confirm-success .ant-modal-body {
   text-align: left;
@@ -1148,7 +1166,9 @@ label.clickable-label:hover {
 }
 
 .ant-modal-confirm .ant-modal-confirm-btns .ant-btn,
-.ant-modal-confirm .ant-modal-confirm-btns .ant-btn:hover {
+.ant-modal-confirm .ant-modal-confirm-btns .ant-btn:hover,
+.save-2-pacs-modal .ant-modal-footer .ant-btn + .ant-btn,
+.save-2-pacs-modal .ant-modal-footer .ant-btn + .ant-btn:hover {
   background-color: #de5c8e;
   border: none;
   border-radius: 8px;
@@ -1166,7 +1186,11 @@ label.clickable-label:hover {
 }
 
 .ant-modal-confirm-confirm .ant-modal-confirm-btns .ant-btn,
-.ant-modal-confirm-confirm .ant-modal-confirm-btns .ant-btn:hover {
+.ant-modal-confirm-confirm .ant-modal-confirm-btns .ant-btn:hover,
+.save-2-pacs-modal .ant-modal-footer .ant-btn + .ant-btn[disabled],
+.save-2-pacs-modal .ant-modal-footer .ant-btn + .ant-btn[disabled]:hover,
+.save-2-pacs-modal .ant-modal-footer .ant-btn,
+.save-2-pacs-modal .ant-modal-footer .ant-btn:hover  {
   background-color: #c4c4c4;
   border: none;
   border-radius: 8px;
@@ -1335,6 +1359,11 @@ table tr td.ant-table-selection-column {
 .ant-table-tbody > tr.ant-table-row-selected > td {
   background: #f8e1ea;
   border: none;
+}
+
+.pos-row > td{
+  color: #03989e !important;
+  font-weight: bold;
 }
 
 .annotate-table tbody {
