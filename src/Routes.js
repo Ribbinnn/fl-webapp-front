@@ -4,9 +4,7 @@ import Home from "./Home";
 import Login from "./Login";
 import NavBar from "./layout/NavBar";
 import Header from "./layout/Header";
-import UploadRecord from "./record/UploadRecord"
 import Diagnosis from "./diagnosis/Diagnosis"
-import MyRecord from "./record/MyRecord";
 import Report from "./view history/Report";
 import ViewHistory from "./view history/ViewHistory";
 import Annotate from "./research/Annotate";
@@ -45,8 +43,6 @@ function Routes() {
             {auth && <NavBar />}
             <Switch>
               <Route path="/" exact render={()=>(auth?<Home/>:<Redirect to='/login'/>)}/>
-              <Route path="/record/upload" exact render={()=>(auth&&globalProject.projectId?<UploadRecord/>: !auth?<Redirect to='/login'/>:<Redirect to='/'/>)}/>
-              <Route path="/record/myrecord" exact render={()=>(auth&&globalProject.projectId?<MyRecord/>:!auth?<Redirect to='/login'/>:<Redirect to='/'/>)}/>
               <Route path="/diagnosis" exact render={()=>(auth&&globalProject.projectId?<Diagnosis/>:!auth?<Redirect to='/login'/>:<Redirect to='/'/>)}/>
               <Route path="/viewhistory" exact render={()=>(auth&&globalProject.projectId?<ViewHistory/>:!auth?<Redirect to='/login'/>:<Redirect to='/'/>)}/>
               <Route path="/viewhistory/:mode/:rid" exact render={()=>(auth&&globalProject.projectId?<Report/>:!auth?<Redirect to='/login'/>:<Redirect to='/'/>)}/>
