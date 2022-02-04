@@ -182,6 +182,7 @@ function HistoryLog(props) {
                         <ImageModal
                             AccessionNo={report.accession_no}
                             // ProcDescription=""
+                            ReportID={report.pred_result_id}
                             StudyDateTime=" " />
                         {/* <DownloadOutlined
                             className="clickable-icon"

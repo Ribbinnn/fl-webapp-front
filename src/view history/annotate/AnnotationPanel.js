@@ -85,10 +85,16 @@ export default function AnnotationPanel(props) {
   const [maskID, setMaskID] = useState();
 
   useEffect(() => {
-    // // console.log(props.accession_no);
-    loadDicom(getDicomByAccessionNo(props.accession_no), "wado", displayImage);
-    getBBox(!rid, rid ? rid : props.accession_no).then((res) => {
-      // // console.log(res);
+    // console.log(props.accession_no);
+    // console.log(props.gradCamList);
+    try {
+      loadDicom(getDicomByAccessionNo(props.accession_no), "wado", displayImage);
+    } catch(e){
+      Modal.error({content: "Error on loading image."})
+      props.handleCancel();
+    }
+    getBBox(rid).then((res) => {
+      // console.log(res);
       if (res.data) {
         setUser({ ...user, ...res.data.user });
         setSavedData(
@@ -512,7 +518,6 @@ export default function AnnotationPanel(props) {
     cornerstoneTools.length.enable(element);
     cornerstoneTools.rectangleRoi.enable(element);
     cornerstoneTools.pan.enable(element);
-
     setTool("mouse");
     setDicomElement(element);
     removeAnnotations(element);

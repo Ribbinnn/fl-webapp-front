@@ -103,10 +103,10 @@ export default function ResultsTable(props) {
               type="link"
               icon={
                 record.class === selected_class ? (
-                  <EyeOutlined style={GradCamStyle} />
+                  <EyeOutlined style={record.isPositive ? {...GradCamStyle, color: "#03989e"} : GradCamStyle} />
                 ) : (
                   <EyeInvisibleOutlined
-                    style={GradCamStyle}
+                    style={record.isPositive ? {...GradCamStyle, color: "#03989e"} : GradCamStyle}
                     onClick={() => props.setGradCam(record.class)}
                   />
                 )
@@ -184,7 +184,7 @@ export default function ResultsTable(props) {
       }
     },
   };
-
+  
   return (
     <div>
       {mode === "edit" && status !== "finalized" && (
@@ -193,6 +193,7 @@ export default function ResultsTable(props) {
           rowSelection={{
             ...rowSelection,
           }}
+          rowClassName={(record, index)=>{return record.isPositive ? "pos-row" : ""}}
           columns={columns}
           dataSource={data}
           pagination={false}
@@ -201,6 +202,7 @@ export default function ResultsTable(props) {
       {(mode === "view" || status === "finalized") && (
         <Table
           className="report-table"
+          rowClassName={(record, index)=>{return record.isPositive ? "pos-row" : ""}}
           columns={columns}
           dataSource={data}
           pagination={false}
