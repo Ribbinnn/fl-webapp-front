@@ -117,23 +117,6 @@ export default function ResultsTable(props) {
     ];
     setColumn(col);
   }
-  // const onSavetoPACS = () => {
-  //   /* save to PACS api */
-  //   const key = "updatable";
-  //   message.loading({ content: "Loading...", key, duration: 0 });
-
-  //   saveToPACS(props.rid)
-  //     .then((res) => {
-  //       console.log(res);
-  //       if (res.success) {
-  //         message.success({ content: res.message, key, duration: 5 });
-  //       } else message.error({ content: res.message, key, duration: 5 });
-  //     })
-  //     .catch((err) => {
-  //       console.log(err.response);
-  //       message.error({ content: err.response.data.message, key, duration: 5 });
-  //     });
-  // };
 
   const onSaveReport = () => {
     /* save report api */
@@ -146,7 +129,7 @@ export default function ResultsTable(props) {
     updateReport(
       props.rid,
       note,
-      JSON.parse(sessionStorage.getItem("user")).id,
+      user,
       { finding: selected_class },
       rating
     )
@@ -300,13 +283,6 @@ export default function ResultsTable(props) {
             Back
           </Button>
         )}
-        {btnGroup === "back" &&
-          status === "reviewed" &&
-          props.head.includes(user) && (
-            <Button className="primary-btn" onClick={() => onSavetoPACS()}>
-              Save to PACS
-            </Button>
-          )}
         {btnGroup === "save" && (
           <Button className="primary-btn" onClick={() => onCancelReport()}>
             Cancel

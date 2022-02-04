@@ -82,7 +82,6 @@ export default function AnnotationPanel(props) {
     onlyPositive: true,
   });
   const [savedData, setSavedData] = useState();
-  const [gradCam, setGradCam] = useState( props.gradCamList ? props.gradCamList[0] : null)
   const [maskID, setMaskID] = useState();
 
   useEffect(() => {
@@ -1060,10 +1059,6 @@ export default function AnnotationPanel(props) {
     setLabels(update);
   };
 
-  const onChangeGradcam = (value) => {
-    setGradCam(value);
-  };
-
   return (
     <div>
       <Row>
@@ -1088,66 +1083,7 @@ export default function AnnotationPanel(props) {
             style={{ display: "relative", width: "790px", height: "640px" }}
           />
         </Col>
-        <Col span={9} style={{ height: "640px" }} /* start */>
-          <Collapse className="annotation-collapse" expandIconPosition="right" defaultActiveKey={[1,2,3]}>
-            {props.gradCamList && (
-              <Panel header="Gradcam" key="3">
-                <Row align="center">
-                  <Select
-                    showArrow={false}
-                    showSearch
-                    placeholder="Select a person"
-                    optionFilterProp="children"
-                    onChange={onChangeGradcam}
-                    value={gradCam}
-                    filterOption={(input, option) =>
-                      option.children
-                        .toLowerCase()
-                        .indexOf(input.toLowerCase()) >= 0
-                    }
-                    className="annotation-gc-select"
-                  >
-                    {props.gradCamList.map((item,i) => {
-                      return <Option value={item} key={i}>{item}</Option>
-                    })}
-                  </Select>
-                  <Image
-                    // preview={false}
-                    height={400}
-                    src={getGradCam(rid, gradCam)}
-                  />
-                </Row>
-              </Panel>
-            )}
-            <Panel header="Toolbar" key="1">
-              <Col style={{ marginTop: "10px" }}>
-                <Row>
-                  <label className="annotate-tool-label"> Window Level </label>
-                </Row>
-                <Row>
-                  <Col span={20}>
-                    <Slider
-                      min={
-                        viewerState.defaultWindowLevel > 2000
-                          ? viewerState.defaultWindowLevel - 2000
-                          : 0
-                      }
-                      max={viewerState.defaultWindowLevel + 2000}
-                      onChange={onViewerChange("windowLevel")}
-                      value={viewerState.windowLevel}
-                    />
-                  </Col>
-                  <Col span={4}>
-                    <Input
-                      className="input-text smaller"
-                      style={{ height: "30px" }}
-                      value={viewerState.windowLevel}
-                      onChange={onViewerChange("windowLevel")}
-                    />
-                  </Col>
-                  {/* end */}
-                </Row>
-        {/* <Col span={9} style={{ height: "640px" }}>
+        <Col span={9} style={{ height: "640px" }}>
           <Collapse
             className="annotation-collapse"
             expandIconPosition="right"
@@ -1230,7 +1166,7 @@ export default function AnnotationPanel(props) {
                       onChange={onViewerChange("windowLevel")}
                     />
                   </Col>
-                </Row> */}
+                </Row> 
               </Col>
               <Col>
                 <Row>
@@ -1384,7 +1320,7 @@ export default function AnnotationPanel(props) {
                 </Col>
               </Row>
             </Panel>
-            <Panel header="Boundind Boxes Table" key="2" /* key="3" */>
+            <Panel header="Boundind Boxes Table" key="3">
               <Row align="space-between" style={{ marginTop: "10px" }}>
                 {/* <Col span={24} align="space-between" style={{ marginTop: "10px" }}> */}
                 <Col span={8} align="start">
@@ -1450,14 +1386,8 @@ export default function AnnotationPanel(props) {
             </Panel>
           </Collapse>
           <Row justify="end" style={{ marginTop: "12px" }}>
-            {false && (
-              <Button className="primary-btn smaller" onClick={() => {}}>
-                Close
-              </Button>
-            )}
-
-            {
-              /* btnMode === "save-cancel" */ labels.some((member) => {
+            { 
+            labels.some((member) => {
                 return !member.saved;
               }) && (
                 <Button
