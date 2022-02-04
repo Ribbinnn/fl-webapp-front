@@ -16,7 +16,7 @@ function Login() {
         <Col span={12} align="middle">
           <Image
             preview={false}
-            height={400}
+            height={500}
             src="/logos/DeepMed Login Logo.png"
           />
         </Col>

@@ -102,7 +102,6 @@ export default function Report(props) {
             <div>
               <Image height={400} src={getGradCam(rid, "original")} />
             </div>
-            {mode === "edit" && info.result.status !== "finalized" && (
               <AnnotationModal
                 accession_no={info.result.image_id.accession_no}
                 /* gradCamList={info.gradCam.reduce((current,item)=>{
@@ -123,8 +122,8 @@ export default function Report(props) {
                   return item.finding;
                 })}
                 displayText="Annotate"
+                mode={info.result.status === "finalized" || mode !== "edit" ? "view-only":"editable"}
               />
-            )}
           </Col>
           {gradCam && (
             <Col xs={24} sm={24} md={24} lg={12} xl={12} align="center">
@@ -161,6 +160,7 @@ export default function Report(props) {
           rate={info.result.rating} //
           head={info.result.project_id.head} //
           rid={rid}
+          HN={info.result.hn}
           gradCam={gradCam}
           setGradCam={setGradCam}
           classes={info.classes} //
