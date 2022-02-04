@@ -63,7 +63,6 @@
 .ant-menu-submenu-title:active {
   background-color: #f8e1ea !important;
 }
-
 /* step menu --------------------- */
 .ant-steps-item-finish
   > .ant-steps-item-container
@@ -929,6 +928,25 @@ label.clickable-label:hover {
   font-size: medium;
 }
 
+/* annotate with gradcam dropdown -----------*/
+
+/* .annotation-gc-select:not(.ant-select-customize-input) .ant-select-selector,
+.annotation-gc-select .ant-select:not(.ant-select-customize-input) .ant-select-selector{
+  /* border: none !important;
+  padding: 0;
+  height: 30px;
+  width: 250px;
+}
+
+.annotation-gc-select{
+  font-size: medium;
+  margin-right: 15px;
+}
+
+.annotation-gc-select > div.ant-select-selector > span.ant-select-selection-search {
+  top: 0px;
+} */
+
 /* collapse ------------------*/
 
 .ant-collapse-icon-position-right
@@ -1437,6 +1455,7 @@ table tr td.ant-table-selection-column {
   padding: 12px;
 }
 
+
 /* slider ----------------- */
 .ant-slider-handle {
   border: none;
@@ -1456,7 +1475,14 @@ table tr td.ant-table-selection-column {
   background-color: #de5c8e;
 }
 /* checkbox ------- */
+.annotation-gc-checkbox{
+  font-size: small;
+  font-weight: normal;
+  line-height: normal;
+  align-items: center;
+}
 
+.annotation-gc-checkbox
 
 /* rate ------------- */
 

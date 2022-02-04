@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import "antd/dist/antd.css";
-import { Menu } from "antd";
+import { Menu, Modal } from "antd";
 import { useHistory } from "react-router-dom";
 import {
   ControlOutlined,
@@ -38,6 +38,21 @@ export default function NavBar() {
     setTab(globalProject.projectId || path === "/annotate" || path === "/admin" ? getTabKey(path) : "home");
     history.push(path);
   }
+
+  function selectMenu(path) {
+    if(!globalProject.projectId && path !== "/admin")
+    return Modal.warning({
+      title: "Please Select Project First.",
+      content:
+        "You need to select your working project before performing that action.",
+      okText: "Ok",
+    });
+    setTab(
+      globalProject.projectId || path === "/admin" ? getTabKey(path) : "home"
+    );
+    history.push(path);
+  }
+
   return (
     <div
       className="navbar"

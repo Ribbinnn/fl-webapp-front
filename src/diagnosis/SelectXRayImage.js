@@ -68,7 +68,7 @@ function SelectXRayImage(props) {
                     <div className="center-div">
                         <ImageModal
                             AccessionNo={record["Accession No"]}
-                            ProcDescription={record["Proc Description"]}
+                            // ProcDescription={record["Proc Description"]}
                             StudyDateTime={record["Study Date Time"]} />
                         {props.mode === "annotate" ?
                             <div className="center-div">

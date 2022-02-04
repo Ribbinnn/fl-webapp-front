@@ -88,7 +88,11 @@ export default function Diagnosis() {
           // console.log(res);
           setCurrent(current + 1);
           setLoading(false);
-        }).catch((err) => console.log(err.response));
+        }).catch((err) => {
+          console.log(err.response);
+          Modal.error({content: err.response.data.message});
+          setLoading(false);
+        });
       } else {
         setCurrent(current + 1);
       }  
@@ -135,7 +139,10 @@ export default function Diagnosis() {
                 >
                   Patient's HN: {HN}
                 </label>
-                <ProjectInfo project_id={globalProject.projectId} collapse={false} />
+                <ProjectInfo
+                  project_id={globalProject.projectId}
+                  collapse={false}
+                />
               </div>
             </Col>
             <Col span={17}>
@@ -232,7 +239,7 @@ function SelectHN(props) {
         props.setAccessionNoIndex([]);
       } else props.setPatient(false);
       props.setLoading(false);
-    });
+    }).catch((err) => console.log(err.response));
   };
   return (
     <Form layout="vertical">
