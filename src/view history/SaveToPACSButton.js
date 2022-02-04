@@ -47,17 +47,17 @@ export default function SaveToPACSButton(props) {
           (Patient's HN and name will be removed).
         </p>
         <p>
-          3. The X-Ray image used in this report CANNOT be later inferred by AI.
-        </p>
-        <p>4. The Gradcams from AI will remain only selected classes.</p>
-        <p>
-          5. Annotations on image can no longer be edited and displayed in
-          view-only mode.
-        </p>
-        <p>
-          6. If there are other reports also referring to this X-Ray Image, they
-          will be automatically applied term no.2 - 5 and their report cannot be
+          3. If there are other reports also referring to this X-Ray Image, they
+          will be automatically applied term no.2 and their report cannot be
           proceeded Save to PACS.
+        </p>
+        <p>
+          4. The X-Ray image used in this report CANNOT be later inferred by AI.
+        </p>
+        <p>5. The Gradcams from AI will remain only selected classes.</p>
+        <p>
+          6. Annotations on image can no longer be edited and displayed in
+          view-only mode.
         </p>
         <p>
           7. This report status will be marked as{" "}
