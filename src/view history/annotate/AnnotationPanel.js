@@ -73,7 +73,14 @@ export default function AnnotationPanel(props) {
     defaultWindowLevel: 0,
   });
   const [savedTime, setSavedTime] = useState();
-  const [btnMode, setBtnMode] = useState("close");
+  const [gradCam, setGradCam] = useState({
+    selected:
+      props.gradCamList.filter((item) => {
+        return item.isPositive;
+      })[0]?.finding || null, 
+      //props.gradCamList.length ? props.gradCamList[0].finding : null,
+    onlyPositive: true,
+  });
   const [savedData, setSavedData] = useState();
   const [gradCam, setGradCam] = useState( props.gradCamList ? props.gradCamList[0] : null)
   const [maskID, setMaskID] = useState();
@@ -334,7 +341,7 @@ export default function AnnotationPanel(props) {
                     setLabelBuffer({
                       key: record.key,
                     });
-                    setBtnMode("save-cancel");
+                    // setBtnMode("save-cancel");
                   },
                   okButtonProps: {
                     style: {
@@ -417,7 +424,7 @@ export default function AnnotationPanel(props) {
                   return [...current, item];
                 }, []);
                 setLabels(update);
-                if (btnMode === "close") setBtnMode("save-cancel");
+                // if (btnMode === "close") setBtnMode("save-cancel");
               }}
               okButtonProps={{ className: "primary-btn popconfirm" }}
               cancelButtonProps={{ style: { display: "none" } }}
@@ -477,7 +484,7 @@ export default function AnnotationPanel(props) {
       }
       setLabelBuffer();
       setSelectedLabel();
-      setBtnMode("save-cancel");
+      // setBtnMode("save-cancel");
     }
   }, [labelBuffer]);
 
@@ -717,7 +724,7 @@ export default function AnnotationPanel(props) {
         //   return;
         // }
         addNewLabel(tool, toolState.data.length - 1);
-        setBtnMode("save-cancel");
+        // setBtnMode("save-cancel");
         return;
       }
     }
@@ -808,7 +815,7 @@ export default function AnnotationPanel(props) {
       })
     ) {
       setLabels(checker);
-      setBtnMode("save-cancel");
+      // setBtnMode("save-cancel");
     }
   };
 
@@ -927,7 +934,7 @@ export default function AnnotationPanel(props) {
           key,
           duration: 5,
         });
-        setBtnMode("close");
+        // setBtnMode("close");
         setLabels(
           labels.map((item) => {
             return { ...item, saved: true };
@@ -961,9 +968,29 @@ export default function AnnotationPanel(props) {
           "wado",
           displayImage
         );
-        setBtnMode("close");
+        // setBtnMode("close");
       },
       cancelText: "No",
+    });
+  };
+
+  const onChangeGradcam = (value) => {
+    setGradCam({ ...gradCam, selected: value });
+  };
+
+  const onCheckPositiveGradcam = (e) => {
+    console.log(e.target.checked);
+    let positiveGradcam = props.gradCamList.filter((item) => {
+      return item.isPositive;
+    });
+    setGradCam({
+      selected: e.target.checked
+        ? positiveGradcam.includes(gradCam.selected)
+          ? gradCam.selected
+          : positiveGradcam[0]?.finding
+          || undefined
+        : gradCam.selected ?? props.gradCamList[0].finding,
+      onlyPositive: e.target.checked,
     });
   };
 
@@ -1061,7 +1088,7 @@ export default function AnnotationPanel(props) {
             style={{ display: "relative", width: "790px", height: "640px" }}
           />
         </Col>
-        <Col span={9} style={{ height: "640px" }}>
+        <Col span={9} style={{ height: "640px" }} /* start */>
           <Collapse className="annotation-collapse" expandIconPosition="right" defaultActiveKey={[1,2,3]}>
             {props.gradCamList && (
               <Panel header="Gradcam" key="3">
@@ -1118,7 +1145,92 @@ export default function AnnotationPanel(props) {
                       onChange={onViewerChange("windowLevel")}
                     />
                   </Col>
+                  {/* end */}
                 </Row>
+        {/* <Col span={9} style={{ height: "640px" }}>
+          <Collapse
+            className="annotation-collapse"
+            expandIconPosition="right"
+            defaultActiveKey={[1, 2, 3]}
+          >
+            {props.gradCamList.length && (
+              <Panel header="Gradcam" key="1">
+                <Row align="center" style={{ marginBottom: "10px" }}>
+                  <span style={{ marginBottom: "5px" }}>
+                    <Select
+                      showArrow={false}
+                      showSearch
+                      optionFilterProp="children"
+                      onChange={onChangeGradcam}
+                      value={gradCam.selected}
+                      filterOption={(input, option) =>
+                        option.children
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      }
+                      bordered={false}
+                      className="annotation-gc-select"
+                    >
+                      {props.gradCamList.reduce((current, item) => {
+                        if (gradCam.onlyPositive && !item.isPositive)
+                          return current;
+                        return [
+                          ...current,
+                          <Option value={item.finding} key={item.finding}>
+                            {item.finding}
+                          </Option>,
+                        ];
+                      }, [])}
+                    </Select>
+                    <Checkbox
+                      className="annotation-gc-checkbox"
+                      defaultChecked
+                      onChange={onCheckPositiveGradcam}
+                    >
+                      Show only <br /> positive findings
+                    </Checkbox>
+                  </span>
+                  {gradCam.selected ? (
+                    <Image
+                      height={400}
+                      src={getGradCam(rid, gradCam.selected)}
+                    />
+                  ) : (
+                    <label style={{ margin: "120px 0 120px 0" }}>
+                      {" "}
+                      No Gradcam Data{" "}
+                    </label>
+                  )}
+                </Row>
+              </Panel>
+            )}
+            <Panel header="Toolbar" key="2">
+              <Col style={{ marginTop: "10px" }}>
+                <Row>
+                  <label className="annotate-tool-label"> Window Level </label>
+                </Row>
+                <Row>
+                  <Col span={20}>
+                    <Slider
+                      min={
+                        viewerState.defaultWindowLevel > 2000
+                          ? viewerState.defaultWindowLevel - 2000
+                          : 0
+                      }
+                      max={viewerState.defaultWindowLevel + 2000}
+                      onChange={onViewerChange("windowLevel")}
+                      value={viewerState.windowLevel}
+                    />
+                  </Col>
+                  <Col span={4}>
+                    <Input
+                      className="input-text smaller"
+                      style={{ height: "30px" }}
+                      value={viewerState.windowLevel}
+                      onChange={onViewerChange("windowLevel")}
+                    />
+                  </Col>
+                </Row> */}
               </Col>
               <Col>
                 <Row>
@@ -1272,7 +1384,7 @@ export default function AnnotationPanel(props) {
                 </Col>
               </Row>
             </Panel>
-            <Panel header="Boundind Boxes Table" key="2">
+            <Panel header="Boundind Boxes Table" key="2" /* key="3" */>
               <Row align="space-between" style={{ marginTop: "10px" }}>
                 {/* <Col span={24} align="space-between" style={{ marginTop: "10px" }}> */}
                 <Col span={8} align="start">
@@ -1344,22 +1456,30 @@ export default function AnnotationPanel(props) {
               </Button>
             )}
 
-            {btnMode === "save-cancel" && (
-              <Button
-                className="primary-btn smaller"
-                style={{ marginRight: "10px" }}
-                onClick={onCancelAnnotations}
-              >
-                Cancel
-              </Button>
-            )}
-            {btnMode === "save-cancel" && (
+            {
+              /* btnMode === "save-cancel" */ labels.some((member) => {
+                return !member.saved;
+              }) && (
+                <Button
+                  className="primary-btn smaller"
+                  style={{ marginRight: "10px" }}
+                  onClick={onCancelAnnotations}
+                >
+                  Cancel
+                </Button>
+              )
+            }
+            {labels.some((member) => {
+              return !member.saved;
+            }) && (
               <Button className="primary-btn smaller" onClick={saveAnnotations}>
                 Save
               </Button>
             )}
 
-            {btnMode === "close" && (
+            {labels.every((member) => {
+              return member.saved;
+            }) && (
               <Button
                 className="primary-btn smaller"
                 onClick={props.handleCancel}
