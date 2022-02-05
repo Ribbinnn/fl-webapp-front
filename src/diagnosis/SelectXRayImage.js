@@ -175,11 +175,10 @@ function SelectXRayImage(props) {
             {loaded && tableData && 
                 <Table 
                     columns={columns} 
-                    dataSource={tableData} 
-                    pagination={false} 
+                    dataSource={tableData}
                     rowSelection={rowSelection}
                     size="small"
-                    className="three-rows-table with-row-selection"
+                    className="with-row-selection"
                 />
             }
         </div>
