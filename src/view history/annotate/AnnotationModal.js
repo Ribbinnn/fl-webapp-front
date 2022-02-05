@@ -34,7 +34,7 @@ export default function AnnotationModal (props){
           width="1350px"
           className="annotation-modal"
         >
-          <AnnotationPanel handleCancel={handleCancel} labelList={props.labelList} accession_no={props.accession_no} gradCamList={props.gradCamList}/>
+          <AnnotationPanel handleCancel={handleCancel} labelList={props.labelList} accession_no={props.accession_no} gradCamList={props.gradCamList} updateStatus={props.updateStatus}/>
         </Modal>
       </div>
     )
