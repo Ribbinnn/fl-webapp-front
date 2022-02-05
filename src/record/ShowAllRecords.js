@@ -226,10 +226,8 @@ function ShowAllRecords(props) {
                                 },
                             }}
                             columns={mergedColumns} 
-                            dataSource={data} 
-                            pagination={false} 
+                            dataSource={data}
                             size="small"
-                            className="seven-rows-table"
                             style={{marginTop: "30px"}}
                         />
                     </Form>
