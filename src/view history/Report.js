@@ -70,6 +70,13 @@ export default function Report(props) {
     });
   };
 
+  const updateStatus = () => {
+    if (info.result.status ==="annotated") setInfo({
+      ...info,
+      result: { ...info.result, status: "reviewed"},
+    });
+  };
+
   return (
     <div className="content">
       {!loaded && (
@@ -104,10 +111,6 @@ export default function Report(props) {
             </div>
               <AnnotationModal
                 accession_no={info.result.image_id.accession_no}
-                /* gradCamList={info.gradCam.reduce((current,item)=>{
-                  if (item === "original") return current
-                  return [...current, {}]
-              },[])} */
                 gradCamList={info.classes.reduce((current, item) => {
                   if (!info.gradCam.includes(item.finding)) return current;
                   return [
@@ -123,6 +126,7 @@ export default function Report(props) {
                 })}
                 displayText="Annotate"
                 mode={info.result.status === "finalized" || mode !== "edit" ? "view-only":"editable"}
+                updateStatus={updateStatus}
               />
           </Col>
           {gradCam && (

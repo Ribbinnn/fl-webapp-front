@@ -341,6 +341,7 @@ export default function AnnotationPanel(props) {
                   className: "label-selector-modal",
                   okText: "Submit",
                   cancelText: "Cancel",
+                  onCancel: () => setSelectedLabel(),
                   onOk: () => {
                     setLabelBuffer({
                       key: record.key,
@@ -946,6 +947,7 @@ export default function AnnotationPanel(props) {
           })
         );
         setSavedTime(new Date(res.data.updatedAt).toLocaleString());
+        props.updateStatus();
       } else
         message.error({
           content: "Cannot save bounding boxes, please try again later.",
