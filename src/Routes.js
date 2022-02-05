@@ -11,6 +11,7 @@ import Report from "./view history/Report";
 import ViewHistory from "./view history/ViewHistory";
 import Admin from "./admin/Admin";
 import Auth from "./Auth";
+import PageNotFound from "./PageNotFound";
 import { updateToken } from "./api";
 
 import "./layout/LayOut.css";
@@ -53,6 +54,7 @@ function Routes() {
               <Route path="/admin/:mode" exact render={()=>(auth?<Admin/>:<Redirect to='/login'/>)}/>
               <Route path="/login" render={()=>(auth?<Redirect to='/'/>:<Login/>)}/>
               <Route path="/auth" render={()=>(<Auth />)}/>
+              <Route render={()=>(auth? <PageNotFound/> :<Redirect to='/'/>)}/>
             </Switch>
           </div>
         </div>
