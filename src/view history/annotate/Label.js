@@ -25,7 +25,7 @@ export default function Label(props) {
   }, []);
 
   const onNameChange = (event) => {
-    props.Name(event.target.value);
+    setName(event.target.value);
   };
 
   const addItem = () => {
