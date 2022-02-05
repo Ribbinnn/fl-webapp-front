@@ -312,10 +312,8 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                             }}
                             columns={mergedColumns} 
                             dataSource={data} 
-                            pagination={false} 
                             rowSelection={rowSelection}
                             size="small"
-                            className="seven-rows-table"
                         />
                     </Form>
                 </div>}
