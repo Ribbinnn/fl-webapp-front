@@ -406,10 +406,9 @@ function HistoryLog(props) {
             {loaded &&
                 <Table 
                     columns={columns} 
-                    dataSource={uploadedItem} 
-                    pagination={false} 
+                    dataSource={uploadedItem}
                     size="small"
-                    className="view-history-table seven-rows-table with-tag"
+                    className="view-history-table with-tag"
                 />}
         </div>
     )

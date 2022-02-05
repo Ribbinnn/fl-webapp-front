@@ -150,7 +150,6 @@ function MyRecord () {
                         <Table 
                             columns={columns} 
                             dataSource={uploadedItem} 
-                            pagination={false} 
                             size="small"
                             onRow={(record, rowIndex) => {
                                 return {
@@ -160,8 +159,8 @@ function MyRecord () {
                                     }, // click row
                                 };
                             }}
-                            style={{width:"700px"}}
-                            className="clickable-table seven-rows-table"
+                            style={{width:"790px"}}
+                            className="clickable-table"
                         />
                     </div>
                 </div>}

@@ -341,6 +341,7 @@ export default function AnnotationPanel(props) {
                   className: "label-selector-modal",
                   okText: "Submit",
                   cancelText: "Cancel",
+                  onCancel: () => setSelectedLabel(),
                   onOk: () => {
                     setLabelBuffer({
                       key: record.key,
@@ -513,12 +514,10 @@ export default function AnnotationPanel(props) {
     cornerstoneTools.pan.activate(element, 2); // pan is the default tool for middle mouse button
     cornerstoneTools.zoom.activate(element, 4); // zoom is the default tool for right mouse button
     cornerstoneTools.zoomWheel.activate(element); // zoom is the default tool for middle mouse wheel
-    if (props.mode === "editable"){
-      cornerstoneTools.freehand.enable(element);
-      cornerstoneTools.length.enable(element);
-      cornerstoneTools.rectangleRoi.enable(element);
-      cornerstoneTools.pan.enable(element);
-    }
+    cornerstoneTools.pan.enable(element);
+    cornerstoneTools.freehand.enable(element);
+    cornerstoneTools.length.enable(element);
+    cornerstoneTools.rectangleRoi.enable(element);
     setTool("mouse");
     setDicomElement(element);
     removeAnnotations(element);
@@ -623,9 +622,11 @@ export default function AnnotationPanel(props) {
     cornerstoneTools.wwwc.disable(dicomElement);
     cornerstoneTools.pan.activate(dicomElement, 2); // 2 is middle mouse button
     cornerstoneTools.zoom.activate(dicomElement, 4); // 4 is right mouse button
-    cornerstoneTools.length.deactivate(dicomElement, 1);
-    cornerstoneTools.rectangleRoi.deactivate(dicomElement, 1);
-    cornerstoneTools.freehand.deactivate(dicomElement, 1);
+    if (props.mode === "editable") {
+      cornerstoneTools.length.deactivate(dicomElement, 1);
+      cornerstoneTools.rectangleRoi.deactivate(dicomElement, 1);
+      cornerstoneTools.freehand.deactivate(dicomElement, 1);
+    }
   }
 
   //onclose
@@ -946,6 +947,7 @@ export default function AnnotationPanel(props) {
           })
         );
         setSavedTime(new Date(res.data.updatedAt).toLocaleString());
+        props.updateStatus();
       } else
         message.error({
           content: "Cannot save bounding boxes, please try again later.",
@@ -1341,7 +1343,7 @@ export default function AnnotationPanel(props) {
                 )}
                 {/* </Col> */}
                 <Table
-                  className="annotate-table clickable-table"
+                  className={`annotate-table clickable-table ${props.mode}`}
                   rowClassName={(record, index) =>
                     record.saved ? "" : "unsaved-label"
                   }
