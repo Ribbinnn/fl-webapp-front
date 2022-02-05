@@ -6,12 +6,10 @@ import {
   ControlOutlined,
   HistoryOutlined,
   PlusSquareOutlined,
-  DatabaseOutlined,
   HomeOutlined,
   EditOutlined,
 } from "@ant-design/icons";
 import Contexts from "../utils/Contexts";
-const { SubMenu } = Menu;
 
 export default function NavBar() {
   const { globalProject } = useContext(Contexts.project);
@@ -38,7 +36,7 @@ export default function NavBar() {
   }
 
   function selectMenu(path) {
-    if(!globalProject.projectId && path !== "/admin")
+    if(!(globalProject.projectId || path === "/admin" || path === "/annotate" || path === "/"))
     return Modal.warning({
       title: "Please Select Project First.",
       content:
