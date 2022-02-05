@@ -1507,3 +1507,40 @@ table tr td.ant-table-selection-column {
   color: #e9c869;
   font-size: 40px;
 }
+
+/* ----- pagination --------*/
+
+.ant-pagination-item a{
+  font-size: medium;
+  color: #58595b;
+}
+
+.ant-pagination.mini .ant-pagination-item:not(.ant-pagination-item-active){
+  color: #58595b;
+}
+
+.ant-pagination-item-active{
+  background-color: #de5c8e;
+  font-weight: bold;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.ant-pagination-prev button, .ant-pagination-next button{
+  color: #58595b;
+}
+
+.ant-pagination-prev .ant-pagination-item-link:hover, .ant-pagination-next .ant-pagination-item-link:hover{
+  color: #de5c8e;
+}
+
+.ant-pagination-disabled .ant-pagination-item-link, .ant-pagination-disabled .ant-pagination-item-link:hover{
+  color: #c4c4c4;
+}
+
+.ant-pagination-options > .ant-select > .ant-select-selector{
+  width: 125px;
+  font-size: medium;
+  text-align: center;
+}
