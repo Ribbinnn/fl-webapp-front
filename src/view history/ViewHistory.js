@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Table, Tooltip, Form, Input, Button, Select, DatePicker, Tag, Spin, Popconfirm } from "antd";
-import { DownloadOutlined ,EditOutlined, DeleteOutlined, ReloadOutlined, LoadingOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, ReloadOutlined, LoadingOutlined } from '@ant-design/icons';
 import {viewHistory, deleteReport} from "../api/viewHistory"
-import SelectProject from "../component/SelectProject";
 import ImageModal from "../component/ImageModal";
 import { useHistory, useLocation } from "react-router-dom";
 import * as moment from "moment";
