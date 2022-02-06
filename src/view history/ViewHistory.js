@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Table, Tooltip, Form, Input, Button, Select, DatePicker, Tag, Spin, Popconfirm } from "antd";
-import { EditOutlined, DeleteOutlined, ReloadOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Table, Tooltip, Form, Input, Button, Select, DatePicker, Tag, Spin, Popconfirm, Dropdown, Menu, Row, Col, Modal } from "antd";
+import { DownloadOutlined ,EditOutlined, DeleteOutlined, ReloadOutlined, LoadingOutlined } from '@ant-design/icons';
 import {viewHistory, deleteReport} from "../api/viewHistory"
+import { exportBBoxCsv, exportBBoxPng } from "../api/masks";
 import ImageModal from "../component/ImageModal";
 import { useHistory, useLocation } from "react-router-dom";
 import * as moment from "moment";
@@ -15,16 +16,11 @@ const { Option } = Select;
 
 export default function ViewHistory() {
   const { globalProject, setGlobalProject } = useContext(Contexts.project);
+  const [loading, setLoading] = useState(false);
 
   return (
-    <div className="content">
-      {globalProject !== "none" && <HistoryLog project={globalProject} />}
-      {/* {globalProject==='none' && <SelectProject
-                // setProject={setProject}
-                Project={project}
-                mode = "select"
-                width="530px" 
-            />} */}
+    <div className={loading ? "content loading" : "content"}>
+      {globalProject !== "none" && <HistoryLog project={globalProject} setLoading={setLoading} />}
     </div>
   );
 }
@@ -49,6 +45,17 @@ function HistoryLog(props) {
     const [shownStatus, setShownStatus] = useState([]);
     const [findings, setFindings] = useState([]);
     const [reload, setReload] = useState("");
+
+    const downloadBBox = (file, type, all) => {
+        const url = window.URL.createObjectURL(file)
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', type === "png" ? `bbox.png` : (all ? `bbox_all.xlsx` : `bbox.xlsx`));
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        props.setLoading(false);
+    }
 
     const columns = [
         {
@@ -183,17 +190,55 @@ function HistoryLog(props) {
                             // ProcDescription=""
                             ReportID={report.pred_result_id}
                             StudyDateTime=" " />
-                        {/* <DownloadOutlined
-                            className="clickable-icon"
-                            onClick={() => {
-                                // download image api
-                            }}
-                        /> */}
+                        <Dropdown overlay={
+                            <Menu>
+                                <Menu.Item key="0">
+                                    <Tooltip placement="top" title="Export bounding boxes of each report in .xlsx format">
+                                        <label
+                                            className="clickable-label"
+                                            onClick={() => {
+                                                props.setLoading(true);
+                                                exportBBoxCsv(false, [report.pred_result_id])
+                                                .then((res) => {
+                                                    downloadBBox(res, "xlsx", false);
+                                                }).catch((err) => {
+                                                    console.log(err);
+                                                })
+                                            }}
+                                        >
+                                            save .xlsx
+                                        </label>
+                                    </Tooltip>
+                                </Menu.Item>
+                                <Menu.Item key="1">
+                                    <Tooltip placement="top" title="Export bounding boxes of each report in .png format">
+                                        <label
+                                            className="clickable-label"
+                                            onClick={() => {
+                                                props.setLoading(true);
+                                                exportBBoxPng(false, report.pred_result_id, report.accession_no)
+                                                .then((res) => {
+                                                    downloadBBox(res, "png", false);
+                                                }).catch((err) => {
+                                                    console.log(err.response);
+                                                    Modal.error({content: 'Bounding box data not found'});
+                                                    props.setLoading(false);
+                                                })
+                                            }}
+                                        >
+                                            save .png
+                                        </label>
+                                    </Tooltip>
+                                </Menu.Item>
+                            </Menu>
+                        } trigger={['click']}>
+                            <DownloadOutlined className="clickable-icon" />
+                        </Dropdown>
                         {report.status === "canceled" ?
                             null : 
                             <EditOutlined
                                 className="clickable-icon"
-                                // style={{marginLeft: "8px"}}
+                                style={{marginLeft: "8px"}}
                                 onClick={() => {
                                     let role = JSON.parse(sessionStorage.getItem("user")).role;
                                     console.log(
@@ -392,16 +437,43 @@ function HistoryLog(props) {
                 </div>
             )}
             {loaded &&
-                <label
-                    className="clickable-label"
-                    style={{color: "#de5c8e", display: "flex", alignItems: "center", margin: "30px 0 8px 0"}}
-                    onClick={() => {
-                        reload === "" ? setReload("reload") : setReload("")
-                        setLoaded(false);
-                    }}>
-                        <ReloadOutlined style={{marginRight: "5px"}} />
-                        Reload
-                </label>}
+                <Row style={{margin: "20px 0 10px 0"}}>
+                    <Col span={12}>
+                        <div style={{position: "absolute", bottom: 0}}>
+                            <label
+                                className="clickable-label"
+                                style={{color: "#de5c8e", display: "flex", alignItems: "center"}}
+                                onClick={() => {
+                                    reload === "" ? setReload("reload") : setReload("")
+                                    setLoaded(false);
+                                }}>
+                                    <ReloadOutlined style={{marginRight: "5px"}} />
+                                    Reload
+                            </label>
+                        </div>
+                    </Col>
+                    <Col span={12}>
+                        <div style={{float: "right"}}>
+                            <Tooltip placement="top" title="Export bounding boxes of all reports in .xlsx format">
+                                <Button
+                                    className="primary-btn smaller"
+                                    onClick={() => {
+                                        props.setLoading(true);
+                                        let report_id_list = uploadedItem.map((item) => item.pred_result_id)
+                                        exportBBoxCsv(false, report_id_list)
+                                        .then((res) => {
+                                            downloadBBox(res, "xlsx", true);
+                                        }).catch((err) => {
+                                            console.log(err);
+                                        })
+                                    }}
+                                >
+                                        Export all to .xlsx
+                                </Button>
+                            </Tooltip>
+                        </div>
+                    </Col>
+                </Row>}
             {loaded &&
                 <Table 
                     columns={columns} 

@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import SelectXRayImage from "../diagnosis/SelectXRayImage";
 
 function Annotate() {
+    const [loading, setLoading] = useState(false);
     return(
-        <div className="content">
-            <SelectXRayImage mode="annotate" />
+        <div className={loading ? "content loading" : "content"}>
+            <SelectXRayImage mode="annotate" setLoading={setLoading} />
         </div>
     );
 }

@@ -25,3 +25,25 @@ export const insertBBox = async (mask_id, report_id, data) => {
         throw e;
     }
 }
+
+export const exportBBoxCsv = async (is_acc_no, list) => {
+    try {
+        const res = (
+            await instance.get("/masks/xlsx/", { params: { is_acc_no, list }, responseType: 'blob' })
+        ).data;
+        return res;
+    } catch (e) {
+        throw e;
+    }
+}
+
+export const exportBBoxPng = async (is_acc_no, report_id, accession_no) => {
+    try {
+        const res = (
+            await instance.get("/masks/png/", { params: { is_acc_no, report_id, accession_no }, responseType: 'blob' })
+        ).data;
+        return res;
+    } catch (e) {
+        throw e;
+    }
+}

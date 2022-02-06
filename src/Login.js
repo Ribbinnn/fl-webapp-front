@@ -93,17 +93,6 @@ function Login() {
                   Sign in
                 </Button>
               </Form.Item>
-              <div className="hr-divider">
-                <label id="smaller-label">OR</label>
-              </div>
-              <div className="center-div">
-                <a href="https://account.it.chula.ac.th/login?service=http://localhost:3000/auth">
-                  <img
-                    src="https://account.it.chula.ac.th/images/ConnectWithChulaSSO.png"
-                    width="300"
-                  />
-                </a>
-              </div>
             </Form>
           </div>
         </Col>

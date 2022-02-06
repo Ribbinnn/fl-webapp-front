@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Table, Tooltip, Spin, Form, DatePicker, Button, Popconfirm, Input } from "antd";
-import { LoadingOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Table, Tooltip, Spin, Form, DatePicker, Button, Popconfirm, Input, Dropdown, Menu, Modal } from "antd";
+import { LoadingOutlined, DeleteOutlined, DownloadOutlined } from "@ant-design/icons";
 import { getPatientDataLocal } from "../api/pacs"
+import { exportBBoxCsv, exportBBoxPng } from "../api/masks";
 import ImageModal from "../component/ImageModal";
 import AnnotationModal from "../view history/annotate/AnnotationModal";
 import * as moment from "moment";
@@ -43,6 +44,17 @@ function SelectXRayImage(props) {
         },
     };
 
+    const downloadBBox = (file, type, all) => {
+        const url = window.URL.createObjectURL(file)
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', type === "png" ? `bbox.png` : (all ? `bbox_all.xlsx` : `bbox.xlsx`));
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        props.setLoading(false);
+    }
+
     const prepareTable = (data) => {
         // create columns
         let field_list = (fields).map((field) => ({
@@ -72,6 +84,50 @@ function SelectXRayImage(props) {
                             StudyDateTime={record["Study Date Time"]} />
                         {props.mode === "annotate" ?
                             <div className="center-div">
+                                <Dropdown overlay={
+                                    <Menu>
+                                        <Menu.Item key="0">
+                                            <Tooltip placement="top" title="Export bounding boxes of each report in .xlsx format">
+                                                <label
+                                                    className="clickable-label"
+                                                    onClick={() => {
+                                                        props.setLoading(true);
+                                                        exportBBoxCsv(true, [record["Accession No"]])
+                                                        .then((res) => {
+                                                            downloadBBox(res, "xlsx", false);
+                                                        }).catch((err) => {
+                                                            console.log(err);
+                                                        })
+                                                    }}
+                                                >
+                                                    save .xlsx
+                                                </label>
+                                            </Tooltip>
+                                        </Menu.Item>
+                                        <Menu.Item key="1">
+                                            <Tooltip placement="top" title="Export bounding boxes of each report in .png format">
+                                                <label
+                                                    className="clickable-label"
+                                                    onClick={() => {
+                                                        props.setLoading(true);
+                                                        exportBBoxPng(true, record["Accession No"], record["Accession No"])
+                                                        .then((res) => {
+                                                            downloadBBox(res, "png", false);
+                                                        }).catch((err) => {
+                                                            console.log(err.response);
+                                                            Modal.error({content: 'Bounding box data not found'});
+                                                            props.setLoading(false);
+                                                        })
+                                                    }}
+                                                >
+                                                    save .png
+                                                </label>
+                                            </Tooltip>
+                                        </Menu.Item>
+                                    </Menu>
+                                } trigger={['click']}>
+                                    <DownloadOutlined className="clickable-icon" />
+                                </Dropdown>
                                 <AnnotationModal accession_no={record["Accession No"]} />
                                 {/* <Popconfirm
                                     title="Delete this report?"
@@ -221,7 +277,15 @@ function SelectXRayImage(props) {
                     </Button>
                 </Form.Item>
             </Form>
-            <label style={{fontSize: "medium", color: "#de5c8e", marginBottom: loaded ? "32px" : (props.mode === "diagnosis" ? 0 : "32px"), marginLeft: "20px"}}>
+            <label
+                style={{
+                    fontSize: "medium", 
+                    color: "#de5c8e", 
+                    marginBottom: props.mode === "annotate" ? 0 : (loaded ? "32px" : 0), 
+                    marginLeft: "20px",
+                    width: "100%"
+                }}
+            >
                 Press 'Search' button without filling any fields to get all results
             </label>
             {!loaded && (
@@ -234,6 +298,26 @@ function SelectXRayImage(props) {
                 </span>
                 </div>
             )}
+            {loaded && tableData && props.mode === "annotate" &&
+                <div style={{float: "right", margin: "10px 0 10px 0"}}>
+                    <Tooltip placement="top" title="Export bounding boxes of all reports in .xlsx format">
+                        <Button
+                            className="primary-btn smaller"
+                            onClick={() => {
+                                props.setLoading(true);
+                                let acc_no_list = tableData.map((data) => data["Accession No"]);
+                                exportBBoxCsv(true, acc_no_list)
+                                .then((res) => {
+                                    downloadBBox(res, "xlsx", true);
+                                }).catch((err) => {
+                                    console.log(err);
+                                })
+                            }}
+                        >
+                                Export all to .xlsx
+                        </Button>
+                    </Tooltip>
+                </div>}
             {loaded && tableData && 
                 <Table 
                     columns={columns} 

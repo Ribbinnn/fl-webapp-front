@@ -24,18 +24,3 @@ export const login = async (username, password, remember) => {
       throw e;
     }
 }
-
-export const chulaSSO = async (search) => {
-  try {
-    const response = (await instance.post('/auth/chula/sso'+search)).data;
-
-    sessionStorage.setItem("token", response.data.token);
-    sessionStorage.setItem("user", JSON.stringify({id: response.data.user_id, username: response.data.username, role: response.data.role}));
-    sessionStorage.setItem("auth", true);
-    
-    updateToken()
-    return response
-  } catch (e) {
-    throw e;
-  }
-}
