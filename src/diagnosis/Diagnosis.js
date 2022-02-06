@@ -1,9 +1,7 @@
 import React, { useState, useRef, useContext } from "react";
-import { Steps, Button, Form, Input, Row, Col, Modal, Spin } from "antd";
+import { Steps, Button, Form, Input, Modal, Spin } from "antd";
 import "antd/dist/antd.css";
 import { LoadingOutlined } from "@ant-design/icons";
-import ProjectInfo from "../component/ProjectInfo";
-import SelectMedicalRecord from "./SelectMedicalRecord";
 import SelectXRayImage from "./SelectXRayImage";
 import Completed from "../component/Completed";
 import PreviewEdit from "./PreviewEdit";
@@ -61,7 +59,6 @@ export default function Diagnosis() {
   //   "Blood pressure": "120/80",
   // });
   const [MedRec, setMedRec] = useState(null);
-  const [MedRecIndex, setMedRecIndex] = useState([]);
   // const [accessionNo, setAccessionNo] = useState("74");
   const [accessionNo, setAccessionNo] = useState(null);
   const [accessionNoIndex, setAccessionNoIndex] = useState([]);
@@ -70,14 +67,11 @@ export default function Diagnosis() {
   const [toDate, setToDate] = useState(null);
   const [pacsTableData, setPacsTableData] = useState(null);
   const [current, setCurrent] = useState(0);
-  const selectMedicalRecordRef = useRef();
 
   const next = () => {
     /** add condition for each step to go next step here */
     if (current === 0 && globalProject.projectReq.length === 0) {
       setCurrent(2);
-    } else if (current === 1) {
-      selectMedicalRecordRef.current.setMedicalRecord();
     } else if (current === 2 && accessionNo === null) {
         Modal.warning({content: "Please select X-Ray Image."});
     } else {
@@ -119,46 +113,13 @@ export default function Diagnosis() {
             Patient={Patient}
             setPatient={setPatient}
             setMedRec={setMedRec}
-            setMedRecIndex={setMedRecIndex}
             setAccessionNo={setAccessionNo}
             setAccessionNoIndex={setAccessionNoIndex}
             loading={loading}
             setLoading={setLoading}
           />
         )}
-        {current === 1 && (
-          <Row>
-            <Col span={7}>
-              <div>
-                <label
-                  style={{
-                    display: "block",
-                    color: "#de5c8e",
-                    marginBottom: "10px",
-                  }}
-                >
-                  Patient's HN: {HN}
-                </label>
-                <ProjectInfo
-                  project_id={globalProject.projectId}
-                  collapse={false}
-                />
-              </div>
-            </Col>
-            <Col span={17}>
-              <SelectMedicalRecord
-                ref={selectMedicalRecordRef}
-                HN={HN}
-                current={current}
-                setCurrent={setCurrent}
-                MedRec={MedRec}
-                setMedRec={setMedRec}
-                MedRecIndex={MedRecIndex}
-                setMedRecIndex={setMedRecIndex}
-              />
-            </Col>
-          </Row>
-        )}
+        {current === 1 && null}
         {current === 2 && (
           <div>
             <label
@@ -234,7 +195,6 @@ function SelectHN(props) {
         props.setHN(input_hn);
         props.setPatient({Name: res.data["Patient Name"]});
         props.setMedRec(null);
-        props.setMedRecIndex([]);
         props.setAccessionNo(null);
         props.setAccessionNoIndex([]);
       } else props.setPatient(false);
