@@ -83,6 +83,7 @@ export default function AnnotationPanel(props) {
   });
   const [savedData, setSavedData] = useState();
   const [maskID, setMaskID] = useState();
+  const [btnMode, setBtnMode] = useState("close");
 
   useEffect(() => {
     // console.log(props.accession_no);
@@ -431,7 +432,7 @@ export default function AnnotationPanel(props) {
                   return [...current, item];
                 }, []);
                 setLabels(update);
-                // if (btnMode === "close") setBtnMode("save-cancel");
+                setBtnMode("save-cancel");
               }}
               okButtonProps={{ className: "primary-btn popconfirm" }}
               cancelButtonProps={{ style: { display: "none" } }}
@@ -446,6 +447,11 @@ export default function AnnotationPanel(props) {
         ),
       },
     ]);
+
+    if (labels.some((member) => {
+      return !member.saved;
+    })) setBtnMode("save-cancel");
+
   }, [labels, labelList]);
 
   useEffect(() => {
@@ -940,7 +946,7 @@ export default function AnnotationPanel(props) {
           key,
           duration: 5,
         });
-        // setBtnMode("close");
+        setBtnMode("close");
         setLabels(
           labels.map((item) => {
             return { ...item, saved: true };
@@ -975,7 +981,7 @@ export default function AnnotationPanel(props) {
           "wado",
           displayImage
         );
-        // setBtnMode("close");
+        setBtnMode("close");
       },
       cancelText: "No",
     });
@@ -1394,10 +1400,7 @@ export default function AnnotationPanel(props) {
             </Panel>
           </Collapse>
           <Row justify="end" style={{ marginTop: "12px" }}>
-            { 
-            labels.some((member) => {
-                return !member.saved;
-              }) && (
+            { btnMode === "save-cancel" && (
                 <Button
                   className="primary-btn smaller"
                   style={{ marginRight: "10px" }}
@@ -1407,17 +1410,13 @@ export default function AnnotationPanel(props) {
                 </Button>
               )
             }
-            {labels.some((member) => {
-              return !member.saved;
-            }) && (
+            {btnMode === "save-cancel" && (
               <Button className="primary-btn smaller" onClick={saveAnnotations}>
                 Save
               </Button>
             )}
 
-            {labels.every((member) => {
-              return member.saved;
-            }) && (
+            {btnMode === "close" && (
               <Button
                 className="primary-btn smaller"
                 onClick={props.handleCancel}
