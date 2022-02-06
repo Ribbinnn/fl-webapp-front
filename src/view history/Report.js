@@ -75,6 +75,13 @@ export default function Report(props) {
     });
   };
 
+  const updateStatus = () => {
+    if (info.result.status ==="annotated") setInfo({
+      ...info,
+      result: { ...info.result, status: "reviewed"},
+    });
+  };
+
   return (
     <div className="content">
       {!loaded && (
@@ -124,6 +131,7 @@ export default function Report(props) {
                   return item.finding;
                 })}
                 displayText="Annotate"
+                updateStatus={updateStatus}
               />
             )}
           </Col>

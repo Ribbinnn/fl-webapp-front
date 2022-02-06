@@ -3,7 +3,6 @@ import { Table, Tooltip, Form, Input, Button, Select, DatePicker, Tag, Spin, Pop
 import { DownloadOutlined ,EditOutlined, DeleteOutlined, ReloadOutlined, LoadingOutlined } from '@ant-design/icons';
 import {viewHistory, deleteReport} from "../api/viewHistory"
 import { exportBBoxCsv, exportBBoxPng } from "../api/masks";
-import SelectProject from "../component/SelectProject";
 import ImageModal from "../component/ImageModal";
 import { useHistory, useLocation } from "react-router-dom";
 import * as moment from "moment";
@@ -477,9 +476,8 @@ function HistoryLog(props) {
                 <Table 
                     columns={columns} 
                     dataSource={uploadedItem} 
-                    pagination={false} 
                     size="small"
-                    className="view-history-table seven-rows-table with-tag"
+                    className="view-history-table with-tag"
                 />}
         </div>
     )

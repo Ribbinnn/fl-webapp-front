@@ -21,9 +21,7 @@ export default function Label(props) {
   const [name, setName] = useState("");
 
   useEffect(() => {
-    if (props.labelList.length > 0) {
-      props.setSelectedLabel(props.labelList[0]);
-    } else props.setSelectedLabel("label");
+    props.setSelectedLabel(props.defaultLabel ?? labelList[0] ?? defaultFinding[0])
   }, []);
 
   const onNameChange = (event) => {
@@ -50,7 +48,7 @@ export default function Label(props) {
       onChange={handleChange}
       style={{ width: 300 }}
       className="label-selector"
-      defaultValue={props.defaultLabel ?? labelList[0] ?? "label"}
+      defaultValue={props.defaultLabel ?? labelList[0] ?? defaultFinding[0]}
       filterOption={(input, option) =>
         option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
       }

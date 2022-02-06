@@ -75,7 +75,7 @@ export default function AnnotationPanel(props) {
   const [savedTime, setSavedTime] = useState();
   const [gradCam, setGradCam] = useState({
     selected:
-      props.gradCamList.filter((item) => {
+      props.gradCamList?.filter((item) => {
         return item.isPositive;
       })[0]?.finding || null, 
       //props.gradCamList.length ? props.gradCamList[0].finding : null,
@@ -93,8 +93,8 @@ export default function AnnotationPanel(props) {
       Modal.error({content: "Error on loading image."})
       props.handleCancel();
     }
-    getBBox(rid).then((res) => {
-      // console.log(res);
+    getBBox(!rid, rid ? rid : props.accession_no).then((res) => {
+      console.log(res);
       if (res.data) {
         setUser({ ...user, ...res.data.user });
         setSavedData(
@@ -112,7 +112,7 @@ export default function AnnotationPanel(props) {
   }, []);
 
   useEffect(() => {
-    // // console.log(labels);
+    console.log(labels);
     setColumns([
       {
         title: "Label",
@@ -142,8 +142,8 @@ export default function AnnotationPanel(props) {
         key: "editor",
         render: (text, record) => (
           <span style={record.saved ? {} : { color: "#de5c8e" }}>
-            {record.updated_by.first_name[0] ?? "-"}
-            {record.updated_by.last_name[0] ?? "-"}
+            {record?.updated_by?.first_name[0] ?? "-"}
+            {record?.updated_by?.last_name[0] ?? "-"}
           </span>
         ),
       },
@@ -346,7 +346,9 @@ export default function AnnotationPanel(props) {
                     setLabelBuffer({
                       key: record.key,
                     });
-                    // setBtnMode("save-cancel");
+                  },
+                  onCancel: () => {
+                    setSelectedLabel();
                   },
                   okButtonProps: {
                     style: {
@@ -950,6 +952,7 @@ export default function AnnotationPanel(props) {
           })
         );
         setSavedTime(new Date(res.data.updatedAt).toLocaleString());
+        props.updateStatus();
       } else
         message.error({
           content: "Cannot save bounding boxes, please try again later.",
@@ -1094,7 +1097,7 @@ export default function AnnotationPanel(props) {
             expandIconPosition="right"
             defaultActiveKey={[1, 2, 3]}
           >
-            {props.gradCamList.length && (
+            {props.gradCamList?.length && (
               <Panel header="Gradcam" key="1">
                 <Row align="center" style={{ marginBottom: "10px" }}>
                   <span style={{ marginBottom: "5px" }}>

@@ -323,10 +323,10 @@ function SelectXRayImage(props) {
                 <Table 
                     columns={columns} 
                     dataSource={tableData} 
-                    pagination={false} 
+                    // pagination={false} 
                     rowSelection={props.mode === "diagnosis" ? rowSelection : null}
                     size="small"
-                    className={props.mode === "diagnosis" ? "three-rows-table with-row-selection" : "seven-rows-table with-row-selection"}
+                    // className={props.mode === "diagnosis" ? "three-rows-table with-row-selection" : "seven-rows-table with-row-selection"}
                 />
             }
         </div>
