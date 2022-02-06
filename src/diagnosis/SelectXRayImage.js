@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Table, Tooltip, Spin, Form, DatePicker, Button, Popconfirm, Input, Dropdown, Menu } from "antd";
+import { Table, Tooltip, Spin, Form, DatePicker, Button, Popconfirm, Input, Dropdown, Menu, Modal } from "antd";
 import { LoadingOutlined, DeleteOutlined, DownloadOutlined } from "@ant-design/icons";
 import { getPatientDataLocal } from "../api/pacs"
 import { exportBBoxCsv, exportBBoxPng } from "../api/masks";
@@ -91,7 +91,6 @@ function SelectXRayImage(props) {
                                                 <label
                                                     className="clickable-label"
                                                     onClick={() => {
-                                                        /* export xlsx api */
                                                         props.setLoading(true);
                                                         exportBBoxCsv(true, [record["Accession No"]])
                                                         .then((res) => {
@@ -110,13 +109,14 @@ function SelectXRayImage(props) {
                                                 <label
                                                     className="clickable-label"
                                                     onClick={() => {
-                                                        /* export png api */
                                                         props.setLoading(true);
                                                         exportBBoxPng(true, record["Accession No"], record["Accession No"])
                                                         .then((res) => {
                                                             downloadBBox(res, "png", false);
                                                         }).catch((err) => {
                                                             console.log(err.response);
+                                                            Modal.error({content: 'Bounding box data not found'});
+                                                            props.setLoading(false);
                                                         })
                                                     }}
                                                 >
@@ -304,7 +304,6 @@ function SelectXRayImage(props) {
                         <Button
                             className="primary-btn smaller"
                             onClick={() => {
-                                /* export xlsx api */
                                 props.setLoading(true);
                                 let acc_no_list = tableData.map((data) => data["Accession No"]);
                                 exportBBoxCsv(true, acc_no_list)

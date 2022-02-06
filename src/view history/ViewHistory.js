@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Table, Tooltip, Form, Input, Button, Select, DatePicker, Tag, Spin, Popconfirm, Dropdown, Menu, Row, Col } from "antd";
+import { Table, Tooltip, Form, Input, Button, Select, DatePicker, Tag, Spin, Popconfirm, Dropdown, Menu, Row, Col, Modal } from "antd";
 import { DownloadOutlined ,EditOutlined, DeleteOutlined, ReloadOutlined, LoadingOutlined } from '@ant-design/icons';
 import {viewHistory, deleteReport} from "../api/viewHistory"
 import { exportBBoxCsv, exportBBoxPng } from "../api/masks";
@@ -220,7 +220,9 @@ function HistoryLog(props) {
                                                 .then((res) => {
                                                     downloadBBox(res, "png", false);
                                                 }).catch((err) => {
-                                                    console.log(err);
+                                                    console.log(err.response);
+                                                    Modal.error({content: 'Bounding box data not found'});
+                                                    props.setLoading(false);
                                                 })
                                             }}
                                         >
