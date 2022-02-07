@@ -66,14 +66,7 @@ export default function Report(props) {
   const updateTimestamp = (updatedAt, updated_by) => {
     setInfo({
       ...info,
-      result: { ...info.result, updatedAt: updatedAt, updated_by: updated_by },
-    });
-  };
-
-  const updateStatus = () => {
-    if (info.result.status ==="annotated") setInfo({
-      ...info,
-      result: { ...info.result, status: "reviewed"},
+      result: { ...info.result, status: info.result.status === "annotated" ? "reviewed" : info.result.status, updatedAt: updatedAt, updated_by: updated_by },
     });
   };
 
@@ -126,7 +119,7 @@ export default function Report(props) {
                 })}
                 displayText="Annotate"
                 mode={info.result.status === "finalized" || mode !== "edit" ? "view-only":"editable"}
-                updateStatus={updateStatus}
+                updateTimestamp={updateTimestamp}
               />
           </Col>
           {gradCam && (
