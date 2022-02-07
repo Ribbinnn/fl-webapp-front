@@ -954,7 +954,7 @@ export default function AnnotationPanel(props) {
           })
         );
         setSavedTime(new Date(res.data.updatedAt).toLocaleString());
-        props.updateStatus();
+        props.updateTimestamp(res.data.updatedAt, user);
       } else
         message.error({
           content: "Cannot save bounding boxes, please try again later.",
