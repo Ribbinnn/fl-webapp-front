@@ -2,7 +2,6 @@ import React, { useEffect, useState, useContext } from "react";
 import { Table, Tooltip, Form, Input, Button, Select, DatePicker, Tag, Spin, Popconfirm } from "antd";
 import { DownloadOutlined ,EditOutlined, DeleteOutlined, ReloadOutlined, LoadingOutlined } from '@ant-design/icons';
 import {viewHistory, deleteReport} from "../api/viewHistory"
-import SelectProject from "../component/SelectProject";
 import ImageModal from "../component/ImageModal";
 import { useHistory, useLocation } from "react-router-dom";
 import * as moment from "moment";
@@ -20,12 +19,6 @@ export default function ViewHistory() {
   return (
     <div className="content">
       {globalProject !== "none" && <HistoryLog project={globalProject} />}
-      {/* {globalProject==='none' && <SelectProject
-                // setProject={setProject}
-                Project={project}
-                mode = "select"
-                width="530px" 
-            />} */}
     </div>
   );
 }
@@ -47,7 +40,14 @@ function HistoryLog(props) {
     const queryString = useQuery();
     const [uploadedItem, setUploadedItem] = useState([])
     const [status, setStatus] = useState([]);
-    const [shownStatus, setShownStatus] = useState([]);
+    const shownStatus = {
+        "all": {shown: "All", color: ""},
+        "canceled": {shown: "Canceled", color: "default"},
+        "in progress": {shown: "1 In Progress", color: "processing"},
+        "annotated": {shown: "2 AI-Annotated", color: "warning"},
+        "reviewed": {shown: "3 Human-Annotated", color: "error"},
+        "finalized": {shown: "4 Finalized", color: "success"}
+    }
     const [findings, setFindings] = useState([]);
     const [reload, setReload] = useState("");
 
@@ -61,28 +61,12 @@ function HistoryLog(props) {
                 showTitle: false
             },
             sorter: {
-                compare: (a, b) => a.status.localeCompare(b.status)
+                compare: (a, b) => shownStatus[a.status].shown.localeCompare(shownStatus[b.status].shown)
             },
             render: (status) => {
-                var color = ""
-                if (status === "canceled") {
-                    color = "default"
-                } else if (status === "finalized") {
-                    color = "success"
-                    status = "4 Finalized"
-                } else if (status === "annotated") {
-                    color = "warning"
-                    status = "2 AI-Annotated"
-                } else if (status === "reviewed") {
-                    color = "error"
-                    status = "3 Human-Annotated"
-                } else {
-                    color = "processing"
-                    status = "1 In Progress"
-                }
                 return(
-                    <Tag color={color}  style={{width: "100%"}}>
-                        {status.charAt(0).toUpperCase() + status.slice(1).split("_").join(" ")}
+                    <Tag color={shownStatus[status].color}  style={{width: "100%"}}>
+                        {shownStatus[status].shown}
                     </Tag>
                 );
             }
@@ -238,6 +222,17 @@ function HistoryLog(props) {
     viewHistory(props.project.projectId)
       .then((response) => {
         console.log(response);
+        // add status, findings list
+        const status = ["all"];
+        const findings = ["all"];
+        for (const i in response.data) {
+            if (!status.includes(response.data[i]["status"])) {
+                status.push(response.data[i]["status"]);
+            }
+            if (!findings.includes(response.data[i]["finding"])) {
+                findings.push(response.data[i]["finding"]);
+            }
+        }
         // filter data by search query params
         let filter_data = response.data.filter(
           (item, i) =>
@@ -261,10 +256,7 @@ function HistoryLog(props) {
               ? true
               : new Date(item.createdAt) <= new Date(queryString.get("to")))
         );
-        // add key to each row & change date-time & add status, findings list
-        const status = ["all"];
-        const shownStatus = [];
-        const findings = ["all"];
+        // add key to each row & change date-time
         for (const i in filter_data) {
           filter_data[i]["key"] = (parseInt(i) + 1).toString();
           filter_data[i].createdAt = new Date(
@@ -273,29 +265,13 @@ function HistoryLog(props) {
           filter_data[i].updatedAt = new Date(
             filter_data[i].updatedAt
           ).toLocaleString();
-          if (!status.includes(filter_data[i]["status"])) {
-            status.push(filter_data[i]["status"]);
-          }
-          if (!findings.includes(filter_data[i]["finding"])) {
-            findings.push(filter_data[i]["finding"]);
-          }
         }
-        for (const i in status) {
-            if (status[i] === "finalized") {
-                shownStatus.push("4 Finalized");
-            } else if (status[i] === "annotated") {
-                shownStatus.push("2 AI-Annotated");
-            } else if (status[i] === "reviewed") {
-                shownStatus.push("3 Human-Annotated");
-            } else if (status[i] === "in progress") {
-                shownStatus.push("1 In Progress");
-            } else {
-                shownStatus.push(status[i]);
-            }
-        }
+            filter_data.sort(
+                (a, b) => shownStatus[a.status].shown.localeCompare(shownStatus[b.status].shown)
+                || new Date(b.updatedAt) - new Date(a.updatedAt)
+            );
             setUploadedItem(filter_data);
             setStatus(status);
-            setShownStatus(shownStatus)
             setFindings(findings);
             setLoaded(true);
         }).catch((err) => console.log(err.response));
@@ -318,11 +294,11 @@ function HistoryLog(props) {
                         className="search-component"
                         defaultValue={queryString.get("status") === null ? "All" : queryString.get("status")}
                         onChange={(value) => {
-                            status[value] === "all" ? queryString.delete("status") : queryString.set("status", status[value]);
+                            value === "all" ? queryString.delete("status") : queryString.set("status", value);
                         }}>
-                            {shownStatus.map((status, i) => (
-                                <Option key={i} value={i}>
-                                    {status.charAt(0).toUpperCase() + status.slice(1).split("_").join(" ")}
+                            {status.map((status, i) => (
+                                <Option key={i} value={status}>
+                                    {shownStatus[status].shown}
                                 </Option>
                             ))}
                     </Select>
@@ -332,10 +308,10 @@ function HistoryLog(props) {
                         className="search-component"
                         defaultValue={queryString.get("findings") === null ? "All" : queryString.get("findings")}
                         onChange={(value) => {
-                            findings[value] === "all" ? queryString.delete("findings") : queryString.set("findings", findings[value]);
+                            value === "all" ? queryString.delete("findings") : queryString.set("findings", value);
                         }}>
                             {findings.map((finding, i) => (
-                                <Option key={i} value={i}>
+                                <Option key={i} value={finding}>
                                     {finding.charAt(0).toUpperCase() + finding.slice(1).split("_").join(" ")}
                                 </Option>
                             ))}
@@ -394,19 +370,19 @@ function HistoryLog(props) {
             )}
             {loaded &&
                 <label
-                    className="clickable-label"
-                    style={{color: "#de5c8e", display: "flex", alignItems: "center", margin: "30px 0 8px 0"}}
-                    onClick={() => {
-                        reload === "" ? setReload("reload") : setReload("")
-                        setLoaded(false);
-                    }}>
-                        <ReloadOutlined style={{marginRight: "5px"}} />
-                        Reload
-                </label>}
+                className="clickable-label"
+                style={{color: "#de5c8e", display: "flex", alignItems: "center", margin: "30px 0 8px 0"}}
+                onClick={() => {
+                    reload === "" ? setReload("reload") : setReload("")
+                    setLoaded(false);
+                }}>
+                    <ReloadOutlined style={{marginRight: "5px"}} />
+                    Reload
+            </label>}
             {loaded &&
                 <Table 
                     columns={columns} 
-                    dataSource={uploadedItem}
+                    dataSource={uploadedItem} 
                     size="small"
                     className="view-history-table with-tag"
                 />}
