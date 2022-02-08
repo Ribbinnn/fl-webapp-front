@@ -273,6 +273,17 @@ function HistoryLog(props) {
     viewHistory(props.project.projectId)
       .then((response) => {
         console.log(response);
+        // add status, findings list
+        const status = ["all"];
+        const findings = ["all"];
+        for (const i in response.data) {
+            if (!status.includes(response.data[i]["status"])) {
+                status.push(response.data[i]["status"]);
+            }
+            if (!findings.includes(response.data[i]["finding"])) {
+                findings.push(response.data[i]["finding"]);
+            }
+        }
         // filter data by search query params
         let filter_data = response.data.filter(
           (item, i) =>
@@ -296,9 +307,7 @@ function HistoryLog(props) {
               ? true
               : new Date(item.createdAt) <= new Date(queryString.get("to")))
         );
-        // add key to each row & change date-time & add status, findings list
-        const status = ["all"];
-        const findings = ["all"];
+        // add key to each row & change date-time
         for (const i in filter_data) {
           filter_data[i]["key"] = (parseInt(i) + 1).toString();
           filter_data[i].createdAt = new Date(
@@ -307,12 +316,6 @@ function HistoryLog(props) {
           filter_data[i].updatedAt = new Date(
             filter_data[i].updatedAt
           ).toLocaleString();
-          if (!status.includes(filter_data[i]["status"])) {
-            status.push(filter_data[i]["status"]);
-          }
-          if (!findings.includes(filter_data[i]["finding"])) {
-            findings.push(filter_data[i]["finding"]);
-          }
         }
             filter_data.sort(
                 (a, b) => shownStatus[a.status].shown.localeCompare(shownStatus[b.status].shown)
@@ -342,10 +345,10 @@ function HistoryLog(props) {
                         className="search-component"
                         defaultValue={queryString.get("status") === null ? "All" : queryString.get("status")}
                         onChange={(value) => {
-                            status[value] === "all" ? queryString.delete("status") : queryString.set("status", status[value]);
+                            value === "all" ? queryString.delete("status") : queryString.set("status", value);
                         }}>
                             {status.map((status, i) => (
-                                <Option key={i} value={i}>
+                                <Option key={i} value={status}>
                                     {shownStatus[status].shown}
                                 </Option>
                             ))}
@@ -356,10 +359,10 @@ function HistoryLog(props) {
                         className="search-component"
                         defaultValue={queryString.get("findings") === null ? "All" : queryString.get("findings")}
                         onChange={(value) => {
-                            findings[value] === "all" ? queryString.delete("findings") : queryString.set("findings", findings[value]);
+                            value === "all" ? queryString.delete("findings") : queryString.set("findings", value);
                         }}>
                             {findings.map((finding, i) => (
-                                <Option key={i} value={i}>
+                                <Option key={i} value={finding}>
                                     {finding.charAt(0).toUpperCase() + finding.slice(1).split("_").join(" ")}
                                 </Option>
                             ))}
