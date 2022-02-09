@@ -317,10 +317,10 @@ function HistoryLog(props) {
             filter_data[i].updatedAt
           ).toLocaleString();
         }
-            filter_data.sort(
-                (a, b) => shownStatus[a.status].shown.localeCompare(shownStatus[b.status].shown)
-                || new Date(b.updatedAt) - new Date(a.updatedAt)
-            );
+            filter_data.sort((a, b) =>
+                ((a.status === "in progress" || b.status === "in progress")
+                && shownStatus[a.status].shown.localeCompare(shownStatus[b.status].shown))
+                || new Date(b.updatedAt) - new Date(a.updatedAt));
             setUploadedItem(filter_data);
             setStatus(status);
             setFindings(findings);
