@@ -6,37 +6,40 @@ import { getDicomByAccessionNo } from "../api/image";
 
 export default function PreviewEdit(props) {
   const onChangeMedRec = (field) => (event) => {
-    // console.log(field, event.target.value);
-    console.log(props.MedRec)
+    let value = event.target.value;
+    // console.log(field, value);
+    // console.log(props.MedRec)
+    // console.log(props.projectReq)
     if (field === "gender") {
-      event.target.value = event.target.value.toUpperCase();
+      value = value.toUpperCase();
     }
     if (
       (field === "gender" &&
-        event.target.value !== "F" &&
-        event.target.value !== "M")
+        value !== "F" &&
+        value !== "M")
     ) {
       return Modal.warning({ content: "Gender must be specified by F or M." });
     } else if (field === "age") {
-      if (!event.target.value)
+      if (!value)
         return Modal.warning({ content: "Age must not be empty." });
-      event.target.value = parseInt(event.target.value);
-    } else if (!event.target.value) {
+      value = parseInt(value);
+    } else if (props.projectReq.find((item) => item.name === field) && !value) {
       return Modal.warning({
         content: `${
           field.charAt(0).toUpperCase() + field.slice(1).split("_").join(" ")
         } must not be empty.`,
       });
     } else if (
-      props.projectReq.find((item) => item.name === field).type === "number"
+      props.projectReq.find((item) => item.name === field)?.type === "number"
     ) {
-      event.target.value = parseInt(event.target.value);
+      value = parseInt(value);
     }
+    // console.log(field, typeof(value));
     props.setMedRec({
       ...props.MedRec,
-      [field]: event.target.value,
+      [field]: value,
     });
-    console.log({ ...props.MedRec, field: event.target.value });
+    // console.log({ ...props.MedRec, field: value });
   };
 
   return (
