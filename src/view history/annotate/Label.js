@@ -19,7 +19,7 @@ export default function Label(props) {
   };
 
   const addItem = () => {
-    console.log("addItem");
+    // console.log("addItem");
     if (name !== ""){
         props.setLabelList([...labelList, name])
         setLabelList([...labelList, name])
@@ -29,7 +29,7 @@ export default function Label(props) {
 
   function handleChange(value) {
     props.setSelectedLabel(value);
-    console.log("Label: ", value);
+    // console.log("Label: ", value);
   }
 
   return (
