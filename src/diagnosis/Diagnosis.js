@@ -94,7 +94,11 @@ export default function Diagnosis() {
   };
 
   const prev = () => {
-    setCurrent(current - 1);
+    if (current === 2 && globalProject.projectReq.length === 0) {
+      setCurrent(0);
+    } else {
+      setCurrent(current - 1);
+    }
   };
 
   return (
