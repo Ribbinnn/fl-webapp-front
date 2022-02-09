@@ -54,7 +54,10 @@ const UploadRecordForm = forwardRef((props, ref) => {
         event.target.files[0].name.split(".")[1] === "xlsx" ? change_field = "w" : change_field = "v";
         while (current_char <= last_char) {
             var column_name = target_workbook[String.fromCharCode(current_char) + "1"];
-            let tmp = column_name[change_field].split("(")
+            if (column_name === undefined) {
+                break;
+            }
+            let tmp = column_name[change_field].toString().split("(")
             tmp[0] = tmp[0].split(" ").join("_").toLowerCase()
             column_name[change_field] = tmp.join('(');
             // column_name[change_field] = tmp[0];
