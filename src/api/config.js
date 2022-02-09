@@ -1,7 +1,3 @@
-/* HEROKU */
-// export const serverURL = "https://flweb-capstone-back.herokuapp.com/api";
-
 /* LOCALHOST + DOCKER */
-export const serverURL = "http://localhost:5000/api";
-export const PYserverURL = "http://localhost:7000/api";
+export const serverURL = `http://${process.env.REACT_APP_IP_ADDRESS}:5000/api`;
 

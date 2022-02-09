@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {serverURL} from './config';
+import { serverURL } from './config';
 
 export var instance = axios.create({
     baseURL: serverURL,
