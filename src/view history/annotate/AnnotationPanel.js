@@ -171,12 +171,12 @@ export default function AnnotationPanel(props) {
                     cornerstoneTools.removeToolState(
                       dicomElement,
                       "length",
-                      first_line
+                      second_line
                     );
                     cornerstoneTools.removeToolState(
                       dicomElement,
                       "length",
-                      second_line
+                      first_line
                     );
 
                     update = update.reduce((current, item) => {
@@ -1016,7 +1016,6 @@ export default function AnnotationPanel(props) {
           const second_line = globalTool["length"].data[item.index[1]];
           cornerstoneTools.removeToolState(dicomElement, "length", second_line);
           cornerstoneTools.removeToolState(dicomElement, "length", first_line);
-          // console.log(first_line, second_line)
           return [
             ...current,
             { ...item, index: -1, invisible: [first_line, second_line] },
@@ -1039,7 +1038,6 @@ export default function AnnotationPanel(props) {
     update = update.reduce((current, item, i) => {
       if (!item.invisible) return [...current, item];
       const bbox = item.invisible;
-      // console.log(bbox)
       if (item.tool === "ratio") {
         cornerstoneTools.addToolState(dicomElement, "length", bbox[0]);
         cornerstoneTools.addToolState(dicomElement, "length", bbox[1]);

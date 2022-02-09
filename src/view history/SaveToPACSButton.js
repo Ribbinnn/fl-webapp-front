@@ -64,7 +64,7 @@ export default function SaveToPACSButton(props) {
           <Tag color={"success"} style={{ marginLeft: "10px" }}>
             4 Finalized
           </Tag>{" "}
-          once Save to PACS process is done.
+          once Save to PACS process is done. The result can be no longer edited and remained only selected classes. 
         </p>
 
         <Checkbox onChange={onAgree}>
