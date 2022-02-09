@@ -197,7 +197,9 @@ export default function Diagnosis() {
             HN={HN}
             Patient={Patient}
             MedRec={MedRec}
+            setMedRec={setMedRec}
             AccessionNo={accessionNo}
+            projectReq={globalProject.projectReq}
           />
         )}
         {current === steps.length - 1 && (
