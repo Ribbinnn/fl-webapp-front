@@ -290,7 +290,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
     return(
         <div>
             <label style={{marginBottom: "10px"}}>Medical Records</label>
-            <Form layout="vertical" style={{margin: "8px 0 5px 0"}}>
+            {hasRecord && <Form layout="vertical" style={{margin: "8px 0 5px 0"}}>
                 <label style={{display: "block", marginBottom: "8px"}}>Clinician</label>
                 <Form.Item style={{display: "inline-block"}}>
                     <Input className="input-text" style={{width: "200px"}} onChange={onChangeClinician} />
@@ -300,7 +300,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                         Filter
                     </Button>
                 </Form.Item>
-            </Form>
+            </Form>}
             {!loaded && (
                 <div style={{ textAlign: "center", marginTop: "20%" }}>
                 <Spin indicator={LoadingIcon} />
