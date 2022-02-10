@@ -15,6 +15,7 @@ function Login() {
   useEffect(() => {
     if (history.location.state) {
       Modal.error({content: history.location.state.err});
+      history.push({state: null});
     }
   })
 
