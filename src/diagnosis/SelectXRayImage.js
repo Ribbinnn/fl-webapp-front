@@ -47,11 +47,11 @@ function SelectXRayImage(props) {
             ellipsis: {
                 showTitle: false,
             },
-            render: field === "Patient Name" || field === "Proc Description" || field === "Study Date Time" ? field => (
+            render: (field) => (
                 <Tooltip placement="topLeft" title={field}>
                     {field}
                 </Tooltip>
-            ) : null,
+            ),
         }));
         field_list.push({
             title: "Preview",

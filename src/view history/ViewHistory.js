@@ -53,6 +53,18 @@ function HistoryLog(props) {
 
     const columns = [
         {
+            title: "No.",
+            dataIndex: "key",
+            key: "key",
+            align: "center",
+            ellipsis: {
+                showTitle: false
+            },
+            sorter: {
+                compare: (a, b) => a.key.localeCompare(b.key)
+            },
+        },
+        {
             title: "Status",
             dataIndex: "status",
             key: "status",
@@ -82,6 +94,11 @@ function HistoryLog(props) {
             sorter: {
                 compare: (a, b) => a.hn.toString().localeCompare(b.hn.toString())
             },
+            render: (HN) => (
+                <Tooltip placement="topLeft" title={HN}>
+                    {HN}
+                </Tooltip>
+            ),
         },
         {
             title: "Patient's Name",
@@ -94,6 +111,11 @@ function HistoryLog(props) {
             sorter: {
                 compare: (a, b) => a.patient_name.localeCompare(b.patient_name)
             },
+            render: (name) => (
+                <Tooltip placement="topLeft" title={name}>
+                    {name}
+                </Tooltip>
+            ),
         },
         {
             title: "Findings",
@@ -106,6 +128,11 @@ function HistoryLog(props) {
             sorter: {
                 compare: (a, b) => a.finding.localeCompare(b.finding)
             },
+            render: (finding) => (
+                <Tooltip placement="topLeft" title={finding}>
+                    {finding}
+                </Tooltip>
+            ),
         },
         {
             title: "Created Date Time",
@@ -152,6 +179,11 @@ function HistoryLog(props) {
             sorter: {
                 compare: (a, b) => a.clinician_name.localeCompare(b.clinician_name)
             },
+            render: (clinician) => (
+                <Tooltip placement="topLeft" title={clinician}>
+                    {clinician}
+                </Tooltip>
+            ),
         },
         {
             title: "Action",
@@ -256,6 +288,11 @@ function HistoryLog(props) {
               ? true
               : new Date(item.createdAt) <= new Date(queryString.get("to")))
         );
+        // default sort
+        filter_data.sort((a, b) =>
+            ((a.status === "in progress" || b.status === "in progress")
+            && shownStatus[a.status].shown.localeCompare(shownStatus[b.status].shown))
+            || new Date(b.updatedAt) - new Date(a.updatedAt));
         // add key to each row & change date-time
         for (const i in filter_data) {
           filter_data[i]["key"] = (parseInt(i) + 1).toString();
@@ -266,10 +303,6 @@ function HistoryLog(props) {
             filter_data[i].updatedAt
           ).toLocaleString();
         }
-            filter_data.sort((a, b) =>
-                ((a.status === "in progress" || b.status === "in progress")
-                && shownStatus[a.status].shown.localeCompare(shownStatus[b.status].shown))
-                || new Date(b.updatedAt) - new Date(a.updatedAt));
             setUploadedItem(filter_data);
             setStatus(status);
             setFindings(findings);

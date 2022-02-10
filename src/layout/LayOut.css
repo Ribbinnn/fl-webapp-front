@@ -1415,6 +1415,11 @@ table tr td.ant-table-selection-column {
 
 .view-history-table .ant-table-thead > tr > th:first-child,
 .view-history-table .ant-table-tbody > tr > td:first-child {
+  width: 70px;
+}
+
+.view-history-table .ant-table-thead > tr > th:nth-child(2),
+.view-history-table .ant-table-tbody > tr > td:nth-child(2) {
   width: 180px;
 }
 
