@@ -213,10 +213,10 @@ function HistoryLog(props) {
                                 // style={{marginLeft: "8px"}}
                                 onClick={() => {
                                     let role = JSON.parse(sessionStorage.getItem("user")).role;
-                                    console.log(
-                                    JSON.parse(sessionStorage.getItem("user")).role,
-                                    report
-                                    );
+                                    // console.log(
+                                    // JSON.parse(sessionStorage.getItem("user")).role,
+                                    // report
+                                    // );
                                     /* SHOW REPORT */
                                     history.push(
                                     `/viewhistory/${role === "clinician" ? "view" : "edit"}/${
@@ -253,7 +253,7 @@ function HistoryLog(props) {
   useEffect(() => {
     viewHistory(props.project.projectId)
       .then((response) => {
-        console.log(response);
+        // console.log(response);
         // add status, findings list
         const status = ["all"];
         const findings = ["all"];

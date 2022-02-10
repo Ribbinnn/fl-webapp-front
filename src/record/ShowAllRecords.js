@@ -74,7 +74,7 @@ function ShowAllRecords(props) {
             update_data["updated_time"] = new Date(update_data["updated_time"]);
             updateRecordRow(props.project.projectId, recordId.current, [update_data])
             .then((res) => {
-                console.log(res);
+                // console.log(res);
                 setEditingKey("");
             }).catch((err) => {
                 console.log(err.response);
@@ -90,7 +90,7 @@ function ShowAllRecords(props) {
         const index = newData.findIndex((item) => key === item.key);
         deleteRecordRow(recordId.current, newData[index].entry_id)
         .then((res) => {
-            console.log(res);
+            // console.log(res);
             setEditingKey("delete");
         }).catch((err) => {
             console.log(err);
@@ -100,7 +100,7 @@ function ShowAllRecords(props) {
     useEffect(() => {
         getAllRecords(props.record.vitals_proj_id)
         .then((res) => {
-            console.log(res);
+            // console.log(res);
             // create columns
             let column_list = (Object.keys(res.data[0].records[0])).map((column) => ({
                 title: column === "hn" ? 

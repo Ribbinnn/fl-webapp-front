@@ -209,14 +209,14 @@ function UserForm() {
                                             if (mode === "createuser") {
                                                 createUser(data.username, data.password, data.first_name, data.last_name, data.role, data.email)
                                                 .then((res) => {
-                                                    console.log(res);
+                                                    // console.log(res);
                                                     Modal.success({content: "Create user successfully."});
                                                     setSubmit(true);
                                                 }).catch((err) => console.log(err.response));
                                             } else {
                                                 updateUser(data.first_name, data.last_name, data.role, data.email, data.username, data.password, isChulaSSO)
                                                 .then((res) => {
-                                                    console.log(res);
+                                                    // console.log(res);
                                                     Modal.success({content: "Update user successfully."});
                                                     setSubmit(true);
                                                 }).catch((err) => console.log(err.response));

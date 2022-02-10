@@ -85,7 +85,7 @@ export default function Diagnosis() {
         setLoading(true);
         infer(accessionNo, globalProject.projectId, MedRec, (JSON.parse(sessionStorage.getItem('user'))).id)
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setCurrent(current + 1);
           setLoading(false);
         }).catch((err) => {
@@ -234,7 +234,7 @@ function SelectHN(props) {
     if (!input_hn) return
     props.setLoading(true);
     findPatientOnPACS(input_hn).then((res) => {
-      console.log(input_hn);
+      // console.log(input_hn);
       if (res.data) {
         props.setHN(input_hn);
         props.setPatient({Name: res.data["Patient Name"]});

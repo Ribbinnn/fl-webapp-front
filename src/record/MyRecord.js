@@ -74,7 +74,7 @@ function MyRecord () {
 
     useEffect(() => {
         searchVitlasProject(globalProject.projectId).then((response) => {
-            console.log(response)
+            // console.log(response)
             let res_list = (response.data).map((project)=>({
                 vitals_proj_id: project.project_id,
                 uploaded: (new Date(project.createdAt)).toLocaleString(),
@@ -187,7 +187,7 @@ function MyRecord () {
                     deleteAPI = {() => {
                         deleteRecord(recordId)
                         .then((res) => {
-                            console.log(res);
+                            // console.log(res);
                             window.location.reload();
                         }).catch((err) => {
                             console.log(err);
