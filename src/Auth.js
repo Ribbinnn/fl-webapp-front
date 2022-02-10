@@ -14,7 +14,10 @@ function Auth() {
             window.location.reload();
         }).catch(e => {
             console.log(e.message.data)
-            history.push('/login')
+            history.push({
+                pathname: '/login',
+                state: { err: 'Cannot sign in with ChulaSSO.' },
+            })
         })
     }, [])
 

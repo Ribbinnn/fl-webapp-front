@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
 import { Row, Col, Form, Input, Button, Image, Modal } from "antd";
 import { login } from "./api/login";
 
 function Login() {
+  const history = useHistory();
   const [form] = Form.useForm();
   const [remember, setRemember] = useState(false);
 
   function rememberOnChange(item) {
     setRemember(item.target.checked);
   }
+
+  useEffect(() => {
+    if (history.location.state) {
+      Modal.error({content: history.location.state.err});
+    }
+  })
 
   return (
     <div style={{ width: "100%" }}>
@@ -79,6 +87,7 @@ function Login() {
                     const data = await form.validateFields();
                     login(data.username, data.password, remember)
                       .then((respond) => {
+                        history.push({state: null});
                         window.location.reload();
                       })
                       .catch((e) => {
