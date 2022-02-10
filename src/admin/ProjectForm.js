@@ -61,7 +61,7 @@ function ProjectForm() {
         if (mode === "editproject") {
             getAllProjects()
             .then((res) => {
-                console.log(res);
+                // console.log(res);
                 setProjects(res);
                 getAllUsers()
                 .then((res) => {
@@ -418,14 +418,14 @@ function ProjectForm() {
                                     if (mode === "createproject") {
                                         createProject(data.name, data.task, data.description, classes, data.head)
                                         .then((res) => {
-                                            console.log(res);
+                                            // console.log(res);
                                             Modal.success({content: "Create project successfully."});
                                             setSubmit(true);
                                         }).catch((err) => console.log(err.response));
                                     } else {
                                         updateProjectById(projectName, data.task, data.description, classes, data.head, data.name)
                                         .then((res) => {
-                                            console.log(res);
+                                            // console.log(res);
                                             Modal.success({content: "Update project successfully."});
                                             setSubmit(true);
                                         }).catch((err) => console.log(err.response));

@@ -122,7 +122,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             update_data["updated_time"] = new Date(update_data["updated_time"]);
             updateRecordRow(globalProject.projectId, record_id, [update_data])
             .then((res) => {
-                console.log(res);
+                // console.log(res);
                 setEditingKey("");
             }).catch((err) => {
                 console.log(err.response);
@@ -138,7 +138,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
         const index = newData.findIndex((item) => key === item.key);
         deleteRecordRow(newData[index].record_id, newData[index].entry_id)
         .then((res) => {
-            console.log(res);
+            // console.log(res);
             setEditingKey("delete");
         }).catch((err) => {
             console.log(err);
