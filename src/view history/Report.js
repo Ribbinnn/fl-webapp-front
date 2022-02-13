@@ -10,6 +10,7 @@ import {
   Spin,
   Tag,
   Modal,
+  Badge
 } from "antd";
 import Info from "../component/Info";
 import {
@@ -85,6 +86,7 @@ export default function Report(props) {
       {loaded && (
         <ReportHeader
           HN={info.result.hn}
+          rno={info.no}
           patient_name={info.result.patient_name}
           patient={info.patient}
           status={info.result.status}
@@ -194,6 +196,8 @@ const ReportHeader = (props) => {
         >
           Report
         </label>
+        <Badge count={`No. ${props.rno}`} className="rno-badge"/>
+        {/* <label style={{ marginLeft: "10px", fontSize:"medium" }} >No. {props.rno}</label> */}
         <Tag
           color={
             props.status === "annotated"
