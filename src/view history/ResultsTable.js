@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Table, Input, Button, Modal, Row, Col, Rate, message } from "antd";
+import {
+  Table,
+  Input,
+  Button,
+  Modal,
+  Row,
+  Col,
+  Rate,
+  message,
+} from "antd";
 import {
   EyeOutlined,
   EyeInvisibleOutlined,
@@ -144,19 +153,30 @@ export default function ResultsTable(props) {
       .then((res) => {
         // console.log(res);
         if (res.success) {
-          message.success({ content: res.message, key, duration: 5 });
+          message.success({
+            content: res.message,
+            key,
+            duration: 3,
+            onClose: () => {
+              window.location.reload();
+            },
+          });
         } else message.error({ content: res.message, key, duration: 5 });
       })
       .catch((err) => {
         console.log(err.response);
-        message.error({ content: err.response.data.message, key, duration: 5 });
+        message.error({
+          content: err.response.data.message,
+          key,
+          duration: 5,
+        });
       });
   };
 
   const onSaveReport = () => {
     /* save report api */
     const key = "updatable";
-    message.loading({ content: "Loading...", key, duration: 0  });
+    message.loading({ content: "Loading...", key, duration: 0 });
     let selected_class = data.reduce((current, item) => {
       if (selectedRowKeys.includes(item.key)) return [...current, item.class];
       return current;
@@ -183,7 +203,7 @@ export default function ResultsTable(props) {
           });
           props.updateTimestamp(res.data.updatedAt, res.data.updated_by);
           // setBtnGroup("back");
-          setReportState({...reportState, btnGroup: "back"})
+          setReportState({ ...reportState, btnGroup: "back" });
           message.success({ content: res.message, key, duration: 5 });
         } else message.error({ content: res.message, key, duration: 5 });
       })
@@ -331,7 +351,9 @@ export default function ResultsTable(props) {
               value={reportState.rating}
             />
             <label className="rating-text" style={{ marginLeft: "20px" }}>
-              {reportState.rating ? ratingDesc[reportState.rating - 1] : "No Rating"}
+              {reportState.rating
+                ? ratingDesc[reportState.rating - 1]
+                : "No Rating"}
             </label>
           </span>
         </Col>
