@@ -1389,6 +1389,12 @@ table tr td.ant-table-selection-column {
   width: 150px;
   text-align: right;
 }
+
+.view-only .ant-table-tbody > tr > td:nth-child(3),
+.view-only .ant-table-thead > tr > th:nth-child(3) {
+  width: 100px;
+  text-align: center;
+}
 .annotate-table .ant-table-tbody > tr > td:nth-child(2) {
   width: 65px;
   text-align: center;
@@ -1411,14 +1417,9 @@ table tr td.ant-table-selection-column {
   font-weight: bold;
 }
 
-.view-history-table .ant-table-thead > tr > th:first-child,
-.view-history-table .ant-table-tbody > tr > td:first-child {
+.view-history-table .ant-table-thead > tr > th:nth-child(2),
+.view-history-table .ant-table-tbody > tr > td:nth-child(2) {
   width: 180px;
-}
-
-.view-history-table .ant-table-thead > tr > th:last-child,
-.view-history-table .ant-table-tbody > tr > td:last-child {
-  width: 120px;
 }
 
 /* dot ------------- */
@@ -1543,4 +1544,10 @@ table tr td.ant-table-selection-column {
   width: 125px;
   font-size: medium;
   text-align: center;
+} 
+
+.rno-badge .ant-badge-count{
+  margin-left: 10px;
+  background: #e9c869;
+  font-weight: bold;
 }

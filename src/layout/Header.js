@@ -1,4 +1,5 @@
 import React, {useContext} from 'react';
+import { useHistory } from "react-router-dom";
 import { Button, Image } from "antd";
 import "antd/dist/antd.css";
 import {
@@ -10,7 +11,7 @@ import SelectProject from '../component/SelectProject';
 
 export default function Header(){
     const { globalProject, setGlobalProject } = useContext(Contexts.project);
-
+    const history = useHistory();
     const username = JSON.parse(sessionStorage.getItem("user")).username
 
     return(
@@ -32,6 +33,7 @@ export default function Header(){
                     onClick={() => {
                         /* logut api */
                         logout().then((respond) => {
+                            history.push({state: null});
                             window.location.reload();
                         }).catch((e) => {
                             console.log(e);

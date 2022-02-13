@@ -171,12 +171,12 @@ export default function AnnotationPanel(props) {
                     cornerstoneTools.removeToolState(
                       dicomElement,
                       "length",
-                      first_line
+                      second_line
                     );
                     cornerstoneTools.removeToolState(
                       dicomElement,
                       "length",
-                      second_line
+                      first_line
                     );
 
                     update = update.reduce((current, item) => {
@@ -343,6 +343,7 @@ export default function AnnotationPanel(props) {
                   className: "label-selector-modal",
                   okText: "Submit",
                   cancelText: "Cancel",
+                  onCancel: () => setSelectedLabel(),
                   onOk: () => {
                     setLabelBuffer({
                       key: record.key,
@@ -992,7 +993,6 @@ export default function AnnotationPanel(props) {
   };
 
   const onCheckPositiveGradcam = (e) => {
-    console.log(e.target.checked);
     let positiveGradcam = props.gradCamList.filter((item) => {
       return item.isPositive;
     });

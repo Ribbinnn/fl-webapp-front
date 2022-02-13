@@ -34,12 +34,12 @@ function SelectXRayImage(props) {
             props.setAccessionNoIndex(selectedRowKeys);
             props.setAccessionNo(selectedRows[0]["Accession No"]);
             props.setMedRec({
-                ...props.MedRec,
                 age: selectedRows[0]["Age"],
                 gender: selectedRows[0]["Patient Sex"],
                 hn: globalProject.projectReq.length === 0 ? selectedRows[0]["Patient ID"] : props.MedRec.hn,
                 entry_id: globalProject.projectReq.length === 0 ? 1 : props.MedRec.entry_id,
-                measured_time: globalProject.projectReq.length === 0 ? selectedRows[0]["Study Date Time"] : props.MedRec.measured_time
+                measured_time: globalProject.projectReq.length === 0 ? selectedRows[0]["Study Date Time"] : props.MedRec.measured_time,
+                ...props.MedRec
             })
         },
     };
@@ -65,11 +65,11 @@ function SelectXRayImage(props) {
             ellipsis: {
                 showTitle: false,
             },
-            render: field === "Patient Name" || field === "Proc Description" || field === "Study Date Time" ? field => (
+            render: (field) => (
                 <Tooltip placement="topLeft" title={field}>
                     {field}
                 </Tooltip>
-            ) : null,
+            ),
         }));
         field_list.push({
             title: "Preview",
