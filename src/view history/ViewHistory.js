@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Table, Tooltip, Form, Input, Button, Select, DatePicker, Tag, Spin, Popconfirm } from "antd";
-import { DownloadOutlined ,EditOutlined, DeleteOutlined, ReloadOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Table, Tooltip, Form, Input, Button, Select, DatePicker, Tag, Spin, Popconfirm, Popover, Row, Col } from "antd";
+import { DownloadOutlined ,EditOutlined, DeleteOutlined, ReloadOutlined, LoadingOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import {viewHistory, deleteReport} from "../api/viewHistory"
 import ImageModal from "../component/ImageModal";
 import { useHistory, useLocation } from "react-router-dom";
@@ -42,11 +42,11 @@ function HistoryLog(props) {
     const [status, setStatus] = useState([]);
     const shownStatus = {
         "all": {shown: "All", color: ""},
-        "canceled": {shown: "Canceled", color: "default"},
-        "in progress": {shown: "1 In Progress", color: "processing"},
-        "annotated": {shown: "2 AI-Annotated", color: "warning"},
-        "reviewed": {shown: "3 Human-Annotated", color: "error"},
-        "finalized": {shown: "4 Finalized", color: "success"}
+        "canceled": {shown: "Canceled", color: "default", desc: "Image inference has been canceled because of server errors."},
+        "in progress": {shown: "1 In Progress", color: "processing", desc: "Image inference is still in progress."},
+        "annotated": {shown: "2 AI-Annotated", color: "warning", desc: "Image inference succeeds, the results are saved as report."},
+        "reviewed": {shown: "3 Human-Annotated", color: "error", desc: "Report has been edited by radiologists."},
+        "finalized": {shown: "4 Finalized", color: "success", desc: "Report has been saved to PACS and cannot be edited."}
     }
     const [findings, setFindings] = useState([]);
     const [reload, setReload] = useState("");
@@ -54,8 +54,8 @@ function HistoryLog(props) {
     const columns = [
         {
             title: "No.",
-            dataIndex: "key",
-            key: "key",
+            dataIndex: "no",
+            key: "no",
             align: "center",
             ellipsis: {
                 showTitle: false
@@ -63,9 +63,40 @@ function HistoryLog(props) {
             sorter: {
                 compare: (a, b) => a.key.localeCompare(b.key)
             },
+            render: (no) => (
+                <Tooltip placement="topLeft" title={no}>
+                    {no}
+                </Tooltip>
+            ),
         },
         {
-            title: "Status",
+            title: 
+                <span>
+                    Status
+                    <Popover
+                        className="bbox-popover"
+                        placement="right"
+                        content={
+                            <span>
+                                {Object.keys(shownStatus).splice(Object.keys(shownStatus).indexOf("canceled"), 5).map((key) => (
+                                    <Row style={{marginTop: key === "canceled" ? 0 : "10px"}}>
+                                        <Col span={10}>
+                                            <Tag color={shownStatus[key].color} style={{marginTop: "5px"}}>
+                                                {shownStatus[key].shown}
+                                            </Tag>
+                                        </Col>
+                                        <Col span={14}>
+                                            <span>{shownStatus[key].desc}</span>
+                                        </Col>
+                                    </Row>
+                                ))}
+                            </span>
+                        }
+                        trigger="hover"
+                    >
+                        <Button type="link" icon={<InfoCircleOutlined />} style={{color: "white"}} />
+                    </Popover>
+                </span>,
             dataIndex: "status",
             key: "status",
             align: "center",
@@ -75,6 +106,7 @@ function HistoryLog(props) {
             sorter: {
                 compare: (a, b) => shownStatus[a.status].shown.localeCompare(shownStatus[b.status].shown)
             },
+            showSorterTooltip: false,
             render: (status) => {
                 return(
                     <Tag color={shownStatus[status].color}  style={{width: "100%"}}>
@@ -280,6 +312,9 @@ function HistoryLog(props) {
             (queryString.get("clinician") === null
               ? true
               : item.clinician_name.toLowerCase().includes(queryString.get("clinician").toLowerCase())) &&
+            (queryString.get("no") === null
+              ? true
+              : item.no.toLowerCase().includes(queryString.get("no").toLowerCase())) &&
             (queryString.get("from") === null
               ? true
               : new Date(item.createdAt) >=
@@ -361,6 +396,15 @@ function HistoryLog(props) {
                 </Form.Item>
             </Form>
             <Form layout="inline">
+                <Form.Item name="no" label="No." style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>
+                    <Input
+                        className="input-text"
+                        defaultValue={queryString.get("no")}
+                        onChange={(item) => {
+                            item.target.value === "" ? queryString.delete("no") : queryString.set("no", item.target.value);
+                        }}
+                        style={{width:"200px"}} />
+                </Form.Item>
                 <Form.Item name="from" label="From" style={{display:"flex", flexDirection:"column", alignItems:"flex-start"}}>   
                     <DatePicker
                         defaultValue={queryString.get("from") === null ? null : moment(new Date(queryString.get("from")))}
