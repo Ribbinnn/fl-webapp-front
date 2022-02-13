@@ -41,7 +41,7 @@ export default function Report(props) {
   useEffect(() => {
     getReport(rid)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setInfo(res.data);
         setLoaded(true);
       })
