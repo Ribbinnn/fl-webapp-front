@@ -23,16 +23,21 @@ export default function ResultsTable(props) {
     "Good",
     "Excellent",
   ];
-  const [rating, setRating] = useState(props.rate);
+  // const [rating, setRating] = useState(props.rate);
   const [columns, setColumn] = useState();
   const [data, setData] = useState();
-  const [selectedRows, setSelectedRows] = useState();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  const [defaultRowKeys, setDefaultRowKeys] = useState([]);
-  const [btnGroup, setBtnGroup] = useState("back");
-  const [defaultNote, setDefaultNote] = useState(props.note);
-  const [note, setNote] = useState(props.note);
-
+  // const [btnGroup, setBtnGroup] = useState("back");
+  // const [note, setNote] = useState(props.note);
+  const [reportState, setReportState] = useState({
+    rating: props.rate,
+    note: props.note,
+    btnGroup: "back",
+  });
+  const [defaultData, setDefaultData] = useState({
+    note: props.note,
+    rating: props.rate,
+  });
   useEffect(() => {
     if (!data) {
       let defaultSelectedRowKeys = [];
@@ -63,7 +68,8 @@ export default function ResultsTable(props) {
       );
       setData(filtered_data);
       setSelectedRowKeys(defaultSelectedRowKeys);
-      setDefaultRowKeys(defaultSelectedRowKeys);
+      // setDefaultRowKeys(defaultSelectedRowKeys);
+      setDefaultData({ ...defaultData, rowKeys: defaultSelectedRowKeys });
     }
     changeGradcam(props.gradCam);
   }, [props.gradCam]);
@@ -105,10 +111,20 @@ export default function ResultsTable(props) {
               type="link"
               icon={
                 record.class === selected_class ? (
-                  <EyeOutlined style={record.isPositive ? {...GradCamStyle, color: "#03989e"} : GradCamStyle} />
+                  <EyeOutlined
+                    style={
+                      record.isPositive
+                        ? { ...GradCamStyle, color: "#03989e" }
+                        : GradCamStyle
+                    }
+                  />
                 ) : (
                   <EyeInvisibleOutlined
-                    style={record.isPositive ? {...GradCamStyle, color: "#03989e"} : GradCamStyle}
+                    style={
+                      record.isPositive
+                        ? { ...GradCamStyle, color: "#03989e" }
+                        : GradCamStyle
+                    }
                     onClick={() => props.setGradCam(record.class)}
                   />
                 )
@@ -126,7 +142,7 @@ export default function ResultsTable(props) {
 
     saveToPACS(props.rid)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.success) {
           message.success({ content: res.message, key, duration: 5 });
         } else message.error({ content: res.message, key, duration: 5 });
@@ -140,25 +156,34 @@ export default function ResultsTable(props) {
   const onSaveReport = () => {
     /* save report api */
     const key = "updatable";
-    message.loading({ content: "Loading...", key });
-    let selected_class = [];
-    for (const i in selectedRows) {
-      selected_class.push(selectedRows[i].class);
-    }
+    message.loading({ content: "Loading...", key, duration: 0  });
+    let selected_class = data.reduce((current, item) => {
+      if (selectedRowKeys.includes(item.key)) return [...current, item.class];
+      return current;
+    }, []);
+    // for (const i in selectedRows) {
+    //   selected_class.push(selectedRows[i].class);
+    // }
     updateReport(
       props.rid,
-      note,
+      reportState.note,
       JSON.parse(sessionStorage.getItem("user")).id,
       { finding: selected_class },
-      rating
+      reportState.rating
     )
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.success) {
-          setDefaultRowKeys(selectedRowKeys);
-          setDefaultNote(note);
+          // setDefaultRowKeys(selectedRowKeys);
+          // setDefaultNote(note);
+          setDefaultData({
+            rating: reportState.rating,
+            rowKeys: selectedRowKeys,
+            note: reportState.note,
+          });
           props.updateTimestamp(res.data.updatedAt, res.data.updated_by);
-          setBtnGroup("back");
+          // setBtnGroup("back");
+          setReportState({...reportState, btnGroup: "back"})
           message.success({ content: res.message, key, duration: 5 });
         } else message.error({ content: res.message, key, duration: 5 });
       })
@@ -172,38 +197,45 @@ export default function ResultsTable(props) {
       content: "All changes you made will not be saved.",
       okText: "Sure",
       onOk: () => {
-        setSelectedRowKeys(defaultRowKeys);
-        setNote(defaultNote);
-        setBtnGroup("back");
-        setRating(props.rate);
+        setSelectedRowKeys(defaultData.rowKeys);
+        // setNote(defaultData.note);
+        // setBtnGroup("back");
+        // setRating(defaultData.rating);
+        setReportState({
+          note: defaultData.note,
+          rating: defaultData.rating,
+          btnGroup: "back",
+        });
       },
       cancelText: "No",
     });
   };
 
   const onChangeRating = (e) => {
-    console.log(e);
-    setRating(e);
-    btnGroup !== "save" && setBtnGroup("save");
+    // console.log(e);
+    // setRating(e);
+    setReportState({ ...reportState, rating: e, btnGroup: "save" });
+    // btnGroup !== "save" && setBtnGroup("save");
   };
   const rowSelection = {
     type: "checkbox",
     selectedRowKeys,
     onChange: (selectedKeys, selectedRows) => {
-      /* console.log(
-        `selectedRowKeys: ${selectedRowKeys}`,
-        "selectedRows: ",
-        selectedRows
-      ); */
-      setSelectedRows(selectedRows);
+      // console.log(
+      //   `selectedRowKeys: ${selectedRowKeys}`,
+      //   "selectedRows: ",
+      //   selectedRows, data
+      // );
+      // setSelectedRows(selectedRows);
       setSelectedRowKeys(selectedKeys);
-      console.log(selectedKeys.sort(), defaultRowKeys.sort());
-      if (selectedKeys.sort() !== defaultRowKeys.sort()) {
-        setBtnGroup("save");
+      // console.log(selectedKeys.sort(), defaultRowKeys.sort());
+      if (selectedKeys.sort() !== defaultData.rowKeys.sort()) {
+        // setBtnGroup("save");
+        setReportState({ ...reportState, btnGroup: "save" });
       }
     },
   };
-  
+
   return (
     <div>
       {mode === "edit" && status !== "finalized" && (
@@ -212,7 +244,9 @@ export default function ResultsTable(props) {
           rowSelection={{
             ...rowSelection,
           }}
-          rowClassName={(record, index)=>{return record.isPositive ? "pos-row" : ""}}
+          rowClassName={(record, index) => {
+            return record.isPositive ? "pos-row" : "";
+          }}
           columns={columns}
           dataSource={data}
           pagination={false}
@@ -221,7 +255,9 @@ export default function ResultsTable(props) {
       {(mode === "view" || status === "finalized") && (
         <Table
           className="report-table"
-          rowClassName={(record, index)=>{return record.isPositive ? "pos-row" : ""}}
+          rowClassName={(record, index) => {
+            return record.isPositive ? "pos-row" : "";
+          }}
           columns={columns}
           dataSource={data}
           pagination={false}
@@ -258,10 +294,18 @@ export default function ResultsTable(props) {
               className="input-text"
               style={{ width: "100%", fontSize: "medium" }}
               autoSize={{ minRows: 2, maxRows: 6 }}
-              value={note}
+              value={reportState.note}
               onChange={(e) => {
-                setNote(e.target.value);
-                e.target.value !== defaultNote && setBtnGroup("save");
+                setReportState({
+                  ...reportState,
+                  note: e.target.value,
+                  btnGroup:
+                    e.target.value !== defaultData.note
+                      ? "save"
+                      : reportState.btnGroup,
+                });
+                // setNote(e.target.value);
+                // e.target.value !== defaultData.note && setBtnGroup("save");
               }}
             />
           )}
@@ -284,10 +328,10 @@ export default function ResultsTable(props) {
               disabled={mode === "view" || status === "finalized"}
               tooltips={ratingDesc}
               onChange={onChangeRating}
-              value={rating}
+              value={reportState.rating}
             />
             <label className="rating-text" style={{ marginLeft: "20px" }}>
-              {rating ? ratingDesc[rating - 1] : "No Rating"}
+              {reportState.rating ? ratingDesc[reportState.rating - 1] : "No Rating"}
             </label>
           </span>
         </Col>
@@ -299,25 +343,25 @@ export default function ResultsTable(props) {
           marginTop: "20px",
         }}
       >
-        {btnGroup === "back" && (
+        {reportState.btnGroup === "back" && (
           <Button className="primary-btn" onClick={() => window.history.back()}>
             Back
           </Button>
         )}
 
-          {btnGroup === "back" &&
+        {reportState.btnGroup === "back" &&
           props.HN &&
           status === "reviewed" &&
           props.head.includes(user) && (
-            <SaveToPACSButton onSavetoPACS={onSavetoPACS}/>
+            <SaveToPACSButton onSavetoPACS={onSavetoPACS} />
           )}
 
-        {btnGroup === "save" && (
+        {reportState.btnGroup === "save" && (
           <Button className="primary-btn" onClick={() => onCancelReport()}>
             Cancel
           </Button>
         )}
-        {btnGroup === "save" && (
+        {reportState.btnGroup === "save" && (
           <Button className="primary-btn" onClick={() => onSaveReport()}>
             Save
           </Button>
