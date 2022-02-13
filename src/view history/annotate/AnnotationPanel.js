@@ -490,8 +490,8 @@ export default function AnnotationPanel(props) {
           updated_time: new Date(),
           updated_by: user,
         };
-        console.log(labelBuffer);
-        console.log(newLabel);
+        // console.log(labelBuffer);
+        // console.log(newLabel);
         setLabels([...labels, newLabel]);
       }
       setLabelBuffer();
@@ -661,7 +661,7 @@ export default function AnnotationPanel(props) {
   };
 
   const imageOnClick = () => {
-    console.log(labels);
+    // console.log(labels);
     if (tool === "pan") {
       return;
     }
@@ -686,7 +686,7 @@ export default function AnnotationPanel(props) {
         dicomElement,
         tool === "ratio" ? "length" : tool
       );
-      console.log(count["length"], toolState.data.length);
+      // console.log(count["length"], toolState.data.length);
       if (
         tool === "ratio" &&
         toolState.data &&
@@ -739,13 +739,11 @@ export default function AnnotationPanel(props) {
       cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState();
     globalTool = globalTool[Object.keys(globalTool)[0]];
     let checker = labels.map((item, i) => {
-      console.log(item);
       if (item.invisible) return item;
       if (item.tool === "ratio") {
         let first_line = globalTool["length"].data[item.index[0]];
         let second_line = globalTool["length"].data[item.index[1]];
         let ratio = (first_line["length"] / second_line["length"]).toFixed(4);
-        console.log(first_line, second_line, ratio);
         if (ratio !== item.ratio) {
           //edit here
           return {
@@ -935,7 +933,6 @@ export default function AnnotationPanel(props) {
     }, []);
 
     insertBBox(rid, bbox_data).then((res) => {
-      console.log(res);
       if (res.success) {
         message.success({
           content: "Bounding boxes successfully saved.",
@@ -988,7 +985,6 @@ export default function AnnotationPanel(props) {
   };
 
   const onCheckPositiveGradcam = (e) => {
-    console.log(e.target.checked);
     let positiveGradcam = props.gradCamList.filter((item) => {
       return item.isPositive;
     });

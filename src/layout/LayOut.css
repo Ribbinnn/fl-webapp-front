@@ -1541,3 +1541,9 @@ table tr td.ant-table-selection-column {
   font-size: medium;
   text-align: center;
 } 
+
+.rno-badge .ant-badge-count{
+  margin-left: 10px;
+  background: #e9c869;
+  font-weight: bold;
+}

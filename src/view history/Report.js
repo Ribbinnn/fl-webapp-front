@@ -10,6 +10,7 @@ import {
   Spin,
   Tag,
   Modal,
+  Badge
 } from "antd";
 import Info from "../component/Info";
 import {
@@ -40,7 +41,7 @@ export default function Report(props) {
   useEffect(() => {
     getReport(rid)
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         setInfo(res.data);
         setLoaded(true);
       })
@@ -85,6 +86,8 @@ export default function Report(props) {
       {loaded && (
         <ReportHeader
           HN={info.result.hn}
+          rno={info.no}
+          patient_name={info.result.patient_name}
           patient={info.patient}
           status={info.result.status}
           medrec={info.record}
@@ -193,6 +196,7 @@ const ReportHeader = (props) => {
         >
           Report
         </label>
+        <Badge count={`No. ${props.rno}`} className="rno-badge"/>
         <Tag
           color={
             props.status === "annotated"
@@ -236,19 +240,11 @@ const ReportHeader = (props) => {
           </i>
         )}
       </label>
-      {props.HN && <label
-        style={{
-          display: "block",
-          color: "#de5c8e",
-          marginBottom: "10px",
-        }}
-      >
-        Patient's HN: {props.HN}
-      </label>}
       <label
         style={{
           display: "block",
           color: "#58595b",
+          marginBottom: "5px"
         }}
       >
         Project: {props.project.name}{" "}
@@ -261,6 +257,22 @@ const ReportHeader = (props) => {
           <Button type="link" icon={<InfoCircleOutlined />} />
         </Popover>
       </label>
+      {props.HN && <label
+        style={{
+          display: "block",
+          color: "#de5c8e",
+          marginBottom: "5px"
+        }}
+      >
+        Patient's HN: {props.HN}
+      </label>}
+      {props.patient_name && <label
+        style={{
+          display: "block",
+        }}
+      >
+        Patient's Name: {props.patient_name}
+      </label>}
       <Row>
         <Col xs={24} sm={24} md={12} lg={12} xl={12}>
           <Collapse defaultActiveKey={["1"]} expandIconPosition="right" ghost>
