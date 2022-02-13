@@ -32,12 +32,9 @@ export default function ResultsTable(props) {
     "Good",
     "Excellent",
   ];
-  // const [rating, setRating] = useState(props.rate);
   const [columns, setColumn] = useState();
   const [data, setData] = useState();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
-  // const [btnGroup, setBtnGroup] = useState("back");
-  // const [note, setNote] = useState(props.note);
   const [reportState, setReportState] = useState({
     rating: props.rate,
     note: props.note,
@@ -77,7 +74,6 @@ export default function ResultsTable(props) {
       );
       setData(filtered_data);
       setSelectedRowKeys(defaultSelectedRowKeys);
-      // setDefaultRowKeys(defaultSelectedRowKeys);
       setDefaultData({ ...defaultData, rowKeys: defaultSelectedRowKeys });
     }
     changeGradcam(props.gradCam);
@@ -181,9 +177,6 @@ export default function ResultsTable(props) {
       if (selectedRowKeys.includes(item.key)) return [...current, item.class];
       return current;
     }, []);
-    // for (const i in selectedRows) {
-    //   selected_class.push(selectedRows[i].class);
-    // }
     updateReport(
       props.rid,
       reportState.note,
@@ -194,15 +187,12 @@ export default function ResultsTable(props) {
       .then((res) => {
         // console.log(res);
         if (res.success) {
-          // setDefaultRowKeys(selectedRowKeys);
-          // setDefaultNote(note);
           setDefaultData({
             rating: reportState.rating,
             rowKeys: selectedRowKeys,
             note: reportState.note,
           });
           props.updateTimestamp(res.data.updatedAt, res.data.updated_by);
-          // setBtnGroup("back");
           setReportState({ ...reportState, btnGroup: "back" });
           message.success({ content: res.message, key, duration: 5 });
         } else message.error({ content: res.message, key, duration: 5 });
@@ -218,9 +208,6 @@ export default function ResultsTable(props) {
       okText: "Sure",
       onOk: () => {
         setSelectedRowKeys(defaultData.rowKeys);
-        // setNote(defaultData.note);
-        // setBtnGroup("back");
-        // setRating(defaultData.rating);
         setReportState({
           note: defaultData.note,
           rating: defaultData.rating,
@@ -233,9 +220,7 @@ export default function ResultsTable(props) {
 
   const onChangeRating = (e) => {
     // console.log(e);
-    // setRating(e);
     setReportState({ ...reportState, rating: e, btnGroup: "save" });
-    // btnGroup !== "save" && setBtnGroup("save");
   };
   const rowSelection = {
     type: "checkbox",
@@ -250,7 +235,6 @@ export default function ResultsTable(props) {
       setSelectedRowKeys(selectedKeys);
       // console.log(selectedKeys.sort(), defaultRowKeys.sort());
       if (selectedKeys.sort() !== defaultData.rowKeys.sort()) {
-        // setBtnGroup("save");
         setReportState({ ...reportState, btnGroup: "save" });
       }
     },
@@ -324,8 +308,6 @@ export default function ResultsTable(props) {
                       ? "save"
                       : reportState.btnGroup,
                 });
-                // setNote(e.target.value);
-                // e.target.value !== defaultData.note && setBtnGroup("save");
               }}
             />
           )}

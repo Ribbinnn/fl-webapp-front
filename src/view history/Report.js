@@ -197,7 +197,6 @@ const ReportHeader = (props) => {
           Report
         </label>
         <Badge count={`No. ${props.rno}`} className="rno-badge"/>
-        {/* <label style={{ marginLeft: "10px", fontSize:"medium" }} >No. {props.rno}</label> */}
         <Tag
           color={
             props.status === "annotated"
