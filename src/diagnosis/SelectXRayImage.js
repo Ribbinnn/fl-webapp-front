@@ -182,7 +182,7 @@ function SelectXRayImage(props) {
 
     useEffect(() => {
         createColumns();
-    }, [pagination])
+    }, [pagination, tableData])
 
     return(
         <div>
@@ -285,6 +285,7 @@ function SelectXRayImage(props) {
                                     } else {
                                         const data = prepareTable(res.data);
                                         setTableData(data);
+                                        setPagination({page: 1, pageSize: 10});
                                         setLoaded(true);
                                     }
                                 }).catch((err) => {
