@@ -322,7 +322,7 @@ export default function ResultsTable(props) {
             Back
           </Button>
         )}
-        {btnGroup === "save" && (
+        {reportState.btnGroup === "save" && (
           <Button className="primary-btn" onClick={() => onCancelReport()}>
             Cancel
           </Button>
