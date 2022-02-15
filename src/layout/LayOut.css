@@ -1390,6 +1390,31 @@ table tr td.ant-table-selection-column {
   text-align: right;
 }
 
+.raw-annotate-table .ant-table-thead > tr > th:nth-child(1),
+.raw-annotate-table .ant-table-tbody > tr > td:nth-child(1) {
+  width: 60px;
+}
+
+.raw-annotate-table .ant-table-tbody > tr > td:nth-child(2) {
+  text-align: left !important;
+}
+
+.raw-annotate-table .ant-table-thead > tr > th:nth-child(4),
+.raw-annotate-table .ant-table-tbody > tr > td:nth-child(4),
+.raw-annotate-table .ant-table-thead > tr > th:nth-child(5),
+.raw-annotate-table .ant-table-tbody > tr > td:nth-child(5),
+.raw-annotate-table .ant-table-thead > tr > th:last-child,
+.raw-annotate-table .ant-table-tbody > tr > td:last-child {
+  width: 100px;
+}
+
+.raw-annotate-table .ant-table-thead > tr > th:nth-child(6),
+.raw-annotate-table .ant-table-tbody > tr > td:nth-child(6),
+.raw-annotate-table .ant-table-thead > tr > th:nth-child(7),
+.raw-annotate-table .ant-table-tbody > tr > td:nth-child(7){
+  width: 150px;
+}
+
 .view-only .ant-table-tbody > tr > td:nth-child(3),
 .view-only .ant-table-thead > tr > th:nth-child(3) {
   width: 100px;

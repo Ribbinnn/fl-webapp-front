@@ -14,7 +14,7 @@ const LoadingIcon = (
 
 function SelectXRayImage(props) {
 
-    const { globalProject, setGlobalProject } = useContext(Contexts.project);
+    const { globalProject } = useContext(Contexts.project);
     const [loaded, setLoaded] = useState(true);
 
     const fields = ["Patient Name", "Accession No", "Patient ID", "Modality", "Study Date Time", "Procedure Code"];
@@ -25,6 +25,7 @@ function SelectXRayImage(props) {
     const [accessionNo, setAccessionNo] = useState(null);
     const [fromDate, setFromDate] = useState(null);
     const [toDate, setToDate] = useState(null);
+    const [pagination, setPagination] = useState({page: 1, pageSize: 10});
 
     const rowSelection = {
         type: "radio",
@@ -55,8 +56,7 @@ function SelectXRayImage(props) {
         props.setLoading(false);
     }
 
-    const prepareTable = (data) => {
-        // create columns
+    const createColumns = () => {
         let field_list = (fields).map((field) => ({
             title: field,
             dataIndex: field,
@@ -71,6 +71,15 @@ function SelectXRayImage(props) {
                 </Tooltip>
             ),
         }));
+
+        if (props.mode === "annotate") {
+            field_list = [{
+                title: "No.", 
+                key: 'index',
+                render: (text, record, index) => (pagination.page - 1) * pagination.pageSize + index + 1}, 
+                ...field_list]
+        }
+
         field_list.push({
             title: "Preview",
             key: "preview",
@@ -149,6 +158,12 @@ function SelectXRayImage(props) {
             align: "center",
         });
         setColumns(field_list);
+    }
+
+    const prepareTable = (data) => {
+        // create columns
+        createColumns();
+
         // add key to each row & change date-time
         for (const i in data) {
             data[i]["key"] = (parseInt(i)+1).toString();
@@ -164,6 +179,10 @@ function SelectXRayImage(props) {
             }
         }
     }, []);
+
+    useEffect(() => {
+        createColumns();
+    }, [pagination])
 
     return(
         <div>
@@ -322,10 +341,15 @@ function SelectXRayImage(props) {
                 <Table 
                     columns={columns} 
                     dataSource={tableData} 
-                    // pagination={false} 
+                    pagination={{
+                        onChange(page, pageSize) {
+                          setPagination({page: page, pageSize: pageSize});
+                          console.log({page: page, pageSize: pageSize});
+                        }
+                      }}
                     rowSelection={props.mode === "diagnosis" ? rowSelection : null}
                     size="small"
-                    // className={props.mode === "diagnosis" ? "three-rows-table with-row-selection" : "seven-rows-table with-row-selection"}
+                    className={props.mode === "diagnosis" ? "diagnosis-table" : "raw-annotate-table" /* "three-rows-table with-row-selection" : "seven-rows-table with-row-selection" */}
                 />
             }
         </div>
