@@ -44,7 +44,7 @@ export default function NavBar() {
       okText: "Ok",
     });
     setTab(
-      globalProject.projectId || path === "/admin" ? getTabKey(path) : "home"
+      globalProject.projectId || path === "/admin" || path === "/annotate" ? getTabKey(path) : "home"
     );
     history.push(path);
   }
