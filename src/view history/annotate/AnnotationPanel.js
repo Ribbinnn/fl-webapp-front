@@ -77,8 +77,8 @@ export default function AnnotationPanel(props) {
     selected:
       props.gradCamList?.filter((item) => {
         return item.isPositive;
-      })[0]?.finding || null, 
-      //props.gradCamList.length ? props.gradCamList[0].finding : null,
+      })[0]?.finding || null,
+    //props.gradCamList.length ? props.gradCamList[0].finding : null,
     onlyPositive: true,
   });
   const [savedData, setSavedData] = useState();
@@ -89,13 +89,17 @@ export default function AnnotationPanel(props) {
     // console.log(props.accession_no);
     // console.log(props.gradCamList);
     try {
-      loadDicom(getDicomByAccessionNo(props.accession_no), "wado", displayImage);
-    } catch(e){
-      Modal.error({content: "Error on loading image."})
+      loadDicom(
+        getDicomByAccessionNo(props.accession_no),
+        "wado",
+        displayImage
+      );
+    } catch (e) {
+      Modal.error({ content: "Error on loading image." });
       props.handleCancel();
     }
     getBBox(!rid, rid ? rid : props.accession_no).then((res) => {
-      console.log(res);
+      // console.log(res);
       if (res.data) {
         setUser({ ...user, ...res.data.user });
         setSavedData(
@@ -113,7 +117,7 @@ export default function AnnotationPanel(props) {
   }, []);
 
   useEffect(() => {
-    console.log(labels);
+    // console.log(labels);
     setColumns([
       {
         title: "Label",
@@ -449,10 +453,12 @@ export default function AnnotationPanel(props) {
       },
     ]);
 
-    if (labels.some((member) => {
-      return !member.saved;
-    })) setBtnMode("save-cancel");
-
+    if (
+      labels.some((member) => {
+        return !member.saved;
+      })
+    )
+      setBtnMode("save-cancel");
   }, [labels, labelList]);
 
   useEffect(() => {
@@ -558,8 +564,8 @@ export default function AnnotationPanel(props) {
                 ],
                 length: current["length"] + 2,
                 initial_ll: current.initial_ll.includes(item.label)
-                ? current.initial_ll
-                : [...current.initial_ll, item.label],
+                  ? current.initial_ll
+                  : [...current.initial_ll, item.label],
               };
             }
             cornerstoneTools.addToolState(element, item.tool, bbox);
@@ -591,7 +597,7 @@ export default function AnnotationPanel(props) {
             rectangleRoi: 0,
             freehand: 0,
             length: 0,
-            initial_ll: props.labelList ? props.labelList : []
+            initial_ll: props.labelList ? props.labelList : [],
           }
         );
         // // console.log(loadedData);
@@ -1000,8 +1006,7 @@ export default function AnnotationPanel(props) {
       selected: e.target.checked
         ? positiveGradcam.includes(gradCam.selected)
           ? gradCam.selected
-          : positiveGradcam[0]?.finding
-          || undefined
+          : positiveGradcam[0]?.finding || undefined
         : gradCam.selected ?? props.gradCamList[0].finding,
       onlyPositive: e.target.checked,
     });
@@ -1013,24 +1018,25 @@ export default function AnnotationPanel(props) {
       cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState();
     globalTool = globalTool[Object.keys(globalTool)[0]];
     update = update
-      .reduceRight((current, item, i) => {
+      .sort((a, b) => (b.index[1] ?? b.index) - (a.index[1] ?? a.index))
+      .reduce((current, item, i) => {
         if (item.invisible) return [...current, item];
         if (item.tool === "ratio") {
           const first_line = globalTool["length"].data[item.index[0]];
           const second_line = globalTool["length"].data[item.index[1]];
           cornerstoneTools.removeToolState(dicomElement, "length", second_line);
           cornerstoneTools.removeToolState(dicomElement, "length", first_line);
-          // // console.log(first_line, second_line)
           return [
             ...current,
             { ...item, index: -1, invisible: [first_line, second_line] },
           ];
         }
         const bbox = globalTool[item.tool].data[item.index];
+        console.log(bbox, item);
         cornerstoneTools.removeToolState(dicomElement, item.tool, bbox);
         return [...current, { ...item, index: -1, invisible: bbox }];
       }, [])
-      .reverse();
+      .sort((a, b) => a.key - b.key);
     cornerstone.updateImage(dicomElement);
     setLabels(update);
   };
@@ -1180,7 +1186,7 @@ export default function AnnotationPanel(props) {
                       onChange={onViewerChange("windowLevel")}
                     />
                   </Col>
-                </Row> 
+                </Row>
               </Col>
               <Col>
                 <Row>
@@ -1400,16 +1406,15 @@ export default function AnnotationPanel(props) {
             </Panel>
           </Collapse>
           <Row justify="end" style={{ marginTop: "12px" }}>
-            { btnMode === "save-cancel" && (
-                <Button
-                  className="primary-btn smaller"
-                  style={{ marginRight: "10px" }}
-                  onClick={onCancelAnnotations}
-                >
-                  Cancel
-                </Button>
-              )
-            }
+            {btnMode === "save-cancel" && (
+              <Button
+                className="primary-btn smaller"
+                style={{ marginRight: "10px" }}
+                onClick={onCancelAnnotations}
+              >
+                Cancel
+              </Button>
+            )}
             {btnMode === "save-cancel" && (
               <Button className="primary-btn smaller" onClick={saveAnnotations}>
                 Save
