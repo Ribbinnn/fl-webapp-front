@@ -192,7 +192,7 @@ export default function Diagnosis() {
 function SelectHN(props) {
   //const [patientName, setPatientName] = useState();
   const handleSubmit = () => {
-    let input_hn = document.getElementById("hn-input").value;
+    let input_hn = document.getElementById("hn-input").value.trim();
     if (!input_hn) return
     props.setLoading(true);
     findPatientOnLocal(input_hn).then((res) => {
@@ -215,7 +215,8 @@ function SelectHN(props) {
           id="hn-input"
           style={{ width: "300px" }}
           defaultValue={props.HN}
-          onChange={() => {
+          onChange={(e) => {
+
             if (props.HN.length > 0 || props.Patient === false) {
               props.setHN("");
               props.setPatient(undefined);
