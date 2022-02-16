@@ -230,7 +230,7 @@ export default function Diagnosis() {
 function SelectHN(props) {
   //const [patientName, setPatientName] = useState();
   const handleSubmit = () => {
-    let input_hn = document.getElementById("hn-input").value;
+    let input_hn = document.getElementById("hn-input").value.trim();
     if (!input_hn) return
     props.setLoading(true);
     findPatientOnPACS(input_hn).then((res) => {

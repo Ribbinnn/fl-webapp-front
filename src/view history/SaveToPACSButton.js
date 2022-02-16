@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Modal, Button, Checkbox, Tag } from "antd";
+import { Modal, Button, Checkbox, Tag, message } from "antd";
+import { saveToPACS } from "../api/pacs";
 
 export default function SaveToPACSButton(props) {
   const [visible, setVisible] = useState(false);
@@ -16,6 +17,34 @@ export default function SaveToPACSButton(props) {
     setAgree(e.target.checked);
   };
 
+  const onSavetoPACS = () => {
+    handleCancel();
+    /* save to PACS api */
+    const key = "updatable";
+    message.loading({ content: "Loading...", key, duration: 0 });
+
+    saveToPACS(props.rid + "a")
+      .then((res) => {
+        // console.log(res);
+        message.destroy(key);
+        if (res.success) {
+          Modal.success({
+            content: res.message,
+            okText: "Ok",
+            onOk: () => {
+              window.location.reload();
+            },
+          });
+        } else {
+          Modal.error({ content: res.message, okText: "Ok" });
+        }
+      })
+      .catch((err) => {
+        message.destroy(key);
+        Modal.error({ content: err.response.data.message, okText: "Ok" });
+      });
+  };
+
   return (
     <div>
       <Button className="primary-btn" onClick={showModal}>
@@ -30,8 +59,7 @@ export default function SaveToPACSButton(props) {
         onCancel={handleCancel}
         title="Term of Save to PACS"
         onOk={() => {
-          props.onSavetoPACS();
-          handleCancel();
+          onSavetoPACS();
         }}
         cancelText="Cancel"
         okText="Proceed"
@@ -40,7 +68,11 @@ export default function SaveToPACSButton(props) {
           disabled: !agree,
         }}
       >
-        <tr/><p>Please read terms of Save to PACS below carefully before proceed Save to PACS. If you agree, these terms will be applied.</p>
+        <tr />
+        <p>
+          Please read terms of Save to PACS below carefully before proceed Save
+          to PACS. If you agree, these terms will be applied.
+        </p>
         <p>1. This action is CANNOT be undone.</p>
         <p>
           2. The X-Ray image used in this report will be marked as annonymous
@@ -64,7 +96,8 @@ export default function SaveToPACSButton(props) {
           <Tag color={"success"} style={{ marginLeft: "10px" }}>
             4 Finalized
           </Tag>{" "}
-          once Save to PACS process is done. The result can be no longer edited and remained only selected classes. 
+          once Save to PACS process is done. The result can be no longer edited
+          and remained only selected classes.
         </p>
 
         <Checkbox onChange={onAgree}>

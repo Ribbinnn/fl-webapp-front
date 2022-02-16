@@ -12,7 +12,7 @@ export default function SelectProject(props) {
 
   useEffect(() => {
       selectProject().then((response) => {
-        console.log(response);
+        // console.log(response);
         let res_list = (response.data.projects).map((project)=>{
           return({
             ProjectID: project._id,

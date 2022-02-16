@@ -77,21 +77,21 @@ export default function AnnotationPanel(props) {
     selected:
       props.gradCamList.filter((item) => {
         return item.isPositive;
-      })[0]?.finding || null, 
-      //props.gradCamList.length ? props.gradCamList[0].finding : null,
+      })[0]?.finding || null,
     onlyPositive: true,
   });
   const [savedData, setSavedData] = useState();
   const [btnMode, setBtnMode] = useState("close");
 
   useEffect(() => {
-    // console.log(props.accession_no);
-    // console.log(props.gradCamList);
-    // console.log(props.mode)
     try {
-      loadDicom(getDicomByAccessionNo(props.accession_no), "wado", displayImage);
-    } catch(e){
-      Modal.error({content: "Error on loading image."})
+      loadDicom(
+        getDicomByAccessionNo(props.accession_no),
+        "wado",
+        displayImage
+      );
+    } catch (e) {
+      Modal.error({ content: "Error on loading image." });
       props.handleCancel();
     }
     getBBox(rid).then((res) => {
@@ -323,134 +323,140 @@ export default function AnnotationPanel(props) {
             >
               <Button type="link" icon={<InfoCircleOutlined />} />
             </Popover>
-            {props.mode === "editable" && <Button
-              type="link"
-              icon={<EditOutlined />}
-              disabled={record.invisible}
-              onClick={() => {
-                Modal.confirm({
-                  title: "Choose label",
-                  content: (
-                    <Label
-                      setSelectedLabel={setSelectedLabel}
-                      labelList={props.labelList}
-                      // setLabelList={setLabelList}
-                      defaultLabel={record.label}
-                    />
-                  ),
-                  keyboard: false,
-                  className: "label-selector-modal",
-                  okText: "Submit",
-                  cancelText: "Cancel",
-                  onCancel: () => setSelectedLabel(),
-                  onOk: () => {
-                    setLabelBuffer({
-                      key: record.key,
-                    });
-                    // setBtnMode("save-cancel");
-                  },
-                  okButtonProps: {
-                    style: {
-                      boxShadow: "none",
-                      backgroundColor: "#de5c8e",
-                    },
-                  },
-                });
-              }}
-            />}
-            {props.mode === "editable" && <Popconfirm
-              title="Delete this label?"
-              onConfirm={() => {
-                let update = labels;
-                let ind = update.findIndex((item) => item.key === record.key);
-                let target = cornerstoneTools.getToolState(
-                  dicomElement,
-                  record.tool === "ratio" ? "length" : record.tool
-                ).data;
-                if (record.tool === "ratio") {
-                  cornerstoneTools.removeToolState(
-                    dicomElement,
-                    "length",
-                    target[record.index[1]]
-                  );
-                  cornerstoneTools.removeToolState(
-                    dicomElement,
-                    "length",
-                    target[record.index[0]]
-                  );
-                } else {
-                  // console.log(target[record.index]);
-                  cornerstoneTools.removeToolState(
-                    dicomElement,
-                    record.tool,
-                    target[record.index]
-                  );
-                }
-                cornerstone.updateImage(dicomElement);
-                update.splice(ind, 1);
-                update = update.reduce((current, item) => {
-                  // console.log(record);
-                  // console.log(item);
-                  if (
-                    record.tool === "ratio" &&
-                    item.tool === "ratio" &&
-                    record.index[0] < item.index[0]
-                  ) {
-                    return [
-                      ...current,
-                      {
-                        ...item,
-                        index: [item.index[0] - 2, item.index[1] - 2],
-                      },
-                    ];
-                  }
-                  if (
-                    record.tool === "ratio" &&
-                    item.tool === "length" &&
-                    record.index[0] < item.index
-                  ) {
-                    return [...current, { ...item, index: item.index - 2 }];
-                  }
-                  if (
-                    record.tool === "length" &&
-                    item.tool === "ratio" &&
-                    record.index < item.index[0]
-                  ) {
-                    return [
-                      ...current,
-                      {
-                        ...item,
-                        index: [item.index[0] - 1, item.index[1] - 1],
-                      },
-                    ];
-                  }
-                  if (item.tool === record.tool && item.index > record.index) {
-                    return [...current, { ...item, index: item.index - 1 }];
-                  }
-                  return [...current, item];
-                }, []);
-                setLabels(update);
-                // if (btnMode === "close") 
-                setBtnMode("save-cancel");
-              }}
-              okButtonProps={{ className: "primary-btn popconfirm" }}
-              cancelButtonProps={{ style: { display: "none" } }}
-            >
+            {props.mode === "editable" && (
               <Button
                 type="link"
+                icon={<EditOutlined />}
                 disabled={record.invisible}
-                icon={<DeleteOutlined />}
+                onClick={() => {
+                  Modal.confirm({
+                    title: "Choose label",
+                    content: (
+                      <Label
+                        setSelectedLabel={setSelectedLabel}
+                        labelList={props.labelList}
+                        // setLabelList={setLabelList}
+                        defaultLabel={record.label}
+                      />
+                    ),
+                    keyboard: false,
+                    className: "label-selector-modal",
+                    okText: "Submit",
+                    cancelText: "Cancel",
+                    onCancel: () => setSelectedLabel(),
+                    onOk: () => {
+                      setLabelBuffer({
+                        key: record.key,
+                      });
+                      // setBtnMode("save-cancel");
+                    },
+                    okButtonProps: {
+                      style: {
+                        boxShadow: "none",
+                        backgroundColor: "#de5c8e",
+                      },
+                    },
+                  });
+                }}
               />
-            </Popconfirm>}
+            )}
+            {props.mode === "editable" && (
+              <Popconfirm
+                title="Delete this label?"
+                onConfirm={() => {
+                  let update = labels;
+                  let ind = update.findIndex((item) => item.key === record.key);
+                  let target = cornerstoneTools.getToolState(
+                    dicomElement,
+                    record.tool === "ratio" ? "length" : record.tool
+                  ).data;
+                  if (record.tool === "ratio") {
+                    cornerstoneTools.removeToolState(
+                      dicomElement,
+                      "length",
+                      target[record.index[1]]
+                    );
+                    cornerstoneTools.removeToolState(
+                      dicomElement,
+                      "length",
+                      target[record.index[0]]
+                    );
+                  } else {
+                    cornerstoneTools.removeToolState(
+                      dicomElement,
+                      record.tool,
+                      target[record.index]
+                    );
+                  }
+                  cornerstone.updateImage(dicomElement);
+                  update.splice(ind, 1);
+                  update = update.reduce((current, item) => {
+                    if (
+                      record.tool === "ratio" &&
+                      item.tool === "ratio" &&
+                      record.index[0] < item.index[0]
+                    ) {
+                      return [
+                        ...current,
+                        {
+                          ...item,
+                          index: [item.index[0] - 2, item.index[1] - 2],
+                        },
+                      ];
+                    }
+                    if (
+                      record.tool === "ratio" &&
+                      item.tool === "length" &&
+                      record.index[0] < item.index
+                    ) {
+                      return [...current, { ...item, index: item.index - 2 }];
+                    }
+                    if (
+                      record.tool === "length" &&
+                      item.tool === "ratio" &&
+                      record.index < item.index[0]
+                    ) {
+                      return [
+                        ...current,
+                        {
+                          ...item,
+                          index: [item.index[0] - 1, item.index[1] - 1],
+                        },
+                      ];
+                    }
+                    if (
+                      item.tool === record.tool &&
+                      item.index > record.index
+                    ) {
+                      return [...current, { ...item, index: item.index - 1 }];
+                    }
+                    return [...current, item];
+                  }, []);
+                  setLabels(update);
+                  // if (btnMode === "close")
+                  setBtnMode("save-cancel");
+                }}
+                okButtonProps={{ className: "primary-btn popconfirm" }}
+                cancelButtonProps={{ style: { display: "none" } }}
+              >
+                <Button
+                  type="link"
+                  disabled={record.invisible}
+                  icon={<DeleteOutlined />}
+                />
+              </Popconfirm>
+            )}
           </span>
         ),
       },
     ]);
 
-    if (labels.some((member) => {
-      return !member.saved;
-    })) setBtnMode("save-cancel");
-
+    if (
+      labels.some((member) => {
+        return !member.saved;
+      })
+    )
+      setBtnMode("save-cancel");
   }, [labels]);
 
   useEffect(() => {
@@ -473,15 +479,7 @@ export default function AnnotationPanel(props) {
         labelBuffer.tool === "ratio" &&
         labelBuffer.index.length === 1
       ) {
-        // if (labelBuffer.index.length === 1)
         return;
-        // let newLabel = {
-        //   ...labelBuffer,
-        //   saved: false,
-        //   updated_time: new Date(),
-        //   updated_by: user,
-        // };
-        // setLabels([...labels, newLabel]);
       } else {
         let newLabel = {
           ...labelBuffer,
@@ -490,13 +488,10 @@ export default function AnnotationPanel(props) {
           updated_time: new Date(),
           updated_by: user,
         };
-        // console.log(labelBuffer);
-        // console.log(newLabel);
         setLabels([...labels, newLabel]);
       }
       setLabelBuffer();
       setSelectedLabel();
-      // setBtnMode("save-cancel");
     }
   }, [labelBuffer]);
 
@@ -504,7 +499,6 @@ export default function AnnotationPanel(props) {
     var element = document.getElementById("annotate-dicom-image");
     cornerstone.enable(element);
     var viewport = cornerstone.getDefaultViewportForImage(element, image);
-    // console.log(viewport);
     cornerstone.displayImage(element, image, viewport);
     setViewerState({
       ...viewerState,
@@ -558,7 +552,6 @@ export default function AnnotationPanel(props) {
               };
             }
             cornerstoneTools.addToolState(element, item.tool, bbox);
-            // console.log(item);
             return {
               ...current,
               initial_lb: [
@@ -592,8 +585,6 @@ export default function AnnotationPanel(props) {
         cornerstone.updateImage(element);
         setLabels(loadedData.initial_lb);
         setImgLoaded(true);
-        // setSavedData(res.data.data)
-        // console.log(loadedData);
         // setLabelList(temp.initial_ll);
       }
       res.data.createdAt !== res.data.updatedAt &&
@@ -611,7 +602,6 @@ export default function AnnotationPanel(props) {
       labelBuffer.index.length === 1
     ) {
       let index = labelBuffer.index[0];
-      // console.log(index);
       let toolState = cornerstoneTools.getToolState(dicomElement, "length")
         .data[index];
       cornerstoneTools.removeToolState(dicomElement, "length", toolState);
@@ -686,7 +676,6 @@ export default function AnnotationPanel(props) {
         dicomElement,
         tool === "ratio" ? "length" : tool
       );
-      // console.log(count["length"], toolState.data.length);
       if (
         tool === "ratio" &&
         toolState.data &&
@@ -694,14 +683,6 @@ export default function AnnotationPanel(props) {
         !toolState.data[toolState.data.length - 1].active
       ) {
         if (labelBuffer) {
-          // setLabelBuffer({
-          //   ...labelBuffer,
-          //   label: (
-          //     toolState.data[labelBuffer.index[0]]["length"] /
-          //     toolState.data[toolState.data.length - 1]["length"]
-          //   ).toFixed(4),
-          //   index: [...labelBuffer.index, toolState.data.length - 1],
-          // });
           if (toolState.data.length <= count["length"] + 1) return;
           addNewLabel(undefined, undefined, {
             ...labelBuffer,
@@ -718,7 +699,6 @@ export default function AnnotationPanel(props) {
             tool: tool,
             index: [toolState.data.length - 1],
           });
-          // setBtnMode("save-cancel");
           return;
         }
       }
@@ -727,11 +707,7 @@ export default function AnnotationPanel(props) {
         toolState.data.length > count[tool] &&
         !toolState.data[toolState.data.length - 1].active
       ) {
-        // if (toolState.data[toolState.data.length - 1].active) {
-        //   return;
-        // }
         addNewLabel(tool, toolState.data.length - 1);
-        // setBtnMode("save-cancel");
         return;
       }
     }
@@ -992,8 +968,7 @@ export default function AnnotationPanel(props) {
       selected: e.target.checked
         ? positiveGradcam.includes(gradCam.selected)
           ? gradCam.selected
-          : positiveGradcam[0]?.finding
-          || undefined
+          : positiveGradcam[0]?.finding || undefined
         : gradCam.selected ?? props.gradCamList[0].finding,
       onlyPositive: e.target.checked,
     });
@@ -1005,7 +980,8 @@ export default function AnnotationPanel(props) {
       cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState();
     globalTool = globalTool[Object.keys(globalTool)[0]];
     update = update
-      .reduceRight((current, item, i) => {
+      .sort((a, b) => (b.index[1] ?? b.index) - (a.index[1] ?? a.index))
+      .reduce((current, item, i) => {
         if (item.invisible) return [...current, item];
         if (item.tool === "ratio") {
           const first_line = globalTool["length"].data[item.index[0]];
@@ -1021,7 +997,7 @@ export default function AnnotationPanel(props) {
         cornerstoneTools.removeToolState(dicomElement, item.tool, bbox);
         return [...current, { ...item, index: -1, invisible: bbox }];
       }, [])
-      .reverse();
+      .sort((a, b) => a.key - b.key);
     cornerstone.updateImage(dicomElement);
     setLabels(update);
   };
@@ -1250,7 +1226,10 @@ export default function AnnotationPanel(props) {
                 </Col>
               </Row>
               <Row style={{ marginTop: "5px", marginBottom: "15px" }}>
-                <Col span={props.mode === "editable" ? 8 : 12} className="annotate-tool-btn-ctn">
+                <Col
+                  span={props.mode === "editable" ? 8 : 12}
+                  className="annotate-tool-btn-ctn"
+                >
                   <Button
                     className={`annotate-tool-btn ${
                       tool === "mouse" ? "selected-tool" : ""
@@ -1262,7 +1241,10 @@ export default function AnnotationPanel(props) {
                     Mouse {<SelectOutlined />}
                   </Button>
                 </Col>
-                <Col span={props.mode === "editable" ? 8 : 12} className="annotate-tool-btn-ctn">
+                <Col
+                  span={props.mode === "editable" ? 8 : 12}
+                  className="annotate-tool-btn-ctn"
+                >
                   <Button
                     className={`annotate-tool-btn ${
                       tool === "pan" ? "selected-tool" : ""
@@ -1274,59 +1256,66 @@ export default function AnnotationPanel(props) {
                     Pan {<DragOutlined />}
                   </Button>
                 </Col>
-                {props.mode === "editable" && <Col span={8} className="annotate-tool-btn-ctn">
-                  <Button
-                    className={`annotate-tool-btn ${
-                      tool === "length" ? "selected-tool" : ""
-                    }`}
-                    onClick={() => {
-                      selectTool("length");
-                    }}
-                  >
-                    Ruler {<ColumnHeightOutlined />}
-                  </Button>
-                </Col>}
-                {props.mode === "editable" && <Col span={8} className="annotate-tool-btn-ctn">
-                  <Button
-                    className={`annotate-tool-btn ${
-                      tool === "rectangleRoi" ? "selected-tool" : ""
-                    }`}
-                    onClick={() => {
-                      selectTool("rectangleRoi");
-                    }}
-                  >
-                    Rectangle {<BorderOutlined />}
-                  </Button>
-                </Col>}
-                {props.mode === "editable" && <Col span={8} className="annotate-tool-btn-ctn">
-                  <Button
-                    className={`annotate-tool-btn ${
-                      tool === "freehand" ? "selected-tool" : ""
-                    }`}
-                    onClick={() => {
-                      selectTool("freehand");
-                    }}
-                  >
-                    Polygon {<StarOutlined />}
-                  </Button>
-                </Col>}
-                {props.mode === "editable" && <Col span={8} className="annotate-tool-btn-ctn">
-                  <Button
-                    className={`annotate-tool-btn ${
-                      tool === "ratio" ? "selected-tool" : ""
-                    }`}
-                    onClick={() => {
-                      selectTool("ratio");
-                    }}
-                  >
-                    Ratio {<VerticalAlignBottomOutlined />}
-                  </Button>
-                </Col>}
+                {props.mode === "editable" && (
+                  <Col span={8} className="annotate-tool-btn-ctn">
+                    <Button
+                      className={`annotate-tool-btn ${
+                        tool === "length" ? "selected-tool" : ""
+                      }`}
+                      onClick={() => {
+                        selectTool("length");
+                      }}
+                    >
+                      Ruler {<ColumnHeightOutlined />}
+                    </Button>
+                  </Col>
+                )}
+                {props.mode === "editable" && (
+                  <Col span={8} className="annotate-tool-btn-ctn">
+                    <Button
+                      className={`annotate-tool-btn ${
+                        tool === "rectangleRoi" ? "selected-tool" : ""
+                      }`}
+                      onClick={() => {
+                        selectTool("rectangleRoi");
+                      }}
+                    >
+                      Rectangle {<BorderOutlined />}
+                    </Button>
+                  </Col>
+                )}
+                {props.mode === "editable" && (
+                  <Col span={8} className="annotate-tool-btn-ctn">
+                    <Button
+                      className={`annotate-tool-btn ${
+                        tool === "freehand" ? "selected-tool" : ""
+                      }`}
+                      onClick={() => {
+                        selectTool("freehand");
+                      }}
+                    >
+                      Polygon {<StarOutlined />}
+                    </Button>
+                  </Col>
+                )}
+                {props.mode === "editable" && (
+                  <Col span={8} className="annotate-tool-btn-ctn">
+                    <Button
+                      className={`annotate-tool-btn ${
+                        tool === "ratio" ? "selected-tool" : ""
+                      }`}
+                      onClick={() => {
+                        selectTool("ratio");
+                      }}
+                    >
+                      Ratio {<VerticalAlignBottomOutlined />}
+                    </Button>
+                  </Col>
+                )}
               </Row>
             </Panel>
             <Panel header="Boundind Boxes Table" key="3">
               <Row align="space-between" style={{ marginTop: "10px" }}>
-                {/* <Col span={24} align="space-between" style={{ marginTop: "10px" }}> */}
                 <Col span={8} align="start">
                   <label
                     className="annotate-tool-label"
@@ -1342,7 +1331,6 @@ export default function AnnotationPanel(props) {
                     </span>
                   </Col>
                 )}
-                {/* </Col> */}
                 <Table
                   className={`annotate-table clickable-table ${props.mode}`}
                   rowClassName={(record, index) =>
@@ -1350,17 +1338,8 @@ export default function AnnotationPanel(props) {
                   }
                   columns={columns}
                   dataSource={labels}
-                  // showHeader={false}
                   pagination={false}
                   size="small"
-                  // onRow={(record, rowIndex) => {
-                  //   return {
-                  //     onClick: (event) => {
-                  //       // labelsOnSelect(record.key);
-                  //       //setCurrentLabels(record.key);
-                  //     }, // click row
-                  //   };
-                  // }}
                 />
               </Row>
               <Row justify="end">
@@ -1390,17 +1369,15 @@ export default function AnnotationPanel(props) {
             </Panel>
           </Collapse>
           <Row justify="end" style={{ marginTop: "12px" }}>
-            {
-              btnMode === "save-cancel" && (
-                <Button
-                  className="primary-btn smaller"
-                  style={{ marginRight: "10px" }}
-                  onClick={onCancelAnnotations}
-                >
-                  Cancel
-                </Button>
-              )
-            }
+            {btnMode === "save-cancel" && (
+              <Button
+                className="primary-btn smaller"
+                style={{ marginRight: "10px" }}
+                onClick={onCancelAnnotations}
+              >
+                Cancel
+              </Button>
+            )}
             {btnMode === "save-cancel" && (
               <Button className="primary-btn smaller" onClick={saveAnnotations}>
                 Save
