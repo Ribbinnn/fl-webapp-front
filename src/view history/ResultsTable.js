@@ -15,7 +15,6 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import { updateReport } from "../api/report";
-import { saveToPACS } from "../api/pacs";
 import SaveToPACSButton from "./SaveToPACSButton";
 
 const { TextArea } = Input;
@@ -140,34 +139,6 @@ export default function ResultsTable(props) {
     ];
     setColumn(col);
   }
-  const onSavetoPACS = () => {
-    /* save to PACS api */
-    const key = "updatable";
-    message.loading({ content: "Loading...", key, duration: 0 });
-
-    saveToPACS(props.rid)
-      .then((res) => {
-        // console.log(res);
-        if (res.success) {
-          message.success({
-            content: res.message,
-            key,
-            duration: 3,
-            onClose: () => {
-              window.location.reload();
-            },
-          });
-        } else message.error({ content: res.message, key, duration: 5 });
-      })
-      .catch((err) => {
-        console.log(err.response);
-        message.error({
-          content: err.response.data.message,
-          key,
-          duration: 5,
-        });
-      });
-  };
 
   const onSaveReport = () => {
     /* save report api */
@@ -226,14 +197,7 @@ export default function ResultsTable(props) {
     type: "checkbox",
     selectedRowKeys,
     onChange: (selectedKeys, selectedRows) => {
-      // console.log(
-      //   `selectedRowKeys: ${selectedRowKeys}`,
-      //   "selectedRows: ",
-      //   selectedRows, data
-      // );
-      // setSelectedRows(selectedRows);
       setSelectedRowKeys(selectedKeys);
-      // console.log(selectedKeys.sort(), defaultRowKeys.sort());
       if (selectedKeys.sort() !== defaultData.rowKeys.sort()) {
         setReportState({ ...reportState, btnGroup: "save" });
       }
@@ -357,7 +321,7 @@ export default function ResultsTable(props) {
           props.HN &&
           status === "reviewed" &&
           props.head.includes(user) && (
-            <SaveToPACSButton onSavetoPACS={onSavetoPACS} />
+            <SaveToPACSButton rid={props.rid} />
           )}
 
         {reportState.btnGroup === "save" && (
