@@ -63,6 +63,7 @@ function HistoryLog(props) {
             sorter: {
                 compare: (a, b) => a.key.localeCompare(b.key)
             },
+            showSorterTooltip: false,
             render: (no) => (
                 <Tooltip placement="topLeft" title={no}>
                     {no}
@@ -126,6 +127,7 @@ function HistoryLog(props) {
             sorter: {
                 compare: (a, b) => a.hn.toString().localeCompare(b.hn.toString())
             },
+            showSorterTooltip: false,
             render: (HN) => (
                 <Tooltip placement="topLeft" title={HN}>
                     {HN}
@@ -133,7 +135,10 @@ function HistoryLog(props) {
             ),
         },
         {
-            title: "Patient's Name",
+            title:
+                <Tooltip placement="topLeft" title="Patient's Name">
+                    Patient's Name
+                </Tooltip>,
             dataIndex: "patient_name",
             key: "patient_name",
             align: "center",
@@ -143,6 +148,7 @@ function HistoryLog(props) {
             sorter: {
                 compare: (a, b) => a.patient_name.localeCompare(b.patient_name)
             },
+            showSorterTooltip: false,
             render: (name) => (
                 <Tooltip placement="topLeft" title={name}>
                     {name}
@@ -150,7 +156,10 @@ function HistoryLog(props) {
             ),
         },
         {
-            title: "Findings",
+            title:
+                <Tooltip placement="topLeft" title="Findings">
+                    Findings
+                </Tooltip>,
             dataIndex: "finding",
             key: "finding",
             align: "center",
@@ -160,6 +169,7 @@ function HistoryLog(props) {
             sorter: {
                 compare: (a, b) => a.finding.localeCompare(b.finding)
             },
+            showSorterTooltip: false,
             render: (finding) => (
                 <Tooltip placement="topLeft" title={finding}>
                     {finding}
@@ -167,7 +177,10 @@ function HistoryLog(props) {
             ),
         },
         {
-            title: "Created Date Time",
+            title:
+                <Tooltip placement="topLeft" title="Created Date Time">
+                    Created Date Time
+                </Tooltip>,
             dataIndex: "createdAt",
             key: "createdAt",
             align: "center",
@@ -177,6 +190,7 @@ function HistoryLog(props) {
             sorter: {
                 compare: (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
             },
+            showSorterTooltip: false,
             render: (date) => (
                 <Tooltip placement="topLeft" title={date}>
                     {date}
@@ -184,7 +198,10 @@ function HistoryLog(props) {
             ),
         },
         {
-            title: "Last Modified",
+            title:
+                <Tooltip placement="topLeft" title="Last Modified">
+                    Last Modified
+                </Tooltip>,
             dataIndex: "updatedAt",
             key: "updatedAt",
             align: "center",
@@ -194,6 +211,7 @@ function HistoryLog(props) {
             sorter: {
                 compare: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt)
             },
+            showSorterTooltip: false,
             render: (date) => (
                 <Tooltip placement="topLeft" title={date}>
                     {date}
@@ -201,7 +219,10 @@ function HistoryLog(props) {
             ),
         },
         {
-            title: "Clinician",
+            title:
+                <Tooltip placement="topLeft" title="Clinician">
+                    Clinician
+                </Tooltip>,
             dataIndex: "clinician_name",
             key: "clinician_name",
             align: "center",
@@ -211,6 +232,7 @@ function HistoryLog(props) {
             sorter: {
                 compare: (a, b) => a.clinician_name.localeCompare(b.clinician_name)
             },
+            showSorterTooltip: false,
             render: (clinician) => (
                 <Tooltip placement="topLeft" title={clinician}>
                     {clinician}

@@ -27,7 +27,9 @@ function SelectXRayImage(props) {
             props.setAccessionNoIndex(selectedRowKeys);
             props.setAccessionNo(selectedRows[0]["Accession No"]);
             props.setMedRec({
-                age: selectedRows[0]["Age"],
+                age:
+                    selectedRows[0]["Age"] ? selectedRows[0]["Age"] :
+                    moment(selectedRows[0]["Study Date Time"]).diff(moment(selectedRows[0]["Patient Birthdate"]), 'years'),
                 gender: selectedRows[0]["Patient Sex"],
                 hn: globalProject.projectReq.length === 0 ? selectedRows[0]["Patient ID"] : props.MedRec.hn,
                 entry_id: globalProject.projectReq.length === 0 ? 1 : props.MedRec.entry_id,
@@ -137,6 +139,7 @@ function SelectXRayImage(props) {
                                 props.fromDate === null ? "" : props.fromDate, 
                                 props.toDate === null ? "" : props.toDate)
                             .then((res) => {
+                                console.log(res);
                                 if (Object.keys(res.data).length === 0) {
                                     setTableData([]);
                                     props.setPacsTableData([]);
