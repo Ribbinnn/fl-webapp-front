@@ -1316,7 +1316,6 @@ export default function AnnotationPanel(props) {
             </Panel>
             <Panel header="Boundind Boxes Table" key="3">
               <Row align="space-between" style={{ marginTop: "10px" }}>
-                {/* <Col span={24} align="space-between" style={{ marginTop: "10px" }}> */}
                 <Col span={8} align="start">
                   <label
                     className="annotate-tool-label"
@@ -1332,7 +1331,6 @@ export default function AnnotationPanel(props) {
                     </span>
                   </Col>
                 )}
-                {/* </Col> */}
                 <Table
                   className={`annotate-table clickable-table ${props.mode}`}
                   rowClassName={(record, index) =>
@@ -1340,17 +1338,8 @@ export default function AnnotationPanel(props) {
                   }
                   columns={columns}
                   dataSource={labels}
-                  // showHeader={false}
                   pagination={false}
                   size="small"
-                  // onRow={(record, rowIndex) => {
-                  //   return {
-                  //     onClick: (event) => {
-                  //       // labelsOnSelect(record.key);
-                  //       //setCurrentLabels(record.key);
-                  //     }, // click row
-                  //   };
-                  // }}
                 />
               </Row>
               <Row justify="end">
