@@ -10,7 +10,7 @@ import Contexts from '../utils/Contexts';
 import SelectProject from '../component/SelectProject';
 
 export default function Header(){
-    const { globalProject, setGlobalProject } = useContext(Contexts.project);
+    const { globalProject, setGlobalProject } = useContext(Contexts).project;
     const history = useHistory();
     const username = JSON.parse(sessionStorage.getItem("user")).username
 

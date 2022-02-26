@@ -9,7 +9,7 @@ const LoadingIcon = (
 );
 
 const SelectMedicalRecord = forwardRef((props, ref) => {
-    const { globalProject, setGlobalProject } = useContext(Contexts.project);
+    const { globalProject, setGlobalProject } = useContext(Contexts).project;
     const [loaded, setLoaded] = useState(false);
     const [hasRecord, setHasRecord] = useState(true);
     const [requirementForm] = Form.useForm();
