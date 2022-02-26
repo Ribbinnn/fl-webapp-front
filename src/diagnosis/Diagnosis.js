@@ -9,60 +9,25 @@ import Completed from "../component/Completed";
 import PreviewEdit from "./PreviewEdit";
 import { findPatientOnPACS } from "../api/pacs";
 import { infer } from "../api/report";
-import Contexts from '../utils/Contexts';
+import Contexts from "../utils/Contexts";
+import BatchDiagnosis from "./BatchDiagnosis";
 const { Step } = Steps;
 
 const LoadingIcon = (
-  <LoadingOutlined style={{ fontSize: 30, color: "#de5c8e", marginRight: 5 }} spin />
+  <LoadingOutlined
+    style={{ fontSize: 30, color: "#de5c8e", marginRight: 5 }}
+    spin
+  />
 );
 
-const steps = [
-  {
-    title: "Select HN",
-  },
-  {
-    title: "Select Medical Record",
-  },
-  {
-    title: "Select X-Ray Image",
-  },
-  {
-    title: "Preview & Edit",
-  },
-  {
-    title: "Diagnosis Started",
-  },
-];
-
-const btnList = [
-  {
-    title: "Back to Home",
-    destination: "/",
-  },
-  {
-    title: "Create New Diagnosis",
-    destination: "/diagnosis",
-  },
-  ,
-  {
-    title: "Go to View History",
-    destination: "/viewhistory",
-  },
-];
-
-export default function Diagnosis() {
-  const { globalProject } = useContext(Contexts.project);
+export default function Diagnosis(props) {
+  const { globalProject } = useContext(Contexts).project;
+  const { currentActivity, setCurrentActivity } = useContext(Contexts).active;
   const [loading, setLoading] = useState(false);
   const [HN, setHN] = useState("");
   const [Patient, setPatient] = useState();
-  // const [MedRec, setMedRec] = useState({
-  //   "Pulse rate": 77,
-  //   Temperature: 37,
-  //   "Blood pressure": "120/80",
-  // });
   const [MedRec, setMedRec] = useState(null);
   const [MedRecIndex, setMedRecIndex] = useState([]);
-  // const [accessionNo, setAccessionNo] = useState("74");
   const [accessionNo, setAccessionNo] = useState(null);
   const [accessionNoIndex, setAccessionNoIndex] = useState([]);
   const [searchAccNo, setSearchAccNo] = useState(null);
@@ -71,31 +36,86 @@ export default function Diagnosis() {
   const [pacsTableData, setPacsTableData] = useState(null);
   const [current, setCurrent] = useState(0);
   const selectMedicalRecordRef = useRef();
+  const steps = {
+    individual: [
+      "Select HN",
+      "Select Medical Record",
+      "Select X-Ray Image",
+      "Preview & Edit",
+      "Diagnosis Started",
+    ],
+    batch: ["Select X-Ray Images", "Diagnosis Started"],
+  };
+
+  const btnList = [
+    {
+      title: "Back to Home",
+      destination: "/",
+    },
+    {
+      title: "Create New Diagnosis",
+      destination: "/diagnosis",
+    },
+    ,
+    {
+      title: "Go to View History",
+      destination: "/viewhistory",
+    },
+  ];
+
+  useState(() => {
+    setLoading(false);
+    setHN("");
+    setPatient();
+    setMedRec(null);
+    setMedRecIndex([]);
+    setAccessionNo(null);
+    setAccessionNoIndex([]);
+    setSearchAccNo(null);
+    setFromDate(null);
+    setToDate(null);
+    setPacsTableData(null);
+    setCurrent(0);
+  }, [props.mode]);
 
   const next = () => {
     /** add condition for each step to go next step here */
-    if (current === 0 && globalProject.projectReq.length === 0) {
-      setCurrent(2);
-    } else if (current === 1) {
-      selectMedicalRecordRef.current.setMedicalRecord();
-    } else if (current === 2 && accessionNo === null) {
-        Modal.warning({content: "Please select X-Ray Image."});
-    } else {
-      if (current === 3) {
-        setLoading(true);
-        infer(accessionNo, globalProject.projectId, MedRec, (JSON.parse(sessionStorage.getItem('user'))).id)
-        .then((res) => {
-          // console.log(res);
-          setCurrent(current + 1);
-          setLoading(false);
-        }).catch((err) => {
-          console.log(err.response);
-          Modal.error({content: err.response.data.message});
-          setLoading(false);
-        });
+    if (props.mode === "individual") {
+      if (current === 0 && globalProject.projectReq.length === 0) {
+        setCurrent(2);
+        setCurrentActivity({ ...currentActivity, enableChangePage: false });
+      } else if (current === 1) {
+        selectMedicalRecordRef.current.setMedicalRecord();
+        setCurrentActivity({ ...currentActivity, enableChangePage: false });
+      } else if (current === 2 && accessionNo === null) {
+        Modal.warning({ content: "Please select X-Ray Image." });
       } else {
-        setCurrent(current + 1);
-      }  
+        if (current === 3) {
+          setLoading(true);
+          infer(
+            accessionNo,
+            globalProject.projectId,
+            MedRec,
+            JSON.parse(sessionStorage.getItem("user")).id
+          )
+            .then((res) => {
+              // console.log(res);
+              setCurrent(current + 1);
+              setLoading(false);
+              setCurrentActivity({ ...currentActivity, enableChangePage: true });
+            })
+            .catch((err) => {
+              console.log(err.response);
+              Modal.error({ content: err.response.data.message });
+              setLoading(false);
+            });
+        } else {
+          setCurrent(current + 1);
+        }
+      }
+    }
+    if (props.mode === "batch") {
+      setCurrent(current + 1);
     }
   };
 
@@ -110,13 +130,13 @@ export default function Diagnosis() {
   return (
     <div className={loading ? "content loading" : "content"}>
       <Steps progressDot current={current}>
-        {steps.map((item) => (
+        {steps[props.mode].map((item) => (
           <Step key={item.title} title={item.title} />
         ))}
       </Steps>
       {/* ----- add content below -------- */}
       <div className="steps-content-diagnosis">
-        {current === 0 && (
+        {props.mode === "individual" && current === 0 && (
           <SelectHN
             HN={HN}
             setHN={setHN}
@@ -130,7 +150,7 @@ export default function Diagnosis() {
             setLoading={setLoading}
           />
         )}
-        {current === 1 && (
+        {props.mode === "individual" && current === 1 && (
           <Row>
             <Col span={7}>
               <div>
@@ -163,7 +183,7 @@ export default function Diagnosis() {
             </Col>
           </Row>
         )}
-        {current === 2 && (
+        {props.mode === "individual" && current === 2 && (
           <div>
             <label
               style={{
@@ -192,7 +212,7 @@ export default function Diagnosis() {
             />
           </div>
         )}
-        {current === 3 && (
+        {props.mode === "individual" && current === 3 && (
           <PreviewEdit
             HN={HN}
             Patient={Patient}
@@ -202,13 +222,16 @@ export default function Diagnosis() {
             projectReq={globalProject.projectReq}
           />
         )}
-        {current === steps.length - 1 && (
+        {props.mode === "batch" && current === 0 && (
+          <BatchDiagnosis/>
+        )}
+        {current === steps[props.mode].length - 1 && (
           <Completed btnList={btnList} title="Diagnosis Started" />
         )}
       </div>
       {/* ----- add content above -------- */}
       <div className={`steps-action${current === 0 ? " steps-action-1" : ""}`}>
-        {current > 0 && current < steps.length - 1 && (
+        {current > 0 && current < steps[props.mode].length - 1 && (
           <Button
             className="primary-btn"
             style={current > 0 ? null : { visibility: "hidden" }}
@@ -217,7 +240,7 @@ export default function Diagnosis() {
             Back
           </Button>
         )}
-        {HN !== "" && current < steps.length - 1 && (
+        {HN !== "" && current < steps[props.mode].length - 1 && (
           <Button className="primary-btn" onClick={() => next()}>
             Next
           </Button>
@@ -231,20 +254,22 @@ function SelectHN(props) {
   //const [patientName, setPatientName] = useState();
   const handleSubmit = () => {
     let input_hn = document.getElementById("hn-input").value.trim();
-    if (!input_hn) return
+    if (!input_hn) return;
     props.setLoading(true);
-    findPatientOnPACS(input_hn).then((res) => {
-      // console.log(input_hn);
-      if (res.data) {
-        props.setHN(input_hn);
-        props.setPatient({Name: res.data["Patient Name"]});
-        props.setMedRec(null);
-        props.setMedRecIndex([]);
-        props.setAccessionNo(null);
-        props.setAccessionNoIndex([]);
-      } else props.setPatient(false);
-      props.setLoading(false);
-    }).catch((err) => console.log(err.response));
+    findPatientOnPACS(input_hn)
+      .then((res) => {
+        // console.log(input_hn);
+        if (res.data) {
+          props.setHN(input_hn);
+          props.setPatient({ Name: res.data["Patient Name"] });
+          props.setMedRec(null);
+          props.setMedRecIndex([]);
+          props.setAccessionNo(null);
+          props.setAccessionNoIndex([]);
+        } else props.setPatient(false);
+        props.setLoading(false);
+      })
+      .catch((err) => console.log(err.response));
   };
   return (
     <Form layout="vertical">
@@ -269,13 +294,21 @@ function SelectHN(props) {
           Submit
         </Button>
       </Form.Item>
-      
-        <div>
-        {props.loading ? <span><Spin indicator={LoadingIcon} /> <label>Searching ...</label></span>: <label id="search-pacs-result">
-          {props.Patient !== undefined && (props.Patient ? `Patient's Name: ${props.Patient.Name}` : "No sufficient data from this patient.")}
-        </label>}
-        </div>
-      
+
+      <div>
+        {props.loading ? (
+          <span>
+            <Spin indicator={LoadingIcon} /> <label>Searching ...</label>
+          </span>
+        ) : (
+          <label id="search-pacs-result">
+            {props.Patient !== undefined &&
+              (props.Patient
+                ? `Patient's Name: ${props.Patient.Name}`
+                : "No sufficient data from this patient.")}
+          </label>
+        )}
+      </div>
     </Form>
   );
 }

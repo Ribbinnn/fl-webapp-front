@@ -29,9 +29,18 @@ function Routes() {
       ? JSON.parse(sessionStorage.getItem("project")).projectReq
       : [],
   });
-  const [currentActivity, setCurrentActivity] = useState({})
+  const [currentActivity, setCurrentActivity] = useState({});
 
-  const value = { project: {globalProject : globalProject, setGlobalProject: setGlobalProject}, active: {currentActivity: currentActivity, setCurrentActivity: setCurrentActivity} };
+  const value = {
+    project: {
+      globalProject: globalProject,
+      setGlobalProject: setGlobalProject,
+    },
+    active: {
+      currentActivity: currentActivity,
+      setCurrentActivity: setCurrentActivity,
+    },
+  };
 
   if (localStorage.getItem("auth") === "true") {
     sessionStorage.setItem("token", localStorage.getItem("token"));
