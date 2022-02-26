@@ -83,10 +83,10 @@ export default function Diagnosis(props) {
     if (props.mode === "individual") {
       if (current === 0 && globalProject.projectReq.length === 0) {
         setCurrent(2);
-        setCurrentActivity({ ...currentActivity, enableChangePage: false });
+        setCurrentActivity({ ...currentActivity, enablePageChange: false });
       } else if (current === 1) {
         selectMedicalRecordRef.current.setMedicalRecord();
-        setCurrentActivity({ ...currentActivity, enableChangePage: false });
+        setCurrentActivity({ ...currentActivity, enablePageChange: false });
       } else if (current === 2 && accessionNo === null) {
         Modal.warning({ content: "Please select X-Ray Image." });
       } else {
@@ -102,7 +102,7 @@ export default function Diagnosis(props) {
               // console.log(res);
               setCurrent(current + 1);
               setLoading(false);
-              setCurrentActivity({ ...currentActivity, enableChangePage: true });
+              setCurrentActivity({ ...currentActivity, enablePageChange: true });
             })
             .catch((err) => {
               console.log(err.response);
