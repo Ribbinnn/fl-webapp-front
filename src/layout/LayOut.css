@@ -1071,23 +1071,74 @@ label.clickable-label:hover {
   height: 38px;
 }
 
-.ant-picker-today-btn {
+.ant-picker-today-btn, 
+.ant-picker-header-view button,
+.ant-picker-header button,
+.ant-picker-header-view{
   color: #58595b;
+  font-size: medium;
+  font-weight: bold;
+}
+
+.ant-picker-content th{
+  color: #58595b;
+  font-weight: bold;
 }
 
 .ant-picker-today-btn:hover,
-.ant-picker-header-view button:hover {
+.ant-picker-header-view button:hover,
+.ant-picker-header button:hover {
   color: #de5c8e;
 }
 
 .ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
-  color: #fff;
+  color: #fff !important;
+  font-weight: bold;
   background: #de5c8e;
+  border-radius: 5px;
 }
 
+.ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner,
 .ant-picker-cell-in-view.ant-picker-cell-today .ant-picker-cell-inner:before {
-  border-color: #de5c8e;
+  border: none;
+  color: #de5c8e;
+  font-weight: bold;
 }
+
+.ant-picker-cell:hover:not(.ant-picker-cell-in-view) .ant-picker-cell-inner, 
+.ant-picker-cell:hover:not(.ant-picker-cell-selected):not(.ant-picker-cell-range-start):not(.ant-picker-cell-range-end):not(.ant-picker-cell-range-hover-start):not(.ant-picker-cell-range-hover-end) .ant-picker-cell-inner{
+  background-color: #f8e1ea;
+  border-radius: 5px;
+}
+
+.ant-picker-cell.ant-picker-cell-in-view:not(.ant-picker-cell-today) .ant-picker-cell-inner{
+  color: #58595b;
+}
+
+.ant-picker-cell:not(.ant-picker-cell-in-view) .ant-picker-cell-inner{
+  color: #c4c4c4;
+}
+
+.ant-picker-decade-panel .ant-picker-content .ant-picker-cell-in-view{
+  height: 66px;
+}
+.ant-picker-year-panel .ant-picker-content .ant-picker-cell-in-view,
+.ant-picker-month-panel .ant-picker-content .ant-picker-cell-in-view{
+  height: 66px;
+  font-size: medium;
+}
+
+.ant-picker-panel-container{
+  border-radius: 8px;
+}
+
+.ant-picker-suffix{
+  color: #58595b;
+}
+/* .ant-picker-header,
+.ant-picker-panel .ant-picker-footer{
+  border-color: #c4c4c4;
+} */
 
 .ant-picker-input > input,
 .ant-picker-input > input::placeholder {
