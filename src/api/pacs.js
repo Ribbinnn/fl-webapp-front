@@ -2,14 +2,8 @@ import { instance } from '.';
 
 export const getPatientData = async (HN, accession_no, start_date, end_date) => {
     try {
-        const params = {HN: HN};
-        if (accession_no !== "") {
-            params["accession_no"] = accession_no;
-        } if (start_date !== "") {
-            params["start_date"] = start_date;
-        } if (end_date !== "") {
-            params["end_date"] = end_date;
-        }
+        const params = { HN, accession_no, start_date, end_date }
+        console.log(params)
         const res = (
             await instance.get("/pacs/", { params: params })
         ).data;
