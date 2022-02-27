@@ -17,11 +17,12 @@ import * as moment from "moment";
 import Contexts from "../utils/Contexts";
 
 export default function BatchDiagnosis(props) {
+  const current = moment();
   const [selectedTime, setSelectedTime] = useState({
-    fromDate: "",
-    fromTime: "",
-    toDate: "",
-    toTime: "",
+    fromDate: current.clone().subtract(1, "hours").format("YYYY-MM-DD"),
+    fromTime: current.clone().subtract(1, "hours").format("HH-mm"),
+    toDate: current.format("YYYY-MM-DD"),
+    toTime: current.format("HH-mm"),
   });
 
   const onChangePicker = (props) => (value) => {
@@ -30,20 +31,13 @@ export default function BatchDiagnosis(props) {
     if (props === "fromDate" || props === "toDate") format = "YYYY-MM-DD";
     console.log(format, value);
     setSelectedTime({
-        ...selectedTime,
-        [props]: value.format(format)
-    })
-  }
+      ...selectedTime,
+      [props]: value.format(format),
+    });
+  };
 
-  useEffect(()=>{
-      var current = moment();
-      setSelectedTime({
-        fromDate: current.clone().subtract(1,"hours").format("YYYY-MM-DD"),
-        fromTime: current.clone().subtract(1,"hours").format("HH-mm"),
-        toDate: current.format("YYYY-MM-DD"),
-        toTime: current.format("HH-mm"),
-      });
-  },[])
+  useEffect(() => {
+  }, []);
 
   return (
     <div>
@@ -63,6 +57,7 @@ export default function BatchDiagnosis(props) {
             value={moment(selectedTime.fromDate, "YYYY-MM-DD")}
             allowClear={false}
             style={{ width: "200px" }}
+            inputReadOnly
           />
           <TimePicker
             format="HH:mm"
@@ -71,6 +66,7 @@ export default function BatchDiagnosis(props) {
             value={moment(selectedTime.fromTime, "HH:mm")}
             style={{ width: "100px", marginLeft: "5px" }}
             onSelect={onChangePicker("fromTime")}
+            inputReadOnly
           />
         </Form.Item>
         <Form.Item
@@ -87,6 +83,7 @@ export default function BatchDiagnosis(props) {
             value={moment(selectedTime.toDate, "YYYY-MM-DD")}
             allowClear={false}
             style={{ width: "200px" }}
+            inputReadOnly
           />
           <TimePicker
             format="HH:mm"
@@ -95,6 +92,7 @@ export default function BatchDiagnosis(props) {
             allowClear={false}
             style={{ width: "100px", marginLeft: "5px" }}
             onSelect={onChangePicker("toTime")}
+            inputReadOnly
           />
         </Form.Item>
         <Form.Item style={{ marginLeft: "20px" }}>
