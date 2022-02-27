@@ -131,7 +131,7 @@ export default function Diagnosis(props) {
     <div className={loading ? "content loading" : "content"}>
       <Steps progressDot current={current}>
         {steps[props.mode].map((item) => (
-          <Step key={item.title} title={item.title} />
+          <Step key={item} title={item} />
         ))}
       </Steps>
       {/* ----- add content below -------- */}

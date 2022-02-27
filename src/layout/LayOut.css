@@ -1091,10 +1091,10 @@ label.clickable-label:hover {
   color: #de5c8e;
 }
 
-.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner {
-  color: #fff !important;
+.ant-picker-cell-in-view.ant-picker-cell-selected .ant-picker-cell-inner{
+  color: #de5c8e !important;
   font-weight: bold;
-  background: #de5c8e;
+  background: #f8e1ea;
   border-radius: 5px;
 }
 
@@ -1111,7 +1111,9 @@ label.clickable-label:hover {
   border-radius: 5px;
 }
 
-.ant-picker-cell.ant-picker-cell-in-view:not(.ant-picker-cell-today) .ant-picker-cell-inner{
+.ant-picker-cell.ant-picker-cell-in-view:not(.ant-picker-cell-today) .ant-picker-cell-inner,
+.ant-picker-time-panel-column > li.ant-picker-time-panel-cell .ant-picker-time-panel-cell-inner, .ant-picker-now-btn,
+.ant-picker-suffix{
   color: #58595b;
 }
 
@@ -1132,14 +1134,6 @@ label.clickable-label:hover {
   border-radius: 8px;
 }
 
-.ant-picker-suffix{
-  color: #58595b;
-}
-/* .ant-picker-header,
-.ant-picker-panel .ant-picker-footer{
-  border-color: #c4c4c4;
-} */
-
 .ant-picker-input > input,
 .ant-picker-input > input::placeholder {
   font-size: large;
@@ -1154,8 +1148,27 @@ label.clickable-label:hover {
   overflow: hidden;
 }
 
-.anticon.anticon-calendar {
+.ant-picker-time-panel-column > li.ant-picker-time-panel-cell .ant-picker-time-panel-cell-inner:hover {
+  background-color: #f8e1ea;
+}
+
+.ant-picker-time-panel-column > li.ant-picker-time-panel-cell-selected .ant-picker-time-panel-cell-inner {
+  background-color: #f8e1ea;
+  color: #de5c8e;
+  font-weight: bold;
+}
+
+.ant-picker-now-btn{
   color: #58595b;
+  font-size: medium;
+}
+
+.batch-diag-timepicker .ant-picker-footer{
+  display: none;
+}
+
+.batch-diag-timepicker .ant-picker-time-panel-column{
+  width: 50px;
 }
 
 /* modal ------------- */
