@@ -26,3 +26,12 @@ export const infer = async (accession_no, project_id, record, user_id) => {
         throw e
     }
 }
+
+export const batchInfer = async (project_id, dicom_info_list, user_id) => {
+    try {
+        const res = (await instance.post("/infer/batch", {project_id, dicom_info_list, user_id}))
+        return res.data;
+    } catch (e) {
+        throw e
+    }
+}

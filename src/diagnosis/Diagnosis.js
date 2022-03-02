@@ -10,7 +10,6 @@ import PreviewEdit from "./PreviewEdit";
 import { findPatientOnPACS } from "../api/pacs";
 import { infer } from "../api/report";
 import Contexts from "../utils/Contexts";
-import BatchDiagnosis from "./BatchDiagnosis";
 const { Step } = Steps;
 
 const LoadingIcon = (
@@ -36,16 +35,13 @@ export default function Diagnosis(props) {
   const [pacsTableData, setPacsTableData] = useState(null);
   const [current, setCurrent] = useState(0);
   const selectMedicalRecordRef = useRef();
-  const steps = {
-    individual: [
-      "Select HN",
-      "Select Medical Record",
-      "Select X-Ray Image",
-      "Preview & Edit",
-      "Diagnosis Started",
-    ],
-    batch: ["Select X-Ray Images", "Diagnosis Started"],
-  };
+  const stepsTitle = [
+    "Select HN",
+    "Select Medical Record",
+    "Select X-Ray Image",
+    "Preview & Edit",
+    "Diagnosis Started",
+  ];
 
   const btnList = [
     {
@@ -54,7 +50,7 @@ export default function Diagnosis(props) {
     },
     {
       title: "Create New Diagnosis",
-      destination: "/diagnosis",
+      destination: "/diagnosis/individual",
     },
     ,
     {
@@ -63,59 +59,39 @@ export default function Diagnosis(props) {
     },
   ];
 
-  useState(() => {
-    setLoading(false);
-    setHN("");
-    setPatient();
-    setMedRec(null);
-    setMedRecIndex([]);
-    setAccessionNo(null);
-    setAccessionNoIndex([]);
-    setSearchAccNo(null);
-    setFromDate(null);
-    setToDate(null);
-    setPacsTableData(null);
-    setCurrent(0);
-  }, [props.mode]);
-
   const next = () => {
     /** add condition for each step to go next step here */
-    if (props.mode === "individual") {
-      if (current === 0 && globalProject.projectReq.length === 0) {
-        setCurrent(2);
-        setCurrentActivity({ ...currentActivity, enablePageChange: false });
-      } else if (current === 1) {
-        selectMedicalRecordRef.current.setMedicalRecord();
-        setCurrentActivity({ ...currentActivity, enablePageChange: false });
-      } else if (current === 2 && accessionNo === null) {
-        Modal.warning({ content: "Please select X-Ray Image." });
+    if (current === 0 && globalProject.projectReq.length === 0) {
+      setCurrent(2);
+      setCurrentActivity({ ...currentActivity, enablePageChange: false });
+    } else if (current === 1) {
+      selectMedicalRecordRef.current.setMedicalRecord();
+      setCurrentActivity({ ...currentActivity, enablePageChange: false });
+    } else if (current === 2 && accessionNo === null) {
+      Modal.warning({ content: "Please select X-Ray Image." });
+    } else {
+      if (current === 3) {
+        setLoading(true);
+        infer(
+          accessionNo,
+          globalProject.projectId,
+          MedRec,
+          JSON.parse(sessionStorage.getItem("user")).id
+        )
+          .then((res) => {
+            // console.log(res);
+            setCurrent(current + 1);
+            setLoading(false);
+            setCurrentActivity({ ...currentActivity, enablePageChange: true });
+          })
+          .catch((err) => {
+            console.log(err.response);
+            Modal.error({ content: err.response.data.message });
+            setLoading(false);
+          });
       } else {
-        if (current === 3) {
-          setLoading(true);
-          infer(
-            accessionNo,
-            globalProject.projectId,
-            MedRec,
-            JSON.parse(sessionStorage.getItem("user")).id
-          )
-            .then((res) => {
-              // console.log(res);
-              setCurrent(current + 1);
-              setLoading(false);
-              setCurrentActivity({ ...currentActivity, enablePageChange: true });
-            })
-            .catch((err) => {
-              console.log(err.response);
-              Modal.error({ content: err.response.data.message });
-              setLoading(false);
-            });
-        } else {
-          setCurrent(current + 1);
-        }
+        setCurrent(current + 1);
       }
-    }
-    if (props.mode === "batch") {
-      setCurrent(current + 1);
     }
   };
 
@@ -130,13 +106,13 @@ export default function Diagnosis(props) {
   return (
     <div className={loading ? "content loading" : "content"}>
       <Steps progressDot current={current}>
-        {steps[props.mode].map((item) => (
+        {stepsTitle.map((item) => (
           <Step key={item} title={item} />
         ))}
       </Steps>
       {/* ----- add content below -------- */}
       <div className="steps-content-diagnosis">
-        {props.mode === "individual" && current === 0 && (
+        {current === 0 && (
           <SelectHN
             HN={HN}
             setHN={setHN}
@@ -150,7 +126,7 @@ export default function Diagnosis(props) {
             setLoading={setLoading}
           />
         )}
-        {props.mode === "individual" && current === 1 && (
+        {current === 1 && (
           <Row>
             <Col span={7}>
               <div>
@@ -183,7 +159,7 @@ export default function Diagnosis(props) {
             </Col>
           </Row>
         )}
-        {props.mode === "individual" && current === 2 && (
+        {current === 2 && (
           <div>
             <label
               style={{
@@ -212,7 +188,7 @@ export default function Diagnosis(props) {
             />
           </div>
         )}
-        {props.mode === "individual" && current === 3 && (
+        {current === 3 && (
           <PreviewEdit
             HN={HN}
             Patient={Patient}
@@ -222,16 +198,13 @@ export default function Diagnosis(props) {
             projectReq={globalProject.projectReq}
           />
         )}
-        {props.mode === "batch" && current === 0 && (
-          <BatchDiagnosis/>
-        )}
-        {current === steps[props.mode].length - 1 && (
+        {current === stepsTitle.length - 1 && (
           <Completed btnList={btnList} title="Diagnosis Started" />
         )}
       </div>
       {/* ----- add content above -------- */}
       <div className={`steps-action${current === 0 ? " steps-action-1" : ""}`}>
-        {current > 0 && current < steps[props.mode].length - 1 && (
+        {current > 0 && current < stepsTitle.length - 1 && (
           <Button
             className="primary-btn"
             style={current > 0 ? null : { visibility: "hidden" }}
@@ -240,7 +213,7 @@ export default function Diagnosis(props) {
             Back
           </Button>
         )}
-        {HN !== "" && current < steps[props.mode].length - 1 && (
+        {HN !== "" && current < stepsTitle.length - 1 && (
           <Button className="primary-btn" onClick={() => next()}>
             Next
           </Button>

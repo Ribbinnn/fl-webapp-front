@@ -16,6 +16,7 @@ import { updateToken } from "./api";
 
 import "./layout/LayOut.css";
 import Contexts from "./utils/Contexts";
+import BatchDiagnosis from "./diagnosis/BatchDiagnosis";
 
 function Routes() {
   const [globalProject, setGlobalProject] = useState({
@@ -114,7 +115,7 @@ function Routes() {
                     globalProject.projectReq.length ? (
                       <Redirect to="/diagnosis/individual" />
                     ) : (
-                      <Diagnosis mode="batch" />
+                      <BatchDiagnosis />
                     )
                   ) : !auth ? (
                     <Redirect to="/login" />
