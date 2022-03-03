@@ -12,7 +12,7 @@ import SelectProject from '../component/SelectProject';
 export default function Header(){
     const { globalProject, setGlobalProject } = useContext(Contexts).project;
     const history = useHistory();
-    const username = JSON.parse(sessionStorage.getItem("user")).username
+    const first_name = JSON.parse(sessionStorage.getItem("user")).first_name
 
     return(
             <div id="header">
@@ -26,7 +26,7 @@ export default function Header(){
           />
 
                 <div id="right-pane">
-                    Hi, {username}.
+                    Hi, {first_name}.
                     <Button 
                     type = "link" 
                     style={{color:'#E9C869', fontWeight:'bold', fontSize: "large", position: "relative", top:"-3px"}} 
