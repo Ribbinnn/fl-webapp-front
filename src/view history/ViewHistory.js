@@ -43,6 +43,7 @@ function HistoryLog(props) {
     const shownStatus = {
         "all": {shown: "All", color: ""},
         "canceled": {shown: "Canceled", color: "default", desc: "Image inference has been canceled because of server errors."},
+        "waiting": {shown: "0 Waiting", color: "purple", desc: "Image inference is waiting in queue before being in progress"},
         "in progress": {shown: "1 In Progress", color: "processing", desc: "Image inference is still in progress."},
         "annotated": {shown: "2 AI-Annotated", color: "warning", desc: "Image inference succeeds, the results are saved as report."},
         "reviewed": {shown: "3 Human-Annotated", color: "error", desc: "Report has been edited by radiologists."},
@@ -75,11 +76,10 @@ function HistoryLog(props) {
                 <span>
                     Status
                     <Popover
-                        className="bbox-popover"
                         placement="right"
                         content={
                             <span>
-                                {Object.keys(shownStatus).splice(Object.keys(shownStatus).indexOf("canceled"), 5).map((key) => (
+                                {Object.keys(shownStatus).splice(Object.keys(shownStatus).indexOf("canceled"), 6).map((key) => (
                                     <Row style={{marginTop: key === "canceled" ? 0 : "10px"}}>
                                         <Col span={10}>
                                             <Tag color={shownStatus[key].color} style={{marginTop: "5px"}}>
@@ -245,7 +245,7 @@ function HistoryLog(props) {
             dataIndex: "action",
             render: (_, report) => {
                 return(
-                    report.status === "in progress" ?
+                    report.status === "waiting" || "in progress" ?
                     // <EditOutlined className="clickable-icon" /> :
                     null :
                     <div className="center-div">
@@ -347,7 +347,7 @@ function HistoryLog(props) {
         );
         // default sort
         filter_data.sort((a, b) =>
-            ((a.status === "in progress" || b.status === "in progress")
+            ((a.status === "waiting" || b.status === "waiting" || a.status === "in progress" || b.status === "in progress")
             && shownStatus[a.status].shown.localeCompare(shownStatus[b.status].shown))
             || new Date(b.updatedAt) - new Date(a.updatedAt));
         // add key to each row & change date-time
