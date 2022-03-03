@@ -245,7 +245,7 @@ function HistoryLog(props) {
             dataIndex: "action",
             render: (_, report) => {
                 return(
-                    report.status === "waiting" || "in progress" ?
+                    report.status === "waiting" || report.status === "in progress" ?
                     // <EditOutlined className="clickable-icon" /> :
                     null :
                     <div className="center-div">
