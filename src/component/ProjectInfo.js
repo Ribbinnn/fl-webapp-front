@@ -10,7 +10,7 @@ const LoadingIcon = (
 const { Panel } = Collapse;
 
 export default function ProjectInfo(props) {
-  const { globalProject } = useContext(Contexts.project);
+  const { globalProject } = useContext(Contexts).project;
   const [loaded, setLoaded] = useState();
   const palette = ["magenta","red","volcano","orange","gold","green","cyan","blue","geekblue","purple"]
   const [pinfo, setPinfo] = useState();

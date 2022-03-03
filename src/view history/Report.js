@@ -32,7 +32,7 @@ const LoadingIcon = (
 );
 
 export default function Report(props) {
-  const { globalProject } = useContext(Contexts.project);
+  const { globalProject } = useContext(Contexts).project;
   const { mode, rid } = useParams();
   const history = useHistory();
   const [loaded, setLoaded] = useState(false);

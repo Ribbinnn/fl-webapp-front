@@ -12,7 +12,7 @@ const LoadingIcon = (
 
 function SelectXRayImage(props) {
 
-    const { globalProject, setGlobalProject } = useContext(Contexts.project);
+    const { globalProject, setGlobalProject } = useContext(Contexts).project;
     const [loaded, setLoaded] = useState(true);
 
     const fields = ["Patient Name", "Accession No", "Patient ID", "Modality", "Study Date Time", "Procedure Code"];

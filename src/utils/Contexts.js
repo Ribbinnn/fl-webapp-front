@@ -1,9 +1,6 @@
 import React from "react";
-const Contexts = {
-  project: React.createContext({
-    globalProject: {},
-    setGlobalProject: () => {},
-  }),
-};
-
+const Contexts = React.createContext({
+  project: { globalProject: {}, setGlobalProject: () => {} },
+  active: { currentActivity: {}, setCurrentAvtivity: () => {} },
+});
 export default Contexts;

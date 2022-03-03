@@ -14,7 +14,7 @@ const LoadingIcon = (
 const { Option } = Select;
 
 export default function ViewHistory() {
-  const { globalProject, setGlobalProject } = useContext(Contexts.project);
+  const { globalProject, setGlobalProject } = useContext(Contexts).project;
 
   return (
     <div className="content">

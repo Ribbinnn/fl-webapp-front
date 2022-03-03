@@ -13,12 +13,15 @@ import Contexts from "../utils/Contexts";
 const { SubMenu } = Menu;
 
 export default function NavBar() {
-  const { globalProject } = useContext(Contexts.project);
+  const { globalProject } = useContext(Contexts).project;
+  const { currentActivity, setCurrentActivity } = useContext(Contexts).active;
   const [tab, setTab] = useState();
   const history = useHistory();
 
   useEffect(() => {
-    setTab(getTabKey());
+    let key = getTabKey();
+    setTab(key);
+    setCurrentActivity({menu: key, enablePageChange: true})
   }, []);
 
   function getTabKey(path) {
@@ -28,22 +31,41 @@ export default function NavBar() {
         return "home";
       case "record":
         return path[1];
+      case "diagnosis":
+        return path[1];
       default:
         return path[0];
     }
   }
 
   function selectMenu(path) {
-    if(!globalProject.projectId && path !== "/admin")
-    return Modal.warning({
-      title: "Please Select Project First.",
-      content:
-        "You need to select your working project before performing that action.",
-      okText: "Ok",
-    });
+    if (!globalProject.projectId && path !== "/admin")
+      return Modal.warning({
+        title: "Please Select Project First.",
+        content:
+          "You need to select your working project before performing that action.",
+        okText: "Ok",
+      });
+    if (!currentActivity.enablePageChange)
+      return Modal.confirm({
+        title: "Are you sure you want to navigate away from this page?",
+        content: "Your action hasn't completed and it won't be saved. Press Yes to continue or No to stay on the current page.",
+        okText: "Yes",
+        onOk: () => {
+          setTab(
+            globalProject.projectId || path === "/admin"
+              ? getTabKey(path)
+              : "home"
+          );
+          setCurrentActivity({menu: getTabKey(path), enablePageChange: true})
+          history.push(path);
+        },
+        cancelText: "No"
+      });
     setTab(
       globalProject.projectId || path === "/admin" ? getTabKey(path) : "home"
     );
+    setCurrentActivity({menu: getTabKey(path), enablePageChange: true})
     history.push(path);
   }
 
@@ -59,7 +81,7 @@ export default function NavBar() {
     >
       <Menu
         selectedKeys={[tab]}
-        defaultOpenKeys={["record"]}
+        defaultOpenKeys={["record", "diagnosis"]}
         mode="inline"
         style={{ height: "calc(100vh - 50px)", paddingTop: 40 }}
       >
@@ -88,14 +110,27 @@ export default function NavBar() {
             My Record
           </Menu.Item>
         </SubMenu>
-        <Menu.Item
+        <SubMenu
           key="diagnosis"
-          className="menuitem"
+          className="submenu"
           icon={<PlusSquareOutlined />}
-          onClick={() => selectMenu("/diagnosis")}
+          title="Diagnosis"
         >
-          Diagnosis
-        </Menu.Item>
+          <Menu.Item
+            key="individual"
+            onClick={() => selectMenu("/diagnosis/individual")}
+          >
+            Individual
+          </Menu.Item>
+          {!globalProject.projectReq.length && (
+            <Menu.Item
+              key="batch"
+              onClick={() => selectMenu("/diagnosis/batch")}
+            >
+              Batch
+            </Menu.Item>
+          )}
+        </SubMenu>
         <Menu.Item
           key="viewhistory"
           className="menuitem"

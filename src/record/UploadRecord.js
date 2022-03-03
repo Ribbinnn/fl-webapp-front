@@ -38,7 +38,7 @@ export default function UploadRecord() {
   const uploadRecordFormRef = useRef();
   
   const [current, setCurrent] = useState(0);
-  const { globalProject, setGlobalProject } = useContext(Contexts.project);
+  const { globalProject, setGlobalProject } = useContext(Contexts).project;
   const next = () => {
     setCurrent(current + 1);
   };

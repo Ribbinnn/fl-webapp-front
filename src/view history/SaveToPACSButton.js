@@ -10,6 +10,7 @@ export default function SaveToPACSButton(props) {
   };
 
   const handleCancel = () => {
+    setAgree(false);
     setVisible(false);
   };
 
@@ -23,7 +24,7 @@ export default function SaveToPACSButton(props) {
     const key = "updatable";
     message.loading({ content: "Loading...", key, duration: 0 });
 
-    saveToPACS(props.rid + "a")
+    saveToPACS(props.rid)
       .then((res) => {
         // console.log(res);
         message.destroy(key);
@@ -100,7 +101,7 @@ export default function SaveToPACSButton(props) {
           and remained only selected classes.
         </p>
 
-        <Checkbox onChange={onAgree}>
+        <Checkbox value={agree} onChange={onAgree}>
           I agree to all terms of Save to PACS stated above.
         </Checkbox>
       </Modal>

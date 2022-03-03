@@ -19,19 +19,25 @@ export default function DicomViewOnly(props) {
   function displayImage(image) {
     var img_ratio = { height: image.height, width: image.width };
     var element = document.getElementById(props.div_id ?? "dicomViewImage");
-    if (img_ratio.height > img_ratio.width) {
-      element.style.width = `${(img_ratio.width / img_ratio.height) * props.size}px`;
-      element.style.height = `${props.size}px`;
-    } else if (img_ratio.height < img_ratio.width) {
-      element.style.height = `${(img_ratio.height / img_ratio.width) * props.size}px`;
-      element.style.width = `${props.size}px`;
-    } else {
-      element.style.height = `${props.size}px`;
-      element.style.width = `${props.size}px`;
+    if (element) {
+      if (img_ratio.height > img_ratio.width) {
+        element.style.width = `${
+          (img_ratio.width / img_ratio.height) * props.size
+        }px`;
+        element.style.height = `${props.size}px`;
+      } else if (img_ratio.height < img_ratio.width) {
+        element.style.height = `${
+          (img_ratio.height / img_ratio.width) * props.size
+        }px`;
+        element.style.width = `${props.size}px`;
+      } else {
+        element.style.height = `${props.size}px`;
+        element.style.width = `${props.size}px`;
+      }
+      cornerstone.enable(element);
+      var viewport = cornerstone.getDefaultViewportForImage(element, image);
+      cornerstone.displayImage(element, image, viewport);
     }
-    cornerstone.enable(element);
-    var viewport = cornerstone.getDefaultViewportForImage(element, image);
-    cornerstone.displayImage(element, image, viewport);
     setLoaded(true);
   }
 

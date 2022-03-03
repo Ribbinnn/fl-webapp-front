@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import { Select, Modal } from "antd";
 import { selectProject } from '../api/project'
 import Contexts from '../utils/Contexts'
@@ -7,8 +7,9 @@ const { Option } = Select;
 
 export default function SelectProject(props) {
   const [itemList, setItemList] = useState([]);
-  const { globalProject, setGlobalProject } = useContext(Contexts.project);
+  const { globalProject, setGlobalProject } = useContext(Contexts).project;
   const { pathname } = useLocation()
+  const history = useHistory();
 
   useEffect(() => {
       selectProject().then((response) => {
@@ -43,7 +44,7 @@ export default function SelectProject(props) {
           const project = itemList.filter(item => item.ProjectID===value)
           setGlobalProject({"projectId": project[0].ProjectID, "projectName": project[0].ProjectName, "projectReq": project[0].Requirement})
           sessionStorage.setItem("project", JSON.stringify({"projectId": project[0].ProjectID, "projectName": project[0].ProjectName, "projectReq": project[0].Requirement}));
-          window.location.reload()
+          pathname.includes('/batch') && project[0].Requirement.length ? history.push("/diagnosis/individual") : window.location.reload()
         },
         cancelText: "No",
       });

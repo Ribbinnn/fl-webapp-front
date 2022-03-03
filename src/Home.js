@@ -10,7 +10,7 @@ const LoadingIcon = (
 );
 
 function Home() {
-    const { globalProject, setGlobalProject } = useContext(Contexts.project);
+    const { globalProject, setGlobalProject } = useContext(Contexts).project;
     const [loaded, setLoaded] = useState(false);
     
     const [projectList, setProjectList] = useState([]);

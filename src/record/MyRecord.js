@@ -11,7 +11,7 @@ const LoadingIcon = (
 );
 
 function MyRecord () {
-    const { globalProject, setGlobalProject } = useContext(Contexts.project);
+    const { globalProject, setGlobalProject } = useContext(Contexts).project;
     const [loaded, setLoaded] = useState(false);
 
     const [current, setCurrent] = useState(0);
