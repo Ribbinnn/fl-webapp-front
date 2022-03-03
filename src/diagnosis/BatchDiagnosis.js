@@ -86,10 +86,6 @@ export default function BatchDiagnosis(props) {
       .then((res) => {
         // console.log(res);
         if (Object.keys(res.data).length === 0) res.data = [];
-        let a = res.data;
-        for (let i = 0; i < 23; i++) {
-          res.data = res.data.concat(a);
-        }
         let result = res.data
           .sort((a, b) => {
             let x = moment(a["Study Date Time"]);
