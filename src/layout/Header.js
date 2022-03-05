@@ -30,12 +30,12 @@ export default function Header() {
       </Col>
       <Col span={8} id="right-pane" justify="center">
         <p>{`Hi, ${user.first_name}`}</p>
-        <p style={{ fontSize: "medium", marginLeft: "5px" }}>{`${
+        {globalProject.projectHead && <p style={{ fontSize: "medium", marginLeft: "5px" }}>{`${
           globalProject.projectHead.length === 0 ? "" :
           globalProject.projectHead.includes(user.id)
             ? "(Project Head)"
             : "(Project Member)"
-        }`}</p>
+        }`}</p>}
         <Button
           type="link"
           style={{
