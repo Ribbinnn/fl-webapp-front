@@ -1,10 +1,12 @@
-import React, { useState, forwardRef, useImperativeHandle } from "react";
+import React, { useState, forwardRef, useImperativeHandle, useContext } from "react";
 import { Button, Input, Table, Modal, Tooltip } from "antd";
 import { CloudDownloadOutlined } from '@ant-design/icons';
 import XLSX from "xlsx";
 import { uploadVitalsRecord, downloadTemplate } from "../api/vitals";
+import Contexts from "../utils/Contexts";
 
 const UploadRecordForm = forwardRef((props, ref) => {
+    const { currentActivity, setCurrentActivity } = useContext(Contexts).active;
     const required_field = ["entry_id", "hn", "measured_time(yyyy-MM-ddTHH:mm:ssZ)"]; // required in every project
     // const required_field = ["entry_id", "hn", "gender", "age", "measured_time"];
 
@@ -79,6 +81,9 @@ const UploadRecordForm = forwardRef((props, ref) => {
             setUploadedRecordName({with_ext: null, without_ext: null});
             setColumns(null);
             setUploadedRecord({with_key: null, without_key: null});
+            if (!currentActivity.enablePageChange){
+                setCurrentActivity({ ...currentActivity, enablePageChange: true });
+              }
         } else {
             // create columns for table
             let column_list = (uploaded_field).map((column) => ({
@@ -114,6 +119,9 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     without_ext: event.target.files[0].name.split(".")[0]});
                 setUploadedRecord({with_key: data_with_key, without_key: data});
             }
+            if (currentActivity.enablePageChange){
+                setCurrentActivity({ ...currentActivity, enablePageChange: false });
+              }
         }
     }
 
