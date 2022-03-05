@@ -17,7 +17,7 @@ function Home() {
 
     useEffect(() => {
         selectProject().then((response) => {
-            console.log(response.data.projects)
+            // console.log(response.data.projects)
             setProjectList(response.data.projects)
             setLoaded(true);
         })
@@ -48,7 +48,7 @@ function Home() {
                                 tabIndex={i}
                                 className={globalProject.projectId === item._id && "selected-proj-card"}
                                 onClick={() => {
-                                    setGlobalProject({"projectId": item._id, "projectName": item.name, "projectReq": item.requirements})
+                                    setGlobalProject({"projectId": item._id, "projectName": item.name, "projectReq": item.requirements, "projectHead": item.head})
                                     sessionStorage.setItem("project", JSON.stringify({"projectId": item._id, "projectName": item.name, "projectReq": item.requirements}));
                                 }}
                             >

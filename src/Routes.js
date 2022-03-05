@@ -29,7 +29,11 @@ function Routes() {
     projectReq: JSON.parse(sessionStorage.getItem("project"))
       ? JSON.parse(sessionStorage.getItem("project")).projectReq
       : [],
+    projectHead: JSON.parse(sessionStorage.getItem("project"))
+      ? JSON.parse(sessionStorage.getItem("project")).projectHead
+      : [],
   });
+
   const [currentActivity, setCurrentActivity] = useState({});
 
   const value = {

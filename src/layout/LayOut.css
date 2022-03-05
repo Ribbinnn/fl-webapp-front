@@ -184,6 +184,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  line-height: 0;
 }
 
 .navbar {
@@ -197,10 +198,20 @@
 #right-pane {
   display: flex;
   flex-direction: row;
-  align-items: center;
-  margin-right: 10;
+  justify-content: end;
   color: white;
   font-size: large;
+  padding-right: 10px;
+}
+
+#right-pane > p{
+  margin: 0;
+  line-height: 50px;
+}
+
+#right-pane > button{
+  top: 0 !important;
+  height: 50px;
 }
 
 .layout-ctn {
@@ -900,6 +911,7 @@ label.clickable-label:hover {
 }
 
 /* Header Dropdown ------------------*/
+
 .select-header.ant-select:not(.ant-select-customize-input) .ant-select-selector,
 .select-header.ant-select-focused:not(.ant-select-disabled) .ant-select:not(.ant-select-customize-input) .ant-select-selector{
   background-color: transparent;
