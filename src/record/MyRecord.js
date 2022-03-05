@@ -28,7 +28,7 @@ function MyRecord() {
       return Modal.confirm({
         title: "Are you sure you want to quit without saving?",
         content:
-          "All changes made will be lost. Press Yes to continue or No to stay on the current page.",
+          "Unsaved changes will be lost. Press Yes to continue or No to stay on the current page.",
         onOk: () => {
           setCurrentActivity({ ...currentActivity, enablePageChange: true });
           setCurrent(current - 1);
