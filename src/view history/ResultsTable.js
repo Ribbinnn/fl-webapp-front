@@ -1,14 +1,5 @@
-import React, { useState, useEffect } from "react";
-import {
-  Table,
-  Input,
-  Button,
-  Modal,
-  Row,
-  Col,
-  Rate,
-  message,
-} from "antd";
+import React, { useState, useEffect, useContext } from "react";
+import { Table, Input, Button, Modal, Row, Col, Rate, message } from "antd";
 import {
   EyeOutlined,
   EyeInvisibleOutlined,
@@ -16,11 +7,13 @@ import {
 } from "@ant-design/icons";
 import { updateReport } from "../api/report";
 import SaveToPACSButton from "./SaveToPACSButton";
+import Contexts from "../utils/Contexts";
 
 const { TextArea } = Input;
 const GradCamStyle = { fontSize: "x-large" };
 
 export default function ResultsTable(props) {
+  const { currentActivity, setCurrentActivity } = useContext(Contexts).active;
   const user = JSON.parse(sessionStorage.getItem("user")).id;
   const mode = props.mode;
   const status = props.status;
@@ -77,6 +70,15 @@ export default function ResultsTable(props) {
     }
     changeGradcam(props.gradCam);
   }, [props.gradCam]);
+
+  useEffect(()=>{
+    if (reportState.btnGroup === "back" && !currentActivity.enablePageChange){
+      setCurrentActivity({ ...currentActivity, enablePageChange: true });
+    }
+    if (reportState.btnGroup === "save" && currentActivity.enablePageChange){
+      setCurrentActivity({ ...currentActivity, enablePageChange: false });
+    }
+  },[reportState])
 
   function changeGradcam(selected_class) {
     const col = [
@@ -320,9 +322,7 @@ export default function ResultsTable(props) {
         {reportState.btnGroup === "back" &&
           props.HN &&
           status === "reviewed" &&
-          props.head.includes(user) && (
-            <SaveToPACSButton rid={props.rid} />
-          )}
+          props.head.includes(user) && <SaveToPACSButton rid={props.rid} />}
 
         {reportState.btnGroup === "save" && (
           <Button className="primary-btn" onClick={() => onCancelReport()}>

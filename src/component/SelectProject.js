@@ -20,6 +20,7 @@ export default function SelectProject(props) {
             ProjectName: project.name,
             // Description: project.description,
             Requirement: project.requirements,
+            Head: project.head
             // Classes: project.predClasses,
             // Owner: project.users,
             // Task: project.task 
@@ -42,8 +43,9 @@ export default function SelectProject(props) {
         width: 500,
         onOk: () => {
           const project = itemList.filter(item => item.ProjectID===value)
-          setGlobalProject({"projectId": project[0].ProjectID, "projectName": project[0].ProjectName, "projectReq": project[0].Requirement})
-          sessionStorage.setItem("project", JSON.stringify({"projectId": project[0].ProjectID, "projectName": project[0].ProjectName, "projectReq": project[0].Requirement}));
+          console.log(project[0])
+          setGlobalProject({"projectId": project[0].ProjectID, "projectName": project[0].ProjectName, "projectReq": project[0].Requirement, "projectHead": project[0].Head})
+          sessionStorage.setItem("project", JSON.stringify({"projectId": project[0].ProjectID, "projectName": project[0].ProjectName, "projectReq": project[0].Requirement, "projectHead": project[0].Head}));
           pathname.includes('/batch') && project[0].Requirement.length ? history.push("/diagnosis/individual") : window.location.reload()
         },
         cancelText: "No",

@@ -21,7 +21,7 @@ export default function NavBar() {
   useEffect(() => {
     let key = getTabKey();
     setTab(key);
-    setCurrentActivity({menu: key, enablePageChange: true})
+    setCurrentActivity({ menu: key, enablePageChange: true });
   }, []);
 
   function getTabKey(path) {
@@ -46,10 +46,25 @@ export default function NavBar() {
           "You need to select your working project before performing that action.",
         okText: "Ok",
       });
-    if (!currentActivity.enablePageChange)
+    if (!currentActivity.enablePageChange) {
+      let contentText = "";
+      switch (currentActivity.menu) {
+        case "upload":
+          contentText = "Your uploaded record hasn't been saved and will be lost.";
+          break;
+        case "myrecord":
+          contentText = "Unsaved changes will be lost.";
+          break;
+        case "viewhistory":
+          contentText = "All changes made will be lost.";
+          break;
+        default:
+          contentText =
+            "Your action hasn't completed and it won't be saved.";
+      }
       return Modal.confirm({
         title: "Are you sure you want to navigate away from this page?",
-        content: "Your action hasn't completed and it won't be saved. Press Yes to continue or No to stay on the current page.",
+        content: contentText + " Press Yes to continue or No to stay on the current page.",
         okText: "Yes",
         onOk: () => {
           setTab(
@@ -57,15 +72,16 @@ export default function NavBar() {
               ? getTabKey(path)
               : "home"
           );
-          setCurrentActivity({menu: getTabKey(path), enablePageChange: true})
+          setCurrentActivity({ menu: getTabKey(path), enablePageChange: true });
           history.push(path);
         },
-        cancelText: "No"
+        cancelText: "No",
       });
+    }
     setTab(
       globalProject.projectId || path === "/admin" ? getTabKey(path) : "home"
     );
-    setCurrentActivity({menu: getTabKey(path), enablePageChange: true})
+    setCurrentActivity({ menu: getTabKey(path), enablePageChange: true });
     history.push(path);
   }
 

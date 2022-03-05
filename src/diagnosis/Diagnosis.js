@@ -90,6 +90,7 @@ export default function Diagnosis(props) {
             setLoading(false);
           });
       } else {
+        if (current === 0) setCurrentActivity({ ...currentActivity, enablePageChange: false });
         setCurrent(current + 1);
       }
     }

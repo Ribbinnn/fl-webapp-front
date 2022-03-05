@@ -19,8 +19,7 @@ export default function ProjectInfo(props) {
     // console.log("here")
     setLoaded(false);
     getProjectInfoByID(globalProject.projectId).then((response) => {
-      console.log(response)
-      console.log(typeof(response.data.head))
+      // console.log(response)
       setPinfo({
           ProjectID: response.data._id,
           ProjectName: response.data.name,

@@ -1,44 +1,35 @@
 import React, { useState, useRef, useContext } from "react";
 import { Steps, Button, Row, Col } from "antd";
 import "antd/dist/antd.css";
-import Completed from "../component/Completed"
+import Completed from "../component/Completed";
 import UploadRecordForm from "./UploadRecordForm";
 import ProjectInfo from "../component/ProjectInfo";
 import Contexts from "../utils/Contexts";
 
 const { Step } = Steps;
 
-const steps = [
-  {
-    title: "Upload File",
-    content: "first-content",
-  },
-  {
-    title: "Upload Completed",
-    content: "second-content",
-  },
-];
-
-const btnList = [
-  { 
-    title: "Back to Home", 
-    destination: "/" 
-  }, 
-  { 
-    title: "Upload New Record", 
-    destination: "/record/upload" 
-  }, 
-  { 
-    title: "Go to My Record", 
-    destination: "/record/myrecord" 
-  }];
-
 export default function UploadRecord() {
-
   const uploadRecordFormRef = useRef();
-  
+  const stepsTitle = ["Upload File", "Upload Completed"];
+
+  const btnList = [
+    {
+      title: "Back to Home",
+      destination: "/",
+    },
+    {
+      title: "Upload New Record",
+      destination: "/record/upload",
+    },
+    {
+      title: "Go to My Record",
+      destination: "/record/myrecord",
+    },
+  ];
+
   const [current, setCurrent] = useState(0);
   const { globalProject, setGlobalProject } = useContext(Contexts).project;
+  const { currentActivity, setCurrentActivity } = useContext(Contexts).active;
   const next = () => {
     setCurrent(current + 1);
   };
@@ -50,43 +41,56 @@ export default function UploadRecord() {
   return (
     <div className="content">
       <Steps progressDot current={current}>
-        {steps.map((item) => (
-          <Step key={item.title} title={item.title} />
+        {stepsTitle.map((item) => (
+          <Step key={item} title={item} />
         ))}
       </Steps>
-      {current < steps.length - 1 &&
+      {current < stepsTitle.length - 1 && (
         <div className="steps-content-upload">
-          <Row style={{marginBottom:"30px"}}>
+          <Row style={{ marginBottom: "30px" }}>
             <Col span={7}>
-              <ProjectInfo project_id={globalProject.projectId} collapse={false} />
+              <ProjectInfo
+                project_id={globalProject.projectId}
+                collapse={false}
+              />
             </Col>
             <Col span={17}>
-              <UploadRecordForm ref={uploadRecordFormRef} project={globalProject} />
+              <UploadRecordForm
+                ref={uploadRecordFormRef}
+                project={globalProject}
+              />
             </Col>
           </Row>
-        </div>}
-      {current === steps.length -1 &&
-        <Completed btnList={btnList} title="Upload Completed"/>}
-      <div className={`steps-action${current===0?" steps-action-1":""}`}>
-          {/* {current>0 && current < steps.length -1 && <Button
+        </div>
+      )}
+      {current === stepsTitle.length - 1 && (
+        <Completed btnList={btnList} title="Upload Completed" />
+      )}
+      <div className={`steps-action${current === 0 ? " steps-action-1" : ""}`}>
+        {/* {current>0 && current < steps.length -1 && <Button
             className="primary-btn"
             style={current > 0 ? null : { visibility: "hidden" }}
             onClick={() => prev()}
           >
             Back
           </Button>} */}
-          {globalProject!== "none" && current < steps.length -1 && 
-            <Button 
-              className="primary-btn" 
-              onClick={() => {
-                uploadRecordFormRef.current.uploadRecord();
-                if (uploadRecordFormRef.current.uploadedRecord !== null) {
-                  next();
+        {globalProject !== "none" && current < stepsTitle.length - 1 && (
+          <Button
+            className="primary-btn"
+            onClick={() => {
+              uploadRecordFormRef.current.uploadRecord();
+              if (uploadRecordFormRef.current.uploadedRecord !== null) {
+                if (!currentActivity.enablePageChange){
+                  setCurrentActivity({ ...currentActivity, enablePageChange: true });
                 }
-              }}>
-                Next
-            </Button>}
-        </div>
+                next();
+              }
+            }}
+          >
+            Next
+          </Button>
+        )}
+      </div>
     </div>
   );
 }
