@@ -81,7 +81,7 @@ export default function AnnotationPanel(props) {
     onlyPositive: true,
   });
   const [savedData, setSavedData] = useState();
-  const [btnMode, setBtnMode] = useState("close");
+  // const [btnMode, setBtnMode] = useState("close");
 
   useEffect(() => {
     try {
@@ -348,7 +348,7 @@ export default function AnnotationPanel(props) {
                       setLabelBuffer({
                         key: record.key,
                       });
-                      // setBtnMode("save-cancel");
+                      // props.setBtnMode("save-cancel");
                     },
                     okButtonProps: {
                       style: {
@@ -433,8 +433,8 @@ export default function AnnotationPanel(props) {
                     return [...current, item];
                   }, []);
                   setLabels(update);
-                  // if (btnMode === "close")
-                  setBtnMode("save-cancel");
+                  // if (props.btnMode === "close")
+                  props.setBtnMode("save-cancel");
                 }}
                 okButtonProps={{ className: "primary-btn popconfirm" }}
                 cancelButtonProps={{ style: { display: "none" } }}
@@ -456,7 +456,7 @@ export default function AnnotationPanel(props) {
         return !member.saved;
       })
     )
-      setBtnMode("save-cancel");
+      props.setBtnMode("save-cancel");
   }, [labels]);
 
   useEffect(() => {
@@ -798,7 +798,7 @@ export default function AnnotationPanel(props) {
       })
     ) {
       setLabels(checker);
-      // setBtnMode("save-cancel");
+      // props.setBtnMode("save-cancel");
     }
   };
 
@@ -915,7 +915,7 @@ export default function AnnotationPanel(props) {
           key,
           duration: 5,
         });
-        setBtnMode("close");
+        props.setBtnMode("close");
         setLabels(
           labels.map((item) => {
             return { ...item, saved: true };
@@ -941,7 +941,7 @@ export default function AnnotationPanel(props) {
     return Modal.confirm({
       title: "Are you sure you want to cancel?",
       icon: <ExclamationCircleOutlined />,
-      content: "All changes you made will not be saved.",
+      content: "All changes made will be lost.",
       okText: "Sure",
       onOk: () => {
         setImgLoaded(false);
@@ -950,7 +950,7 @@ export default function AnnotationPanel(props) {
           "wado",
           displayImage
         );
-        setBtnMode("close");
+        props.setBtnMode("close");
       },
       cancelText: "No",
     });
@@ -1369,7 +1369,7 @@ export default function AnnotationPanel(props) {
             </Panel>
           </Collapse>
           <Row justify="end" style={{ marginTop: "12px" }}>
-            {btnMode === "save-cancel" && (
+            {props.btnMode === "save-cancel" && (
               <Button
                 className="primary-btn smaller"
                 style={{ marginRight: "10px" }}
@@ -1378,13 +1378,13 @@ export default function AnnotationPanel(props) {
                 Cancel
               </Button>
             )}
-            {btnMode === "save-cancel" && (
+            {props.btnMode === "save-cancel" && (
               <Button className="primary-btn smaller" onClick={saveAnnotations}>
                 Save
               </Button>
             )}
 
-            {btnMode === "close" && (
+            {props.btnMode === "close" && (
               <Button
                 className="primary-btn smaller"
                 onClick={props.handleCancel}
