@@ -35,10 +35,11 @@ export default function SelectProject(props) {
   
   // handle change for select project dropdown in header
   function handleChange(value) {
-    if (pathname.includes('/diagnosis')){
+    if (pathname.includes('/diagnosis') || pathname.includes('/record')){
       return Modal.confirm({
         title: "Are you sure you want to change the project?",
-        content: "All changes will not be saved and you will be redirected to the first step of Diagnosis",
+        content: `All changes will not be saved and you will be redirected to the first step of
+          ${pathname.split("/")[1].charAt(0).toUpperCase() + pathname.split("/")[1].slice(1)}`,
         okText: "Sure",
         width: 500,
         onOk: () => {

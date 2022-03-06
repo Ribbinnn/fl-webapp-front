@@ -105,6 +105,12 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
         try {
             setLoaded(false);
             const row = await tableForm.validateFields();
+            for (const i in row) {
+                if (row[i] === "" || row[i] === null) {
+                  throw new Error(
+                    `Invalid record input: ${Object.keys(row).find(key => row[key] === row[i])} is missing`)
+                }
+              }
             const newData = [...currentData.current];
             const index = newData.findIndex((item) => key === item.key);
             const update_data = { ...newData[index], ...row };
@@ -127,9 +133,12 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             }).catch((err) => {
                 console.log(err.response);
                 Modal.error({content: err.response.data.error});
+                setEditingKey("");
             });
         } catch (errInfo) {
             console.log('Validate Failed:', errInfo);
+            Modal.error({ content: errInfo.message });
+            setEditingKey("");
         }
     };
     const deleteRow = (key) => {
