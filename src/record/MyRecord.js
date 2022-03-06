@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Table, Button, Form, Input, DatePicker, Spin, Modal } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { searchVitlasProject, deleteRecord } from "../api/vitals";
@@ -13,6 +13,7 @@ const LoadingIcon = (
 function MyRecord() {
   const { globalProject, setGlobalProject } = useContext(Contexts).project;
   const { currentActivity, setCurrentActivity } = useContext(Contexts).active;
+  const showAllRecordsRef = useRef();
 
   const [loaded, setLoaded] = useState(false);
 
@@ -24,7 +25,7 @@ function MyRecord() {
   };
 
   const prev = () => {
-    if (!currentActivity.enablePageChange) {
+    if (!currentActivity.enablePageChange && showAllRecordsRef.current.editingKey !== "") {
       return Modal.confirm({
         title: "Are you sure you want to quit without saving?",
         content:
@@ -226,6 +227,7 @@ function MyRecord() {
       {loaded && current === 1 && (
         <div style={{ height: "100%" }}>
           <ShowAllRecords
+            ref={showAllRecordsRef}
             record={currentRecord}
             setRecordId={setRecordId}
             project={globalProject}

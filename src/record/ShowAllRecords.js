@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useContext } from "react";
+import React, { useEffect, useState, forwardRef, useImperativeHandle, useRef, useContext } from "react";
 import { getAllRecords, deleteRecordRow, updateRecordRow } from "../api/vitals";
 import {
   Table,
@@ -23,7 +23,7 @@ const LoadingIcon = (
   <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
 );
 
-function ShowAllRecords(props) {
+const ShowAllRecords = forwardRef((props, ref) => {
   const { currentActivity, setCurrentActivity } = useContext(Contexts).active;
 
   const recordId = useRef("");
@@ -34,6 +34,10 @@ function ShowAllRecords(props) {
   const currentData = useRef([]);
   const [mergedColumns, setMergeColumns] = useState([]);
   const [editingKey, setEditingKey] = useState("");
+
+  useImperativeHandle(ref, () => ({
+    editingKey: editingKey,
+  }));
 
   const EditableCell = ({
     editing,
@@ -80,6 +84,12 @@ function ShowAllRecords(props) {
     try {
       setLoaded(false);
       const row = await form.validateFields();
+      for (const i in row) {
+        if (row[i] === "" || row[i] === null) {
+          throw new Error(
+            `Invalid record input: ${Object.keys(row).find(key => row[key] === row[i])} is missing`)
+        }
+      }
       const newData = [...currentData.current];
       const index = newData.findIndex((item) => key === item.key);
       const update_data = { ...newData[index], ...row };
@@ -101,9 +111,12 @@ function ShowAllRecords(props) {
         .catch((err) => {
           console.log(err.response);
           Modal.error({ content: err.response.data.error });
+          setEditingKey("");
         });
     } catch (errInfo) {
       console.log("Validate Failed:", errInfo);
+      Modal.error({ content: errInfo.message });
+      setEditingKey("");
     }
   };
   const deleteRow = (key) => {
@@ -283,6 +296,6 @@ function ShowAllRecords(props) {
       )}
     </div>
   );
-}
+});
 
 export default ShowAllRecords;
