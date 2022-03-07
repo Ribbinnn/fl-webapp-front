@@ -49,7 +49,7 @@ function Home() {
                                 className={globalProject.projectId === item._id && "selected-proj-card"}
                                 onClick={() => {
                                     setGlobalProject({"projectId": item._id, "projectName": item.name, "projectReq": item.requirements, "projectHead": item.head})
-                                    sessionStorage.setItem("project", JSON.stringify({"projectId": item._id, "projectName": item.name, "projectReq": item.requirements}));
+                                    sessionStorage.setItem("project", JSON.stringify({"projectId": item._id, "projectName": item.name, "projectReq": item.requirements, "projectHead": item.head}));
                                 }}
                             >
                                 <label style={{ display: "block", fontWeight: "bold" }} >
