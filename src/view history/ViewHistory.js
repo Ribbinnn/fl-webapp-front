@@ -51,6 +51,7 @@ function HistoryLog(props) {
     }
     const [findings, setFindings] = useState([]);
     const [reload, setReload] = useState("");
+    const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
 
     const columns = [
         {
@@ -495,6 +496,26 @@ function HistoryLog(props) {
                     dataSource={uploadedItem} 
                     size="small"
                     className="view-history-table with-tag"
+                    pagination={
+                        uploadedItem.length > 20 && {
+                          size: "small",
+                          hideOnSinglePage: uploadedItem.length <= 20,
+                          onChange(page, pageSize) {
+                            setPagination({ page: page, pageSize: pageSize });
+                          },
+                          showQuickJumper: uploadedItem.length / pagination.pageSize > 12,
+                          showSizeChanger: uploadedItem.length > 20,
+                          pageSizeOptions: ["10", "20", "50", "100"].reduce(
+                            (current, item) => {
+                              return current.slice(-1) > uploadedItem.length
+                                ? current
+                                : [...current, item];
+                            },
+                            []
+                          ),
+                          position: ["topRight", "bottomRight"],
+                        }
+                      }
                 />}
         </div>
     )
