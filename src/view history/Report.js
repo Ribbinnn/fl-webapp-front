@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import {
   Collapse,
@@ -24,7 +24,6 @@ import ResultsTable from "./ResultsTable";
 import { getGradCam } from "../api/image";
 import { getReport } from "../api/report";
 import { saveAs } from "file-saver";
-import Contexts from "../utils/Contexts";
 const { Panel } = Collapse;
 
 const LoadingIcon = (
@@ -32,7 +31,6 @@ const LoadingIcon = (
 );
 
 export default function Report(props) {
-  const { globalProject } = useContext(Contexts).project;
   const { mode, rid } = useParams();
   const history = useHistory();
   const [loaded, setLoaded] = useState(false);
@@ -49,13 +47,6 @@ export default function Report(props) {
         return Modal.error({ title: "Report not Found", onOk:  () => history.push("/viewhistory")});
       });
   }, []);
-
-  useEffect(() => {
-    if (info && info.result.project_id._id !== globalProject.projectId) {
-      // console.log(info);
-      history.push("/viewhistory");
-    }
-  }, [globalProject]);
 
   const downloadImage = () => {
     saveAs(

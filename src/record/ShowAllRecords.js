@@ -25,7 +25,6 @@ const LoadingIcon = (
 
 const ShowAllRecords = forwardRef((props, ref) => {
   const { currentActivity, setCurrentActivity } = useContext(Contexts).active;
-
   const recordId = useRef("");
   const [loaded, setLoaded] = useState(false);
 
