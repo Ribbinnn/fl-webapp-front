@@ -87,6 +87,7 @@ export default function SelectProject(props) {
       projectId: project[0].ProjectID,
       projectName: project[0].ProjectName,
       projectReq: project[0].Requirement,
+      projectHead: project[0].Head,
     });
     sessionStorage.setItem(
       "project",
@@ -94,6 +95,7 @@ export default function SelectProject(props) {
         projectId: project[0].ProjectID,
         projectName: project[0].ProjectName,
         projectReq: project[0].Requirement,
+        projectHead: project[0].Head,
       })
     );
     if (pathname.includes("/myrecord")){
