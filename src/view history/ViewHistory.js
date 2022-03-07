@@ -316,8 +316,10 @@ function HistoryLog(props) {
             if (!status.includes(response.data[i]["status"])) {
                 status.push(response.data[i]["status"]);
             }
-            if (!findings.includes(response.data[i]["finding"])) {
-                findings.push(response.data[i]["finding"]);
+            if (response.data[i]["finding"] !== "") {
+                if (!findings.includes(response.data[i]["finding"])) {
+                    findings.push(response.data[i]["finding"]);
+                }
             }
         }
         // filter data by search query params
