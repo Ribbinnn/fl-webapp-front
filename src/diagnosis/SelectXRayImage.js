@@ -39,7 +39,7 @@ function SelectXRayImage(props) {
         },
     };
 
-    const prepareTable = (data) => {
+    const createColumns = () => {
         // create columns
         let field_list = (fields).map((field) => ({
             title: field,
@@ -72,6 +72,10 @@ function SelectXRayImage(props) {
             align: "center",
         });
         setColumns(field_list);
+    }
+
+    const prepareTable = (data) => {
+        createColumns();
         // add key to each row & change date-time
         for (const i in data) {
             data[i]["key"] = (parseInt(i)+1).toString();
@@ -141,6 +145,7 @@ function SelectXRayImage(props) {
                             .then((res) => {
                                 console.log(res);
                                 if (Object.keys(res.data).length === 0) {
+                                    createColumns();
                                     setTableData([]);
                                     props.setPacsTableData([]);
                                     props.setAccessionNoIndex([]);
