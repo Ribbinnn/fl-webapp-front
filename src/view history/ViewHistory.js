@@ -513,7 +513,7 @@ function HistoryLog(props) {
                             },
                             []
                           ),
-                          position: ["topRight", "bottomRight"],
+                          position: ["bottomRight"],
                         }
                       }
                 />}
