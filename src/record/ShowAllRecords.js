@@ -115,6 +115,7 @@ const ShowAllRecords = forwardRef((props, ref) => {
     } catch (errInfo) {
       console.log("Validate Failed:", errInfo);
       Modal.error({ content: errInfo.message });
+      if (!currentActivity.enablePageChange) setCurrentActivity({ ...currentActivity, enablePageChange: true });
       setEditingKey("");
     }
   };
