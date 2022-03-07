@@ -469,16 +469,27 @@ function HistoryLog(props) {
                 </div>
             )}
             {loaded &&
-                <label
-                className="clickable-label"
-                style={{color: "#de5c8e", display: "flex", alignItems: "center", margin: "30px 0 8px 0"}}
-                onClick={() => {
-                    reload === "" ? setReload("reload") : setReload("")
-                    setLoaded(false);
-                }}>
-                    <ReloadOutlined style={{marginRight: "5px"}} />
-                    Reload
-            </label>}
+                <Row style={{margin: "30px 0 8px 0"}}>
+                    <Col span={12}>
+                            <label
+                                className="clickable-label"
+                                style={{color: "#de5c8e", display: "flex", alignItems: "center"}}
+                                onClick={() => {
+                                    reload === "" ? setReload("reload") : setReload("")
+                                    setLoaded(false);
+                                }}>
+                                    <ReloadOutlined style={{marginRight: "5px"}} />
+                                    Reload
+                            </label>
+                    </Col>
+                    <Col span={12}>
+                        <div style={{float: "right", marginRight: "5px"}}>
+                            <label>
+                                {`${uploadedItem.length} report(s)`}
+                            </label>
+                        </div>
+                    </Col>
+                </Row>}
             {loaded &&
                 <Table 
                     columns={columns} 
