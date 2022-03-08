@@ -306,6 +306,7 @@ function HistoryLog(props) {
   ];
 
   useEffect(() => {
+    setLoaded(false);
     viewHistory(props.project.projectId)
       .then((response) => {
         // console.log(response);
