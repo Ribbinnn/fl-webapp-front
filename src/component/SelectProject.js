@@ -75,9 +75,8 @@ export default function SelectProject(props) {
               history.push("/viewhistory")
               return
           }
-          pathname.includes("/batch") && project[0].Requirement.length
-            ? history.push("/diagnosis/individual")
-            : window.location.reload();
+          if (pathname.includes("/batch") && project[0].Requirement.length) history.push("/diagnosis/individual")
+          window.location.reload();
         },
         cancelText: "No",
       });
@@ -98,7 +97,7 @@ export default function SelectProject(props) {
         projectHead: project[0].Head,
       })
     );
-    if (pathname.includes("/myrecord")){
+    if (["/myrecord","/batch"].some((item)=>pathname.includes(item))){
       window.location.reload();
     }
   }
