@@ -29,7 +29,7 @@ export const chulaSSO = async (search) => {
     const response = (await instance.post('/auth/chula/sso'+search)).data;
 
     sessionStorage.setItem("token", response.data.token);
-    sessionStorage.setItem("user", JSON.stringify({id: response.data.user_id, username: response.data.username, role: response.data.role}));
+    sessionStorage.setItem("user", JSON.stringify({id: response.data.user_id, username: response.data.username, first_name: response.data.first_name, role: response.data.role}));
     sessionStorage.setItem("auth", true);
     
     updateToken()
