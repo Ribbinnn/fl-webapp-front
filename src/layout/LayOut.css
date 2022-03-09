@@ -1489,9 +1489,53 @@ table tr td.ant-table-selection-column {
   font-weight: bold;
 }
 
+.view-history-table .ant-table-thead > tr > th:first-child,
+.view-history-table .ant-table-tbody > tr > td:first-child {
+  width: 110px;
+}
+
 .view-history-table .ant-table-thead > tr > th:nth-child(2),
 .view-history-table .ant-table-tbody > tr > td:nth-child(2) {
   width: 180px;
+}
+
+.view-history-table .ant-table-thead > tr > th:nth-child(3),
+.view-history-table .ant-table-tbody > tr > td:nth-child(3) {
+  width: 100px;
+}
+
+.view-history-table .ant-table-thead > tr > th:nth-child(4),
+.view-history-table .ant-table-tbody > tr > td:nth-child(4) {
+  width: 150px;
+}
+
+.view-history-table .ant-table-thead > tr > th:nth-child(5),
+.view-history-table .ant-table-tbody > tr > td:nth-child(5) {
+  width: 140px;
+}
+
+.view-history-table .ant-table-thead > tr > th:nth-child(6),
+.view-history-table .ant-table-tbody > tr > td:nth-child(6),
+.view-history-table .ant-table-thead > tr > th:nth-child(7),
+.view-history-table .ant-table-tbody > tr > td:nth-child(7) {
+  width: 120px;
+}
+
+.view-history-table .ant-table-tbody > tr > td:nth-child(6),
+.view-history-table .ant-table-tbody > tr > td:nth-child(7) {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.view-history-table .ant-table-thead > tr > th:nth-child(8),
+.view-history-table .ant-table-tbody > tr > td:nth-child(8) {
+  width: 100px;
+}
+
+.view-history-table .ant-table-thead > tr > th:last-child,
+.view-history-table .ant-table-tbody > tr > td:last-child {
+  width: 100px;
 }
 
 .batch-diag-table .ant-table-thead > tr > th, 
