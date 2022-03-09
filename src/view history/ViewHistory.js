@@ -59,18 +59,18 @@ function HistoryLog(props) {
             dataIndex: "no",
             key: "no",
             align: "center",
-            ellipsis: {
-                showTitle: false
-            },
+            // ellipsis: {
+            //     showTitle: false
+            // },
             sorter: {
                 compare: (a, b) => a.key.localeCompare(b.key)
             },
             showSorterTooltip: false,
-            render: (no) => (
-                <Tooltip placement="topLeft" title={no}>
-                    {no}
-                </Tooltip>
-            ),
+            // render: (no) => (
+            //     <Tooltip placement="topLeft" title={no}>
+            //         {no}
+            //     </Tooltip>
+            // ),
         },
         {
             title: 
@@ -102,9 +102,6 @@ function HistoryLog(props) {
             dataIndex: "status",
             key: "status",
             align: "center",
-            ellipsis: {
-                showTitle: false
-            },
             sorter: {
                 compare: (a, b) => shownStatus[a.status].shown.localeCompare(shownStatus[b.status].shown)
             },
@@ -122,72 +119,63 @@ function HistoryLog(props) {
             dataIndex: "hn",
             key: "hn",
             align: "center",
-            ellipsis: {
-                showTitle: false
-            },
+            // ellipsis: {
+            //     showTitle: false
+            // },
             sorter: {
                 compare: (a, b) => a.hn.toString().localeCompare(b.hn.toString())
             },
             showSorterTooltip: false,
-            render: (HN) => (
-                <Tooltip placement="topLeft" title={HN}>
-                    {HN}
-                </Tooltip>
-            ),
+            // render: (HN) => (
+            //     <Tooltip placement="topLeft" title={HN}>
+            //         {HN}
+            //     </Tooltip>
+            // ),
         },
         {
-            title:
-                <Tooltip placement="topLeft" title="Patient's Name">
-                    Patient's Name
-                </Tooltip>,
+            title: "Patient's Name",
             dataIndex: "patient_name",
             key: "patient_name",
             align: "center",
-            ellipsis: {
-                showTitle: false
-            },
+            // ellipsis: {
+            //     showTitle: false
+            // },
             sorter: {
                 compare: (a, b) => a.patient_name.localeCompare(b.patient_name)
             },
             showSorterTooltip: false,
-            render: (name) => (
-                <Tooltip placement="topLeft" title={name}>
-                    {name}
-                </Tooltip>
-            ),
+            // render: (name) => (
+            //     <Tooltip placement="topLeft" title={name}>
+            //         {name}
+            //     </Tooltip>
+            // ),
         },
         {
-            title:
-                <Tooltip placement="topLeft" title="Findings">
-                    Findings
-                </Tooltip>,
+            title: "Findings",
             dataIndex: "finding",
             key: "finding",
             align: "center",
-            ellipsis: {
-                showTitle: false
-            },
+            // ellipsis: {
+            //     showTitle: false
+            // },
             sorter: {
                 compare: (a, b) => a.finding.localeCompare(b.finding)
             },
             showSorterTooltip: false,
-            render: (finding) => (
-                <Tooltip placement="topLeft" title={finding}>
-                    {finding}
-                </Tooltip>
-            ),
+            // render: (finding) => (
+            //     <Tooltip placement="topLeft" title={finding}>
+            //         {finding}
+            //     </Tooltip>
+            // ),
         },
         {
-            title:
-                <Tooltip placement="topLeft" title="Created Date Time">
-                    Created Date Time
-                </Tooltip>,
+            title: "Created Date Time",
             dataIndex: "createdAt",
             key: "createdAt",
             align: "center",
-            ellipsis: {
-                showTitle: false
-            },
+            // ellipsis: {
+            //     showTitle: false
+            // },
             sorter: {
                 compare: (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
             },
@@ -199,16 +187,13 @@ function HistoryLog(props) {
             ),
         },
         {
-            title:
-                <Tooltip placement="topLeft" title="Last Modified">
-                    Last Modified
-                </Tooltip>,
+            title: "Last Modified",
             dataIndex: "updatedAt",
             key: "updatedAt",
             align: "center",
-            ellipsis: {
-                showTitle: false
-            },
+            // ellipsis: {
+            //     showTitle: false
+            // },
             sorter: {
                 compare: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt)
             },
@@ -220,22 +205,19 @@ function HistoryLog(props) {
             ),
         },
         {
-            title:
-                <Tooltip placement="topLeft" title="Clinician">
-                    Clinician
-                </Tooltip>,
+            title: "Clinician",
             dataIndex: "clinician_name",
             key: "clinician_name",
             align: "center",
-            ellipsis: {
-                showTitle: false
-            },
+            // ellipsis: {
+            //     showTitle: false
+            // },
             sorter: {
                 compare: (a, b) => a.clinician_name.localeCompare(b.clinician_name)
             },
             showSorterTooltip: false,
-            render: (clinician) => (
-                <Tooltip placement="topLeft" title={clinician}>
+            render: (clinician, report) => (
+                <Tooltip placement="top" title={`${clinician} ${report.clinician_lastname}`}>
                     {clinician}
                 </Tooltip>
             ),
@@ -498,7 +480,7 @@ function HistoryLog(props) {
                     columns={columns} 
                     dataSource={uploadedItem} 
                     size="small"
-                    className="view-history-table with-tag"
+                    className="view-history-table"
                     pagination={
                         uploadedItem.length > 20 && {
                           size: "small",
