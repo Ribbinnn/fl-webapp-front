@@ -98,9 +98,9 @@ function MyRecord() {
         // console.log(response)
         let res_list = response.data.map((project) => ({
           vitals_proj_id: project.project_id,
-          uploaded: new Date(project.createdAt).toLocaleString(),
+          uploaded: new Date(project.createdAt).toLocaleString("sv-SE"),
           rec_name: project.record_name,
-          updated: new Date(project.updatedAt).toLocaleString(),
+          updated: new Date(project.updatedAt).toLocaleString("sv-SE"),
           key: response.data.indexOf(project),
         }));
 

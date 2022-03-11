@@ -142,8 +142,11 @@ const ShowAllRecords = forwardRef((props, ref) => {
           title:
             column === "hn"
               ? column.toUpperCase()
-              : column.charAt(0).toUpperCase() +
-                column.slice(1).split("_").join(" "),
+              : (column === "measured_time" || column === "updated_time"
+                ? <Tooltip placement="topLeft" title={column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" ")}>
+                      {column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" ")}
+                  </Tooltip>
+                : column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" ")),
           dataIndex: column,
           key: column,
           align: "center",
@@ -231,10 +234,10 @@ const ShowAllRecords = forwardRef((props, ref) => {
           res.data[0].records[i]["key"] = (parseInt(i) + 1).toString();
           res.data[0].records[i]["measured_time"] = new Date(
             res.data[0].records[i]["measured_time"]
-          ).toLocaleString();
+          ).toLocaleString("sv-SE");
           res.data[0].records[i]["updated_time"] = new Date(
             res.data[0].records[i]["updated_time"]
-          ).toLocaleString();
+          ).toLocaleString("sv-SE");
         }
         setData(res.data[0].records);
         currentData.current = res.data[0].records;
