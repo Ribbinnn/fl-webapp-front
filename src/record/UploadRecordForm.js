@@ -87,9 +87,14 @@ const UploadRecordForm = forwardRef((props, ref) => {
         } else {
             // create columns for table
             let column_list = (uploaded_field).map((column) => ({
-                title: column === "hn" ? 
-                    column.toUpperCase() : 
-                    column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" "),
+                title:
+                    column === "hn"
+                    ? column.toUpperCase()
+                    : (column === "measured_time(YYYY-MM-DD HH:mm)"
+                    ? <Tooltip placement="topLeft" title={column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" ")}>
+                            {column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" ")}
+                        </Tooltip>
+                    : column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" ")),
                 dataIndex: column,
                 key: column,
                 align: "center",

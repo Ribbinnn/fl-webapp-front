@@ -142,8 +142,11 @@ const ShowAllRecords = forwardRef((props, ref) => {
           title:
             column === "hn"
               ? column.toUpperCase()
-              : column.charAt(0).toUpperCase() +
-                column.slice(1).split("_").join(" "),
+              : (column === "measured_time" || column === "updated_time"
+                ? <Tooltip placement="topLeft" title={column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" ")}>
+                      {column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" ")}
+                  </Tooltip>
+                : column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" ")),
           dataIndex: column,
           key: column,
           align: "center",
