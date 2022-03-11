@@ -231,10 +231,10 @@ const ShowAllRecords = forwardRef((props, ref) => {
           res.data[0].records[i]["key"] = (parseInt(i) + 1).toString();
           res.data[0].records[i]["measured_time"] = new Date(
             res.data[0].records[i]["measured_time"]
-          ).toLocaleString();
+          ).toLocaleString("sv-SE");
           res.data[0].records[i]["updated_time"] = new Date(
             res.data[0].records[i]["updated_time"]
-          ).toLocaleString();
+          ).toLocaleString("sv-SE");
         }
         setData(res.data[0].records);
         currentData.current = res.data[0].records;

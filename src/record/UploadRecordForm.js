@@ -7,7 +7,7 @@ import Contexts from "../utils/Contexts";
 
 const UploadRecordForm = forwardRef((props, ref) => {
     const { currentActivity, setCurrentActivity } = useContext(Contexts).active;
-    const required_field = ["entry_id", "hn", "measured_time(yyyy-MM-ddTHH:mm:ssZ)"]; // required in every project
+    const required_field = ["entry_id", "hn", "measured_time(YYYY-MM-DD HH:mm)"]; // required in every project
     // const required_field = ["entry_id", "hn", "gender", "age", "measured_time"];
 
     const [uploadedRecordName, setUploadedRecordName] = useState({with_ext: null, without_ext: null});
@@ -96,7 +96,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 ellipsis: {
                     showTitle: false,
                 },
-                render: column === "measured_time(yyyy-MM-ddTHH:mm:ssZ)" ? column => (
+                render: column === "measured_time(YYYY-MM-DD HH:mm)" ? column => (
                     <Tooltip placement="topLeft" title={column}>
                         {column}
                     </Tooltip>
@@ -107,11 +107,18 @@ const UploadRecordForm = forwardRef((props, ref) => {
             if (data.length === 0) {
                 Modal.warning({content: "Record is empty."});
             } else {
-                // add key to each row & change date-time
+                // change date-time
+                for (const i in data) {
+                    if (typeof(data[i]["measured_time(YYYY-MM-DD HH:mm)"]) === "string"
+                    && data[i]["measured_time(YYYY-MM-DD HH:mm)"].charAt(0) === "\'") { // escape date in excel
+                        data[i]["measured_time(YYYY-MM-DD HH:mm)"] = data[i]["measured_time(YYYY-MM-DD HH:mm)"].slice(1);
+                    }
+                    data[i]["measured_time(YYYY-MM-DD HH:mm)"] = new Date(data[i]["measured_time(YYYY-MM-DD HH:mm)"]).toLocaleString("sv-SE");
+                }
+                // add key to each row
                 const data_with_key = JSON.parse(JSON.stringify(data));
                 for (const i in data_with_key) {
                     data_with_key[i]["key"] = (parseInt(i)+1).toString();
-                    data_with_key[i]["measured_time(yyyy-MM-ddTHH:mm:ssZ)"] = new Date(data_with_key[i]["measured_time(yyyy-MM-ddTHH:mm:ssZ)"]).toLocaleString();
                 }
                 setColumns(column_list);
                 setUploadedRecordName({

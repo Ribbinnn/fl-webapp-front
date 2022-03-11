@@ -20,6 +20,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             try {
                 if (!hasRecord) {
                     const data = await requirementForm.validateFields();
+                    data["entry_id"] = 1;
                     data["hn"] = parseInt(props.HN); // add HN
                     for (const i in data) {
                         if (!isNaN(data[i])) {
@@ -243,16 +244,16 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                 // add key to each row & change date-time
                 for (const i in res.data) {
                     res.data[i]["key"] = (parseInt(i)+1).toString();
-                    res.data[i]["measured_time"] = new Date(res.data[i]["measured_time"]).toLocaleString();
-                    res.data[i]["updated_time"] = new Date(res.data[i]["updated_time"]).toLocaleString();
+                    res.data[i]["measured_time"] = new Date(res.data[i]["measured_time"]).toLocaleString("sv-SE");
+                    res.data[i]["updated_time"] = new Date(res.data[i]["updated_time"]).toLocaleString("sv-SE");
                 }
                 setData(res.data);
                 currentData.current = res.data;
                 setLoaded(true);
             } else {
                 setHasRecord(false);
-                const fields = ["entry_id", "measured_time"];
-                const fieldsLabel = {entry_id: "Entry id", measured_time: "Measured time (yyyy-MM-ddTHH:mm:ssZ)"}; 
+                const fields = ["measured_time"];
+                const fieldsLabel = {measured_time: "Measured time(YYYY-MM-DD HH:mm)"}; 
                 // add additional required field of each project
                 for (const i in globalProject.projectReq) {
                     const field = globalProject.projectReq[i]["name"];
@@ -264,7 +265,8 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                         name={field}
                         key={field}
                         label={fieldsLabel[field]}
-                        initialValue={props.MedRec === null ? null : props.MedRec[field]}
+                        initialValue={props.MedRec === null ? null :
+                            (field === "measured_time" ? new Date(props.MedRec[field]).toLocaleString("sv-SE") : props.MedRec[field])}
                         style={{marginBottom: "5px"}}
                         rules={[
                             {

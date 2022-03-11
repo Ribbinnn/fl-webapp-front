@@ -341,10 +341,10 @@ function HistoryLog(props) {
           filter_data[i]["key"] = (parseInt(i) + 1).toString();
           filter_data[i].createdAt = new Date(
             filter_data[i].createdAt
-          ).toLocaleString();
+          ).toLocaleString("sv-SE");
           filter_data[i].updatedAt = new Date(
             filter_data[i].updatedAt
-          ).toLocaleString();
+          ).toLocaleString("sv-SE");
         }
             setUploadedItem(filter_data);
             setStatus(status);
@@ -417,7 +417,7 @@ function HistoryLog(props) {
                     <DatePicker
                         defaultValue={queryString.get("from") === null ? null : moment(new Date(queryString.get("from")))}
                         onChange={(date) => {
-                            date === null ? queryString.delete("from") : queryString.set("from", date.startOf('day').toDate().toLocaleString());
+                            date === null ? queryString.delete("from") : queryString.set("from", date.startOf('day').toDate().toLocaleString("sv-SE"));
                         }}
                         style={{width:"200px"}} />
                 </Form.Item>
@@ -425,7 +425,7 @@ function HistoryLog(props) {
                     <DatePicker
                         defaultValue={queryString.get("to") === null ? null : moment(new Date(queryString.get("to")))}
                         onChange={(date) => {
-                            date === null ? queryString.delete("to") : queryString.set("to", date.startOf('day').toDate().toLocaleString());
+                            date === null ? queryString.delete("to") : queryString.set("to", date.startOf('day').toDate().toLocaleString("sv-SE"));
                         }}
                         style={{width:"200px"}} />
                 </Form.Item>

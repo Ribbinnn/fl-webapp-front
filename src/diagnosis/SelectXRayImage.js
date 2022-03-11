@@ -79,7 +79,7 @@ function SelectXRayImage(props) {
         // add key to each row & change date-time
         for (const i in data) {
             data[i]["key"] = (parseInt(i)+1).toString();
-            data[i]["Study Date Time"] = new Date(data[i]["Study Date Time"]).toLocaleDateString();
+            data[i]["Study Date Time"] = new Date(data[i]["Study Date Time"]).toLocaleString("sv-SE");
         }
         return data;
     }
