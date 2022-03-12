@@ -83,7 +83,7 @@ function HistoryLog(props) {
                                 {Object.keys(shownStatus).splice(Object.keys(shownStatus).indexOf("canceled"), 6).map((key) => (
                                     <Row style={{marginTop: key === "canceled" ? 0 : "10px"}}>
                                         <Col span={10}>
-                                            <Tag color={shownStatus[key].color} style={{marginTop: "5px"}}>
+                                            <Tag color={shownStatus[key].color} style={{marginTop: "5px", fontSize: "small"}}>
                                                 {shownStatus[key].shown}
                                             </Tag>
                                         </Col>
@@ -108,7 +108,7 @@ function HistoryLog(props) {
             showSorterTooltip: false,
             render: (status) => {
                 return(
-                    <Tag color={shownStatus[status].color}  style={{width: "100%"}}>
+                    <Tag color={shownStatus[status].color}  style={{width: "100%", fontSize: "small"}}>
                         {shownStatus[status].shown}
                     </Tag>
                 );
