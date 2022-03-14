@@ -14,6 +14,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
     const [hasRecord, setHasRecord] = useState(true);
     const [requirementForm] = Form.useForm();
     const [requirementInput, setRequirementInput] = useState(null);
+    const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
 
     useImperativeHandle(ref, () => ({
         setMedicalRecord: async () => {
@@ -149,7 +150,7 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
         deleteRecordRow(newData[index].record_id, newData[index].entry_id)
         .then((res) => {
             // console.log(res);
-            setEditingKey("delete");
+            setEditingKey(editingKey === "delete" ? "" : "delete");
         }).catch((err) => {
             console.log(err);
         });
@@ -332,10 +333,30 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                         }}
                         columns={mergedColumns} 
                         dataSource={data} 
-                        pagination={false} 
                         rowSelection={rowSelection}
                         size="small"
-                        className="seven-rows-table"
+                        // className="seven-rows-table"
+                        style={{ marginBottom: data ? (data.length > 10 ? 0 : "10px") : 0 }}
+                        pagination={
+                            data.length > 10 && {
+                              size: "small",
+                              hideOnSinglePage: data.length <= 10,
+                              onChange(page, pageSize) {
+                                setPagination({ page: page, pageSize: pageSize });
+                              },
+                              showQuickJumper: data.length / pagination.pageSize > 8,
+                              showSizeChanger: data.length > 10,
+                              pageSizeOptions: ["10", "20", "50", "100"].reduce(
+                                (current, item) => {
+                                  return current.slice(-1) > data.length
+                                    ? current
+                                    : [...current, item];
+                                },
+                                []
+                              ),
+                              position: ["bottomRight"],
+                            }
+                          }
                     />
                 </Form>}
             {loaded && !hasRecord &&

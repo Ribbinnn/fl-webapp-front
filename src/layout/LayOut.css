@@ -307,7 +307,7 @@ ol {
 
 .show-all-records-content {
   width: 100%;
-  min-height: 93%;
+  min-height: 87%;
   max-height: 100%;
 }
 
@@ -1320,25 +1320,25 @@ tbody {
   overflow: scroll;
 }
 
-.seven-rows-table tbody {
-  max-height: 287px; /* 7 rows */
+/* .seven-rows-table tbody {
+  max-height: 287px;
 }
 
 .seven-rows-table.with-tag tbody {
-  max-height: 288px; /* 7 rows */
+  max-height: 288px;
 }
 
 .three-rows-table tbody {
-  max-height: 123px; /* 3 rows */
+  max-height: 123px;
 }
 
 .three-rows-table.with-row-selection tbody {
-  max-height: 144px; /* 3 rows */
+  max-height: 144px;
 }
 
 .four-rows-table tbody {
-  max-height: 200px; /* 4 rows */
-}
+  max-height: 200px;
+} */
 
 thead,
 tbody tr {
