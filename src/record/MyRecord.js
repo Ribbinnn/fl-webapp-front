@@ -16,6 +16,7 @@ function MyRecord() {
   const showAllRecordsRef = useRef();
 
   const [loaded, setLoaded] = useState(false);
+  const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
 
   const [current, setCurrent] = useState(0);
   const next = () => {
@@ -220,6 +221,26 @@ function MyRecord() {
               }}
               style={{ width: "790px" }}
               className="clickable-table"
+              pagination={
+                uploadedItem.length > 20 && {
+                  size: "small",
+                  hideOnSinglePage: uploadedItem.length <= 20,
+                  onChange(page, pageSize) {
+                    setPagination({ page: page, pageSize: pageSize });
+                  },
+                  showQuickJumper: uploadedItem.length / pagination.pageSize > 12,
+                  showSizeChanger: uploadedItem.length > 20,
+                  pageSizeOptions: ["10", "20", "50", "100"].reduce(
+                    (current, item) => {
+                      return current.slice(-1) > uploadedItem.length
+                        ? current
+                        : [...current, item];
+                    },
+                    []
+                  ),
+                  position: ["topRight", "bottomRight"],
+                }
+              }
             />
           </div>
         </div>

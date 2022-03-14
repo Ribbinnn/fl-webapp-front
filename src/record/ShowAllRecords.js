@@ -9,6 +9,8 @@ import {
   Tooltip,
   Spin,
   Modal,
+  Row,
+  Col,
 } from "antd";
 import {
   EditOutlined,
@@ -27,6 +29,7 @@ const ShowAllRecords = forwardRef((props, ref) => {
   const { currentActivity, setCurrentActivity } = useContext(Contexts).active;
   const recordId = useRef("");
   const [loaded, setLoaded] = useState(false);
+  const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
 
   const [form] = Form.useForm();
   const [data, setData] = useState([]);
@@ -126,7 +129,7 @@ const ShowAllRecords = forwardRef((props, ref) => {
     deleteRecordRow(recordId.current, newData[index].entry_id)
       .then((res) => {
         // console.log(res);
-        setEditingKey("delete");
+        setEditingKey(editingKey === "delete" ? "" : "delete");
       })
       .catch((err) => {
         console.log(err);
@@ -254,15 +257,28 @@ const ShowAllRecords = forwardRef((props, ref) => {
 
   return (
     <div className="show-all-records-content">
-      <div className="show-all-records-grid">
-        <label style={{ color: "#de5c8e", display: "block" }}>
-          Record Name: {props.record.rec_name}
-        </label>
-        <label style={{ display: "block" }}>
-          Project: {props.project.projectName}
-        </label>
-        <label>Uploaded Time: {props.record.updated}</label>
-      </div>
+      <Row>
+          <Col span={12}>
+            <div className="show-all-records-grid">
+              <label style={{ color: "#de5c8e", display: "block" }}>
+                Record Name: {props.record.rec_name}
+              </label>
+              <label style={{ display: "block" }}>
+                Project: {props.project.projectName}
+              </label>
+              <label>Uploaded Time: {props.record.updated}</label>
+            </div>
+          </Col>
+          <Col span={12}>
+            <Button
+              className="primary-btn smaller"
+              style={{ position: "absolute", bottom: 0, right: 0 }}
+              onClick={props.next}
+            >
+              Delete all records
+            </Button>
+          </Col>
+      </Row>
       {!loaded && (
         <div style={{ textAlign: "center", marginTop: "20%" }}>
           <Spin indicator={LoadingIcon} />
@@ -285,16 +301,29 @@ const ShowAllRecords = forwardRef((props, ref) => {
               columns={mergedColumns}
               dataSource={data}
               size="small"
-              style={{ marginTop: "30px" }}
+              style={{ margin: data.length > 20 ? "30px 0 0 0" : "30px 0 40px 0" }}
+              pagination={
+                data.length > 20 && {
+                  size: "small",
+                  hideOnSinglePage: data.length <= 20,
+                  onChange(page, pageSize) {
+                    setPagination({ page: page, pageSize: pageSize });
+                  },
+                  showQuickJumper: data.length / pagination.pageSize > 12,
+                  showSizeChanger: data.length > 20,
+                  pageSizeOptions: ["10", "20", "50", "100"].reduce(
+                    (current, item) => {
+                      return current.slice(-1) > data.length
+                        ? current
+                        : [...current, item];
+                    },
+                    []
+                  ),
+                  position: ["bottomRight"],
+                }
+              }
             />
           </Form>
-          <Button
-            className="primary-btn smaller"
-            style={{ float: "right", marginTop: "30px" }}
-            onClick={props.next}
-          >
-            Delete all records
-          </Button>
         </div>
       )}
     </div>

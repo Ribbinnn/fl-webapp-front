@@ -47,7 +47,7 @@ export default function UploadRecord() {
       </Steps>
       {current < stepsTitle.length - 1 && (
         <div className="steps-content-upload">
-          <Row style={{ marginBottom: "30px" }}>
+          <Row>
             <Col span={7}>
               <ProjectInfo
                 project_id={globalProject.projectId}

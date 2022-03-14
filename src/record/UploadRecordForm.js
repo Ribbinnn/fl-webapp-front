@@ -13,6 +13,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
     const [uploadedRecordName, setUploadedRecordName] = useState({with_ext: null, without_ext: null});
     const [uploadedRecord ,setUploadedRecord] = useState({with_key: null, without_key: null});
     const [columns, setColumns] = useState(null);
+    const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
 
     useImperativeHandle(ref, () => ({
         uploadRecord: () => {
@@ -201,9 +202,29 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 <Table 
                     columns={columns} 
                     dataSource={uploadedRecord.with_key} 
-                    pagination={false} 
                     size="small"
-                    className="three-rows-table"
+                    // className="three-rows-table"
+                    style={{ marginBottom: uploadedRecord ? (uploadedRecord.with_key.length > 10 ? 0 : "10px") : 0 }}
+                    pagination={
+                        uploadedRecord.with_key.length > 10 && {
+                          size: "small",
+                          hideOnSinglePage: uploadedRecord.with_key.length <= 10,
+                          onChange(page, pageSize) {
+                            setPagination({ page: page, pageSize: pageSize });
+                          },
+                          showQuickJumper: uploadedRecord.with_key.length / pagination.pageSize > 8,
+                          showSizeChanger: uploadedRecord.with_key.length > 10,
+                          pageSizeOptions: ["10", "20", "50", "100"].reduce(
+                            (current, item) => {
+                              return current.slice(-1) > uploadedRecord.with_key.length
+                                ? current
+                                : [...current, item];
+                            },
+                            []
+                          ),
+                          position: ["bottomRight"],
+                        }
+                      }
                 />}
         </div>
     );

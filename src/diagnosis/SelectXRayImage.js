@@ -18,6 +18,7 @@ function SelectXRayImage(props) {
     const fields = ["Patient Name", "Accession No", "Patient ID", "Modality", "Study Date Time", "Procedure Code"];
     const [columns, setColumns] = useState(null);
     const [tableData, setTableData] = useState(null);
+    const [pagination, setPagination] = useState({ page: 1, pageSize: 10 });
 
     const rowSelection = {
         type: "radio",
@@ -186,7 +187,27 @@ function SelectXRayImage(props) {
                     dataSource={tableData}
                     rowSelection={rowSelection}
                     size="small"
-                    className="with-row-selection"
+                    // className="with-row-selection"
+                    pagination={
+                        tableData.length > 20 && {
+                          size: "small",
+                          hideOnSinglePage: tableData.length <= 20,
+                          onChange(page, pageSize) {
+                            setPagination({ page: page, pageSize: pageSize });
+                          },
+                          showQuickJumper: tableData.length / pagination.pageSize > 12,
+                          showSizeChanger: tableData.length > 20,
+                          pageSizeOptions: ["10", "20", "50", "100"].reduce(
+                            (current, item) => {
+                              return current.slice(-1) > tableData.length
+                                ? current
+                                : [...current, item];
+                            },
+                            []
+                          ),
+                          position: ["topRight", "bottomRight"],
+                        }
+                      }
                 />
             }
         </div>
