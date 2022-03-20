@@ -35,7 +35,7 @@ export default function DeleteForm(props) {
     if (props.mode === "user") {
       getAllUsers()
         .then((res) => {
-          setOptions(res);
+          setOptions(res.filter((item) => !item.isChulaSSO));
           setLoaded(true);
         })
         .catch((err) => console.log(err.response));
@@ -43,7 +43,7 @@ export default function DeleteForm(props) {
       //get all project
       getAllProjects()
         .then((res) => {
-          console.log(res)
+          // console.log(res)
           setOptions(res);
           setLoaded(true);
         })
@@ -53,15 +53,15 @@ export default function DeleteForm(props) {
 
   const deleteAPI = () => {
     if (cfmMessage === keyword.children) {
-      const key = 'updatable';
-      message.loading({ content: 'Loading...', key });
+      const key = "updatable";
+      message.loading({ content: "Loading...", key });
       if (props.mode === "user") {
         deleteUserById(keyword.value)
           .then((res) => {
-            console.log(res)
+            console.log(res);
             res.success
-              ? message.success({ content: res.message, key, duration: 5})
-              : message.error({ content: res.message, key, duration: 5});
+              ? message.success({ content: res.message, key, duration: 5 })
+              : message.error({ content: res.message, key, duration: 5 });
             initializePage();
           })
           .catch((err) => message.error(err.response));
@@ -70,9 +70,9 @@ export default function DeleteForm(props) {
         deleteProjectById(keyword.value)
           .then((res) => {
             res.success
-              ? message.success({ content: res.message, key, duration: 5})
-              : message.error({ content: res.message, key, duration: 5});
-              initializePage();
+              ? message.success({ content: res.message, key, duration: 5 })
+              : message.error({ content: res.message, key, duration: 5 });
+            initializePage();
           })
           .catch((err) => message.error(err.response));
       }
@@ -104,51 +104,72 @@ export default function DeleteForm(props) {
         {loaded && (
           <div>
             <div>
-              <label>
-                {props.mode === "user" ? "Username" : "Project Name"}
-              </label>
+              <div>
+                <label>
+                  {props.mode === "user" ? "Username" : "Project Name"}
+                </label>
+              </div>
+              <Select
+                className="search-component wider"
+                showSearch
+                optionFilterProp={props.mode === "user" ? "children" : "label"}
+                onChange={(i, j) => {
+                  console.log(j);
+                  if (props.mode === "project") {
+                    j.children = options.find((member) => {
+                      return member._id === i;
+                    }).name;
+                  }
+                  setKeyword(j);
+                  console.log("selected ---> ", i);
+                }}
+                style={{ width: "243px", marginRight: "20px" }}
+              >
+                {props.mode === "project" &&
+                  options.map((project, i) => {
+                    let projectHead = "";
+                    for (const i in project.head) {
+                      if (parseInt(i) + 1 === project.head.length) {
+                        projectHead += project.head[i].username;
+                      } else {
+                        projectHead += project.head[i].username + ", ";
+                      }
+                    }
+                    return (
+                      <Option
+                        key={i}
+                        value={project["_id"]}
+                        label={project.name}
+                      >
+                        {
+                          <div className="select-item-group">
+                            <label>{project.name}</label>
+                            <br />
+                            <label style={{ fontSize: "small" }}>
+                              {projectHead}
+                            </label>
+                          </div>
+                        }
+                      </Option>
+                    );
+                  })}
+                {props.mode === "user" &&
+                  options.map((item, i) => (
+                    <Option key={i} value={item._id}>
+                      {item.username}
+                    </Option>
+                  ))}
+              </Select>
+
+            {props.mode === "user" && (
+            <label style={{marginTop: "10px"}}>
+              <i>
+                Note: User who currently is member of projects or authenticated
+                via ChulaSSO can't be removed.
+              </i>
+            </label>
+        )}
             </div>
-            <Select
-              className="search-component wider"
-              showSearch
-              optionFilterProp={props.mode === "user" ? "children" : "label"}
-              onChange={(i, j) => {
-                console.log(j);
-                if (props.mode === "project"){
-                  j.children = options.find((member) => {
-                    return member._id === i
-                  }).name
-                }
-                setKeyword(j);
-                console.log("selected ---> ", i);
-              }}
-              style={{ width: "243px" }}
-            >
-              {props.mode === "project" && options.map((project, i) => {
-                                            let projectHead = "";
-                                            for (const i in project.head) {
-                                                if (parseInt(i)+1 === project.head.length) {
-                                                    projectHead += project.head[i].username;
-                                                } else {
-                                                    projectHead += project.head[i].username + ", ";
-                                                }
-                                            }
-                                            return(
-                                                <Option key={i} value={project["_id"]} label={project.name}>
-                                                    {<div className="select-item-group">
-                                                        <label>{project.name}</label>
-                                                        <br />
-                                                        <label style={{fontSize: "small"}}>{projectHead}</label>
-                                                    </div>}
-                                                </Option>
-                                            );
-                                        })}
-              {props.mode === "user" && options.map((item, i) => (
-                <Option key={i} value={item._id}>
-                  {item.username}
-                </Option>
-              ))}
-            </Select>
           </div>
         )}
       </Row>
