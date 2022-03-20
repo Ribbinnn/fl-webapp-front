@@ -112,7 +112,7 @@ const ShowAllRecords = forwardRef((props, ref) => {
         })
         .catch((err) => {
           console.log(err.response);
-          Modal.error({ content: err.response.data.error });
+          Modal.error({ content: err.response.data.message });
           setEditingKey("");
         });
     } catch (errInfo) {
