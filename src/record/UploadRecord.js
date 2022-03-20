@@ -34,9 +34,9 @@ export default function UploadRecord() {
     setCurrent(current + 1);
   };
 
-  const prev = () => {
-    setCurrent(current - 1);
-  };
+  // const prev = () => {
+  //   setCurrent(current - 1);
+  // };
 
   return (
     <div className="content">
@@ -58,6 +58,7 @@ export default function UploadRecord() {
               <UploadRecordForm
                 ref={uploadRecordFormRef}
                 project={globalProject}
+                next={next}
               />
             </Col>
           </Row>
@@ -83,7 +84,6 @@ export default function UploadRecord() {
                 if (!currentActivity.enablePageChange){
                   setCurrentActivity({ ...currentActivity, enablePageChange: true });
                 }
-                next();
               }
             }}
           >

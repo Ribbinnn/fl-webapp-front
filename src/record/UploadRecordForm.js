@@ -26,8 +26,10 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 )
                 .then((res) => {
                     // console.log(res);
+                    props.next()
                 }).catch((err) => {
-                    console.log(err.response);
+                    // console.log(err.response);
+                    Modal.error({content: err.response.data.message});
                 })
             } else {
                 Modal.warning({content: "Please upload record."});
