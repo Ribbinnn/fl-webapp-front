@@ -79,7 +79,7 @@ function HistoryLog(props) {
                     <Popover
                         placement="right"
                         content={
-                            <span>
+                            <span onClick={(e) => e.stopPropagation()}>
                                 {Object.keys(shownStatus).splice(Object.keys(shownStatus).indexOf("canceled"), 6).map((key) => (
                                     <Row style={{marginTop: key === "canceled" ? 0 : "10px"}}>
                                         <Col span={10}>
@@ -123,7 +123,14 @@ function HistoryLog(props) {
             //     showTitle: false
             // },
             sorter: {
-                compare: (a, b) => a.hn.toString().localeCompare(b.hn.toString())
+                compare: (a, b) => {
+                    if (a.hn == null) {
+                        a.hn = "";
+                    } if (b.hn == null) {
+                        b.hn = "";
+                    }
+                    return a.hn.toString().localeCompare(b.hn.toString());
+                }
             },
             showSorterTooltip: false,
             // render: (HN) => (
@@ -141,7 +148,14 @@ function HistoryLog(props) {
             //     showTitle: false
             // },
             sorter: {
-                compare: (a, b) => a.patient_name.localeCompare(b.patient_name)
+                compare: (a, b) => {
+                    if (a.patient_name == null) {
+                        a.patient_name = "";
+                    } if (b.patient_name == null) {
+                        b.patient_name = "";
+                    }
+                    return a.patient_name.localeCompare(b.patient_name);
+                }
             },
             showSorterTooltip: false,
             // render: (name) => (
@@ -310,7 +324,7 @@ function HistoryLog(props) {
           (item, i) =>
             (queryString.get("patient_HN") === null
               ? true
-              : item.hn.includes(queryString.get("patient_HN"))) &&
+              : (item.hn !== null) && (item.hn.includes(queryString.get("patient_HN")))) &&
             (queryString.get("status") === null
               ? true
               : item.status === queryString.get("status")) &&
