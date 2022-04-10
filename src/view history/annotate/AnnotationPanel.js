@@ -34,6 +34,7 @@ import {
   ExclamationOutlined,
   EyeInvisibleOutlined,
   EyeOutlined,
+  ArrowLeftOutlined
 } from "@ant-design/icons";
 import { useParams } from "react-router-dom";
 import { getDicomByAccessionNo } from "../../api/image";
@@ -127,7 +128,8 @@ export default function AnnotationPanel(props) {
             {(record.tool === "length" && <ColumnHeightOutlined />) ||
               (record.tool === "rectangleRoi" && <BorderOutlined />) ||
               (record.tool === "freehand" && <StarOutlined />) ||
-              (record.tool === "ratio" && <VerticalAlignBottomOutlined />)}
+              (record.tool === "ratio" && <VerticalAlignBottomOutlined />)||
+              (record.tool === "arrowAnnotate" && <ArrowLeftOutlined />)}
             {record.label}
             {record.tool === "ratio" && ` (${record.ratio})`}
             {record.updated_by.username !== user.username && (
@@ -463,16 +465,51 @@ export default function AnnotationPanel(props) {
     if (labelBuffer) {
       // console.log(labelBuffer);
       if (labelBuffer.key <= labels.length) {
+        let before_edit = labels.find((elm) => elm.key === labelBuffer.key);
         let edittedLabels = labels.map((item) => {
           if (item.key === labelBuffer.key) {
+            let toolState = cornerstoneTools.getToolState(
+              dicomElement,
+              "arrowAnnotate"
+            );
+            if (item.tool === "arrowAnnotate") {
+              var element = document.getElementById("annotate-dicom-image");
+              // console.log(labelBuffer,labels);
+              let before_changetext = toolState.data[labels[labelBuffer.key - 1].index];
+              cornerstoneTools.addToolState(element, "arrowAnnotate", {
+                ...before_changetext,
+                text: selectedLabel,
+              });
+              cornerstoneTools.removeToolState(
+                dicomElement,
+                "arrowAnnotate",
+                before_changetext
+              );
+              // console.log(toolState);
+              cornerstone.updateImage(element);
+            }
             return {
               ...item,
+              index:
+                item.tool === "arrowAnnotate"
+                  ? toolState.data.length - 1
+                  : item.index,
               label: selectedLabel,
               saved: false,
               updated_time: new Date(),
               updated_by: user,
             };
-          } else return item;
+          } else if (before_edit.tool === "arrowAnnotate" && item.tool === "arrowAnnotate" && before_edit.index < item.index){
+            // console.log("case 2:",item, "new index:", item.index - 1)
+            return {
+              ...item,
+              index: item.index - 1,
+            };
+
+          } else {
+            // console.log("case 3:",item)
+            return item;
+          }
         });
         setLabels(edittedLabels);
       } else if (
@@ -481,8 +518,30 @@ export default function AnnotationPanel(props) {
       ) {
         return;
       } else {
+        let toolState = cornerstoneTools.getToolState(
+          dicomElement,
+          "arrowAnnotate"
+        );
+        if (labelBuffer.tool === "arrowAnnotate") {
+          var element = document.getElementById("annotate-dicom-image");
+          let before_addtext = toolState.data[labelBuffer.index];
+          cornerstoneTools.addToolState(element, "arrowAnnotate", {
+            ...before_addtext,
+            text: selectedLabel,
+            invalidated: true,
+          });
+          cornerstoneTools.removeToolState(
+            dicomElement,
+            "arrowAnnotate",
+            before_addtext
+          );
+          cornerstone.updateImage(element);
+          // deactivateTools();
+          // cornerstoneTools.arrowAnnotate.activate(dicomElement, 1);
+        }
         let newLabel = {
           ...labelBuffer,
+          index: labelBuffer.tool === "arrowAnnotate" ?  toolState.data.length -1 : labelBuffer.index,
           label: selectedLabel,
           saved: false,
           updated_time: new Date(),
@@ -497,6 +556,7 @@ export default function AnnotationPanel(props) {
 
   function displayImage(image) {
     var element = document.getElementById("annotate-dicom-image");
+    if (!element) return
     cornerstone.enable(element);
     var viewport = cornerstone.getDefaultViewportForImage(element, image);
     cornerstone.displayImage(element, image, viewport);
@@ -519,6 +579,14 @@ export default function AnnotationPanel(props) {
     cornerstoneTools.freehand.enable(element);
     cornerstoneTools.length.enable(element);
     cornerstoneTools.rectangleRoi.enable(element);
+    cornerstoneTools.arrowAnnotate.enable(element);
+
+    // cornerstoneTools.addTool(ArrowAnnotateTool, {
+    //   configuration: {
+    //     getTextCallback: () => { console.log('get text'); },
+    //     changeTextCallback: () => { console.log('change text'); },
+    //   },
+    // });
     setTool("mouse");
     setDicomElement(element);
     removeAnnotations(element);
@@ -579,6 +647,7 @@ export default function AnnotationPanel(props) {
             rectangleRoi: 0,
             freehand: 0,
             length: 0 /* initial_ll: [] */,
+            arrowAnnotate: 0
           }
         );
         // console.log(loadedData);
@@ -623,6 +692,7 @@ export default function AnnotationPanel(props) {
       cornerstoneTools.length.deactivate(dicomElement, 1);
       cornerstoneTools.rectangleRoi.deactivate(dicomElement, 1);
       cornerstoneTools.freehand.deactivate(dicomElement, 1);
+      cornerstoneTools.arrowAnnotate.deactivate(dicomElement, 1);
     }
   }
 
@@ -670,12 +740,13 @@ export default function AnnotationPanel(props) {
           else counter[item.tool] = counter[item.tool] + 1;
           return counter;
         },
-        { rectangleRoi: 0, length: 0, freehand: 0 }
+        { rectangleRoi: 0, length: 0, freehand: 0, arrowAnnotate: 0 }
       );
       let toolState = cornerstoneTools.getToolState(
         dicomElement,
         tool === "ratio" ? "length" : tool
       );
+      // console.log(toolState)
       if (
         tool === "ratio" &&
         toolState.data &&
@@ -702,7 +773,15 @@ export default function AnnotationPanel(props) {
           return;
         }
       }
-      if (
+      if (tool === "arrowAnnotate"){
+        if (toolState.data &&
+        toolState.data.length > count[tool] &&
+        !toolState.data[toolState.data.length - 1].handles.end.active){
+          addNewLabel(tool, toolState.data.length - 1);
+          return;
+        }
+      }
+      else if (
         toolState.data &&
         toolState.data.length > count[tool] &&
         !toolState.data[toolState.data.length - 1].active
@@ -769,6 +848,30 @@ export default function AnnotationPanel(props) {
               )
           )
             return {
+              ...item,
+              saved: false,
+              updated_time: new Date(),
+              updated_by: user,
+            };
+          else return item;
+        }
+        if (item.tool === "arrowAnnotate") {
+          if (
+            JSON.stringify(
+              globalTool[item.tool].data[item.index].handles.start
+            ) !==
+              JSON.stringify(
+                savedData[savedData.findIndex((elm) => elm.key === item.key)]
+                  .data.handles.start
+              ) ||
+            JSON.stringify(
+              globalTool[item.tool].data[item.index].handles.end
+            ) !==
+              JSON.stringify(
+                savedData[savedData.findIndex((elm) => elm.key === item.key)]
+                  .data.handles.end
+              )
+          ) return {
               ...item,
               saved: false,
               updated_time: new Date(),
@@ -876,6 +979,7 @@ export default function AnnotationPanel(props) {
     );
     let freehandState = cornerstoneTools.getToolState(dicomElement, "freehand");
     let lengthState = cornerstoneTools.getToolState(dicomElement, "length");
+    let arrowAnnotateState = cornerstoneTools.getToolState(dicomElement, "arrowAnnotate");
     let bbox_data = labels.reduce((current, item, i) => {
       return [
         ...current,
@@ -901,7 +1005,9 @@ export default function AnnotationPanel(props) {
               : item.tool === "freehand"
               ? { ...freehandState.data[item.index], active: false }
               : item.tool === "length"
-              ? { ...lengthState.data[item.index], active: false }
+              ? { ...lengthState.data[item.index], active: false } 
+              : item.tool === "arrowAnnotate"
+              ? { ...arrowAnnotateState.data[item.index], active: false } 
               : { ...rectangleRoiState.data[item.index], active: false },
           updated_time: item.updated_time,
         },
@@ -1309,6 +1415,20 @@ export default function AnnotationPanel(props) {
                       }}
                     >
                       Ratio {<VerticalAlignBottomOutlined />}
+                    </Button>
+                  </Col>
+                )}
+                {props.mode === "editable" && (
+                  <Col span={8} className="annotate-tool-btn-ctn">
+                    <Button
+                      className={`annotate-tool-btn ${
+                        tool === "arrowAnnotate" ? "selected-tool" : ""
+                      }`}
+                      onClick={() => {
+                        selectTool("arrowAnnotate");
+                      }}
+                    >
+                      Arrow {<ArrowLeftOutlined />}
                     </Button>
                   </Col>
                 )}
