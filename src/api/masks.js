@@ -10,7 +10,6 @@ export const getBBox = async (reportId) => {
 }
 
 export const insertBBox = async (report_id, data) => {
-    console.log(report_id, data)
     try {
         const response = (
             await instance.patch("/masks/", {report_id, data})
