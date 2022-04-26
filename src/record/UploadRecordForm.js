@@ -56,8 +56,8 @@ const UploadRecordForm = forwardRef((props, ref) => {
         const cell_range = XLSX.utils.decode_range(target_workbook["!ref"]);
         const last_col = cell_range.e.c;
         var current_col = cell_range.s.c;
-        var change_field = "";
-        event.target.files[0].name.split(".")[1] === "xlsx" ? change_field = "w" : change_field = "v";
+        var change_field = "w";
+        // event.target.files[0].name.split(".")[1] === "xlsx" ? change_field = "w" : change_field = "v";
         while (current_col <= last_col) {
             var column_name = target_workbook[XLSX.utils.encode_cell({r: 0, c: current_col})];
             if (column_name === undefined) {
@@ -181,7 +181,8 @@ const UploadRecordForm = forwardRef((props, ref) => {
                         <input 
                             type="file" 
                             id="input-file" 
-                            accept=".xlsx, .csv" 
+                            // accept=".xlsx, .csv"
+                            accept=".xlsx" 
                             hidden 
                             onChange={(event) => {
                                 handleUploadedFile(event);
@@ -190,8 +191,11 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 <label style={{marginLeft: "20px"}}>
                     {uploadedRecord.with_key ? uploadedRecordName.with_ext : null}
                 </label>
-                <label id="smaller-label" style={{display: "block", color: "#de5c8e", margin: "8px 0 0 10px"}}>
+                {/* <label id="smaller-label" style={{display: "block", color: "#de5c8e", margin: "8px 0 0 10px"}}>
                     *accepted file type: .xlsx, .csv
+                </label> */}
+                <label id="smaller-label" style={{display: "block", color: "#de5c8e", margin: "8px 0 0 10px"}}>
+                    *accepted file type: .xlsx
                 </label>
             </div>
             {uploadedRecord.with_key && 
