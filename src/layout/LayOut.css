@@ -299,11 +299,11 @@ ol {
   margin-left: 50px;
 }
 
-.upload-record-grid {
+/* .upload-record-grid {
   display: grid;
   grid-auto-flow: row;
   grid-row-gap: 5px;
-}
+} */
 
 .show-all-records-content {
   width: 100%;
@@ -1315,10 +1315,10 @@ label.clickable-label:hover {
 }
 
 /* table ------------------------- */
-tbody {
+/* tbody {
   display: block;
   overflow: scroll;
-}
+} */
 
 /* .seven-rows-table tbody {
   max-height: 287px;
@@ -1340,15 +1340,16 @@ tbody {
   max-height: 200px;
 } */
 
-thead,
+/* thead,
 tbody tr {
   display: table;
   width: 100%;
   table-layout: fixed;
-}
+} */
 
 .ant-table-thead > tr > th {
-  background: rgba(88, 89, 91, 0.7);
+  /* background: rgba(88, 89, 91, 0.7); */
+  background-color: #8a8a8c;
   font-size: medium;
   font-weight: bold;
   color: white;
@@ -1356,8 +1357,15 @@ tbody tr {
   text-align: center;
 }
 
+.ant-table-tbody > tr > td {
+  color: #58595b;
+  font-size: medium;
+  border: unset;
+  text-align: center;
+}
+
 .ant-table-small .ant-table-thead > tr > th {
-  background-color: rgba(88, 89, 91, 0.7);
+  background-color: #8a8a8c;
 }
 
 .ant-table-container table > thead > tr:first-child th:last-child {
@@ -1370,32 +1378,58 @@ tbody tr {
   content: none;
 }
 
-.ant-table-tbody > tr:nth-child(odd) {
+.ant-table-tbody > tr:nth-child(odd),
+.ant-table-tbody > tr:nth-child(odd) > td.ant-table-cell-fix-left,
+.ant-table-tbody > tr:nth-child(odd) > td.ant-table-cell-fix-right {
   background-color: #e5e5e5;
 }
 
-.ant-table-tbody > tr:nth-child(even) {
+.ant-table-tbody > tr:nth-child(even),
+.ant-table-tbody > tr:nth-child(even) > td.ant-table-cell-fix-left,
+.ant-table-tbody > tr:nth-child(even) > td.ant-table-cell-fix-right {
   background-color: white;
 }
 
-.ant-table-tbody > tr > td {
-  color: #58595b;
-  font-size: medium;
-  border: unset;
-  text-align: center;
+.ant-table-fixed-header .ant-table-tbody > tr:nth-child(even),
+.ant-table-fixed-header .ant-table-tbody > tr:nth-child(even) > td.ant-table-cell-fix-left,
+.ant-table-fixed-header .ant-table-tbody > tr:nth-child(even) > td.ant-table-cell-fix-right,
+.ant-table-fixed-column .ant-table-tbody > tr:nth-child(even),
+.ant-table-fixed-column .ant-table-tbody > tr:nth-child(even) > td.ant-table-cell-fix-left,
+.ant-table-fixed-column .ant-table-tbody > tr:nth-child(even) > td.ant-table-cell-fix-right {
+  background-color: #e5e5e5;
 }
 
-.ant-table .ant-table-tbody > tr:hover > td {
-  background: unset;
+.ant-table-fixed-header .ant-table-tbody > tr:nth-child(odd),
+.ant-table-fixed-header .ant-table-tbody > tr:nth-child(odd) > td.ant-table-cell-fix-left,
+.ant-table-fixed-header .ant-table-tbody > tr:nth-child(odd) > td.ant-table-cell-fix-right,
+.ant-table-fixed-column .ant-table-tbody > tr:nth-child(odd),
+.ant-table-fixed-column .ant-table-tbody > tr:nth-child(odd) > td.ant-table-cell-fix-left,
+.ant-table-fixed-column .ant-table-tbody > tr:nth-child(odd) > td.ant-table-cell-fix-right {
+  background-color: white;
+}
+
+.ant-table-cell-fix-left, .ant-table-cell-fix-right {
+  z-index: 1;
+}
+
+.ant-table .ant-table-tbody > tr:hover > td,
+.ant-table .ant-table-tbody > tr:hover > td.ant-table-cell-fix-left,
+.ant-table .ant-table-tbody > tr:hover > td.ant-table-cell-fix-right {
+  background: #f8e1ea;
 }
 
 .clickable-table .ant-table .ant-table-tbody > tr:hover > td {
-  background: #f8e1ea;
+  /* background: #f8e1ea; */
   cursor: pointer;
 }
 
-.ant-table-tbody > tr.ant-table-row-selected > td {
+.ant-table-tbody > tr.ant-table-row-selected > td,
+.ant-table-fixed-header .ant-table-tbody > tr.ant-table-row-selected > td.ant-table-cell-fix-left,
+.ant-table-fixed-header .ant-table-tbody > tr.ant-table-row-selected > td.ant-table-cell-fix-right,
+.ant-table-fixed-column .ant-table-tbody > tr.ant-table-row-selected > td.ant-table-cell-fix-left,
+.ant-table-fixed-column .ant-table-tbody > tr.ant-table-row-selected > td.ant-table-cell-fix-right {
   background: #f8e1ea;
+  border: none;
 }
 
 td.ant-table-column-sort {
@@ -1408,19 +1442,19 @@ td.ant-table-column-sort {
 }
 
 .ant-table-thead th.ant-table-column-has-sorters:hover {
-  background-color: rgba(88, 89, 91, 0.7);
+  background-color: #8a8c8c;
 }
 
-.report-table tbody {
+/* .report-table tbody {
   overflow: scroll;
   max-height: 200px;
-}
+} */
 
-table tr th.ant-table-selection-column,
+/* table tr th.ant-table-selection-column,
 table tr td.ant-table-selection-column {
   width: 10%;
   min-width: 25px;
-}
+} */
 
 .ant-table-thead > tr > th,
 .ant-table-tbody > tr > td,
@@ -1432,10 +1466,6 @@ table tr td.ant-table-selection-column {
 .ant-table-thead th.ant-table-column-sort {
   background: rgba(88, 89, 91, 0.7);
 }
-.ant-table-tbody > tr.ant-table-row-selected > td {
-  background: #f8e1ea;
-  border: none;
-}
 
 .pos-row > td{
   color: #03989e !important;
@@ -1446,6 +1476,13 @@ table tr td.ant-table-selection-column {
   overflow: scroll;
   height: 210px;
   background-color: rgb(229 229 229);
+}
+
+.annotate-table thead,
+.annotate-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 
 .annotate-table .ant-table-tbody > tr > td {
@@ -1480,6 +1517,11 @@ table tr td.ant-table-selection-column {
   height: 210px;
 }
 
+.annotate-table .ant-table-empty .ant-table-tbody > tr.ant-table-placeholder:hover > td {
+  background: #e5e5e5;
+  cursor: default;
+}
+
 .selected-layer {
   background: #f8e1ea !important;
 }
@@ -1489,10 +1531,15 @@ table tr td.ant-table-selection-column {
   font-weight: bold;
 }
 
-.view-history-table .ant-table-thead > tr > th, 
+.record-table .ant-table-thead > tr > th,
+.record-table .ant-table-tbody > tr > td{
+  line-height: 20px;
+}
+
+/* .view-history-table .ant-table-thead > tr > th, 
 .view-history-table .ant-table-tbody > tr > td{
   padding: 10px 5px;
-}
+} */
 
 .view-history-table .ant-table-thead > tr > th,
 .view-history-table .ant-table-tbody > tr > td{
@@ -1548,10 +1595,10 @@ table tr td.ant-table-selection-column {
   width: 100px;
 }
 
-.batch-diag-table .ant-table-thead > tr > th, 
+/* .batch-diag-table .ant-table-thead > tr > th, 
 .batch-diag-table .ant-table-tbody > tr > td{
   padding: 10px 5px;
-}
+} */
 
 .batch-diag-table .ant-table-thead > tr > th,
 .batch-diag-table .ant-table-tbody > tr > td{

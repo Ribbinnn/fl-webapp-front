@@ -194,11 +194,11 @@ function HistoryLog(props) {
                 compare: (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
             },
             showSorterTooltip: false,
-            render: (date) => (
-                <Tooltip placement="topLeft" title={date}>
-                    {date}
-                </Tooltip>
-            ),
+            // render: (date) => (
+            //     <Tooltip placement="topLeft" title={date}>
+            //         {date}
+            //     </Tooltip>
+            // ),
         },
         {
             title: "Last Modified",
@@ -212,11 +212,11 @@ function HistoryLog(props) {
                 compare: (a, b) => new Date(a.updatedAt) - new Date(b.updatedAt)
             },
             showSorterTooltip: false,
-            render: (date) => (
-                <Tooltip placement="topLeft" title={date}>
-                    {date}
-                </Tooltip>
-            ),
+            // render: (date) => (
+            //     <Tooltip placement="topLeft" title={date}>
+            //         {date}
+            //     </Tooltip>
+            // ),
         },
         {
             title: "Clinician",
@@ -230,11 +230,11 @@ function HistoryLog(props) {
                 compare: (a, b) => a.clinician_name.localeCompare(b.clinician_name)
             },
             showSorterTooltip: false,
-            render: (clinician, report) => (
-                <Tooltip placement="top" title={`${clinician} ${report.clinician_lastname}`}>
-                    {clinician}
-                </Tooltip>
-            ),
+            // render: (clinician, report) => (
+            //     <Tooltip placement="top" title={`${clinician} ${report.clinician_lastname}`}>
+            //         {clinician}
+            //     </Tooltip>
+            // ),
         },
         {
             title: "Action",
@@ -251,12 +251,6 @@ function HistoryLog(props) {
                             // ProcDescription=""
                             ReportID={report.pred_result_id}
                             StudyDateTime=" " />
-                        {/* <DownloadOutlined
-                            className="clickable-icon"
-                            onClick={() => {
-                                // download image api
-                            }}
-                        /> */}
                         {report.status === "canceled" ?
                             null : 
                             <EditOutlined

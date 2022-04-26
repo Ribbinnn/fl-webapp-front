@@ -157,6 +157,7 @@ function ManageUserTable(props) {
 
   const rowSelection = {
     type: "checkbox",
+    columnWidth: 52,
     selectedRowKeys,
     onChange: (selectedKeys, selectedRows) => {
       // console.log(
@@ -201,7 +202,7 @@ function ManageUserTable(props) {
       <label> Users </label>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <Table
-          className="report-table"
+          // className="report-table"
           rowSelection={{
             ...rowSelection,
           }}
@@ -209,6 +210,7 @@ function ManageUserTable(props) {
           dataSource={allUsers}
           pagination={false}
           style={{ width: '48%' }}
+          scroll={{ y: 200 }}
         />
         <Table
           columns={userTableColumns}
@@ -216,7 +218,7 @@ function ManageUserTable(props) {
           pagination={false}
           size="small"
           style={{ width: '48%' }}
-          className="four-rows-table"
+          // className="four-rows-table"
         />
       </div>
       <Button
