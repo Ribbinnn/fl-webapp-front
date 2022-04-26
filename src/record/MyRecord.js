@@ -60,9 +60,9 @@ function MyRecord() {
       dataIndex: "uploaded",
       key: "uploaded",
       align: "center",
-      ellipsis: {
-        showTitle: false,
-      },
+      // ellipsis: {
+      //   showTitle: false,
+      // },
       sorter: {
         compare: (a, b) => new Date(a.uploaded) - new Date(b.uploaded),
       },
@@ -72,9 +72,9 @@ function MyRecord() {
       dataIndex: "updated",
       key: "updated",
       align: "center",
-      ellipsis: {
-        showTitle: false,
-      },
+      // ellipsis: {
+      //   showTitle: false,
+      // },
       sorter: {
         compare: (a, b) => a.updated.localeCompare(b.updated),
       },
@@ -84,9 +84,9 @@ function MyRecord() {
       dataIndex: "rec_name",
       key: "rec_name",
       align: "center",
-      ellipsis: {
-        showTitle: false,
-      },
+      // ellipsis: {
+      //   showTitle: false,
+      // },
       sorter: {
         compare: (a, b) => a.rec_name.localeCompare(b.rec_name),
       },

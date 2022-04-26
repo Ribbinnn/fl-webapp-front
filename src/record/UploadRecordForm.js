@@ -53,12 +53,13 @@ const UploadRecordForm = forwardRef((props, ref) => {
         const target_workbook = workbook.Sheets[workbook.SheetNames[0]];
         // change field name to lowercase
         const uploaded_field = [];
-        const last_char = target_workbook["!ref"].split(":")[1].charAt(0).charCodeAt(0);
-        var current_char = "A".charCodeAt(0);
+        const cell_range = XLSX.utils.decode_range(target_workbook["!ref"]);
+        const last_col = cell_range.e.c;
+        var current_col = cell_range.s.c;
         var change_field = "";
         event.target.files[0].name.split(".")[1] === "xlsx" ? change_field = "w" : change_field = "v";
-        while (current_char <= last_char) {
-            var column_name = target_workbook[String.fromCharCode(current_char) + "1"];
+        while (current_col <= last_col) {
+            var column_name = target_workbook[XLSX.utils.encode_cell({r: 0, c: current_col})];
             if (column_name === undefined) {
                 break;
             }
@@ -67,7 +68,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
             column_name[change_field] = tmp.join('(');
             // column_name[change_field] = tmp[0];
             uploaded_field.push(column_name[change_field]);
-            current_char++;
+            current_col++;
         }
         // check if uploaded file has all required fields
         const missing_field = [];
@@ -93,22 +94,20 @@ const UploadRecordForm = forwardRef((props, ref) => {
                 title:
                     column === "hn"
                     ? column.toUpperCase()
-                    : (column === "measured_time(YYYY-MM-DD HH:mm)"
-                    ? <Tooltip placement="topLeft" title={column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" ")}>
-                            {column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" ")}
-                        </Tooltip>
-                    : column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" ")),
+                    : column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" "),
                 dataIndex: column,
                 key: column,
                 align: "center",
-                ellipsis: {
-                    showTitle: false,
-                },
-                render: column === "measured_time(YYYY-MM-DD HH:mm)" ? column => (
-                    <Tooltip placement="topLeft" title={column}>
-                        {column}
-                    </Tooltip>
-                ) : null,
+                // ellipsis: {
+                //     showTitle: false,
+                // },
+                width: column === "entry_id" ? 100 : 120,
+                fixed: column === "entry_id" ? "left" : "",
+                // render: column === "measured_time(YYYY-MM-DD HH:mm)" ? column => (
+                //     <Tooltip placement="topLeft" title={column}>
+                //         {column}
+                //     </Tooltip>
+                // ) : null,
             }));
             // convert file to json
             const data = XLSX.utils.sheet_to_json(target_workbook);
@@ -122,6 +121,13 @@ const UploadRecordForm = forwardRef((props, ref) => {
                         data[i]["measured_time(YYYY-MM-DD HH:mm)"] = data[i]["measured_time(YYYY-MM-DD HH:mm)"].slice(1);
                     }
                     data[i]["measured_time(YYYY-MM-DD HH:mm)"] = new Date(data[i]["measured_time(YYYY-MM-DD HH:mm)"]).toLocaleString("sv-SE");
+                    Object.keys(data[i]).forEach((key) => {
+                        if (data[i][key] === true) {
+                            data[i][key] = "true";
+                        } if (data[i][key] === false) {
+                            data[i][key] = "false";
+                        }
+                    });
                 }
                 // add key to each row
                 const data_with_key = JSON.parse(JSON.stringify(data));
@@ -141,10 +147,10 @@ const UploadRecordForm = forwardRef((props, ref) => {
     }
 
     return(
-        <div className="upload-record-grid">
-            <label style={{display: "block"}}>Medical Records</label>
+        <div /*className="upload-record-grid"*/>
+            <label style={{display: "block", marginBottom: "5px"}}>Medical Records</label>
             <label 
-                style={{color: "#de5c8e", display: "flex", alignItems: "center"}}
+                style={{color: "#de5c8e", display: "flex", alignItems: "center", marginBottom: "13px"}}
                 className="clickable-label"
                 onClick={() => {
                     downloadTemplate(props.project.projectId).then((res) => {
@@ -164,7 +170,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     Download Template
                     <CloudDownloadOutlined style={{marginLeft: "5px"}} />
             </label>
-            <div style={{margin: "8px 0 20px 30px"}}>
+            <div style={{margin: "8px 0 25px 30px"}}>
                 <Button 
                     type="primary" 
                     className="primary-btn smaller" 
@@ -194,7 +200,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     <label>Record name:</label>
                     <Input 
                         className="input-text" 
-                        style={{maxWidth: "300px", marginLeft: "10px", marginBottom: "10px"}}
+                        style={{maxWidth: "300px", marginLeft: "10px", marginBottom: "15px"}}
                         value={uploadedRecordName.without_ext}
                         onChange={(event) => {
                             setUploadedRecordName({...uploadedRecordName, without_ext: event.target.value});
@@ -205,8 +211,9 @@ const UploadRecordForm = forwardRef((props, ref) => {
                     columns={columns} 
                     dataSource={uploadedRecord.with_key} 
                     size="small"
-                    // className="three-rows-table"
+                    className="record-table"
                     style={{ marginBottom: uploadedRecord ? (uploadedRecord.with_key.length > 10 ? 0 : "10px") : 0 }}
+                    scroll={{ x: 770 }}
                     pagination={
                         uploadedRecord.with_key.length > 10 && {
                           size: "small",

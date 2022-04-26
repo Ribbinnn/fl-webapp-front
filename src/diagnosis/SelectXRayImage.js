@@ -47,14 +47,14 @@ function SelectXRayImage(props) {
             dataIndex: field,
             key: field,
             align: "center",
-            ellipsis: {
-                showTitle: false,
-            },
-            render: (field) => (
-                <Tooltip placement="topLeft" title={field}>
-                    {field}
-                </Tooltip>
-            ),
+            // ellipsis: {
+            //     showTitle: false,
+            // },
+            // render: (field) => (
+            //     <Tooltip placement="topLeft" title={field}>
+            //         {field}
+            //     </Tooltip>
+            // ),
         }));
         field_list.push({
             title: "Preview",

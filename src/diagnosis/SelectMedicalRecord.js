@@ -23,11 +23,15 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                     const data = await requirementForm.validateFields();
                     data["entry_id"] = 1;
                     data["hn"] = parseInt(props.HN); // add HN
-                    for (const i in data) {
-                        if (!isNaN(data[i])) {
-                            data[i] = parseInt(data[i]);
+                    Object.keys(data).forEach((key) => {
+                        if (data[key] === "true") {
+                            data[key] = true;
+                        } if (data[key] === "false") {
+                            data[key] = false;
+                        } if (!isNaN(data[key])) {
+                            data[key] = parseInt(data[key]);
                         }
-                    }
+                    });
                     data["measured_time"] = new Date(data["measured_time"]);
                     props.setMedRec(data);
                 }
@@ -51,6 +55,8 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
 
     const rowSelection = {
         type: "radio",
+        columnWidth: 50,
+        fixed: true,
         selectedRowKeys: props.MedRecIndex,
         onChange: (selectedRowKeys, selectedRows) => {
             // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows[0]);
@@ -80,11 +86,12 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                 <Form.Item
                     name={dataIndex}
                     style={{margin: 0}}
-                    rules={[
-                        {
-                            required: true,
-                        },
-                    ]}>
+                    // rules={[
+                    //     {
+                    //         required: true,
+                    //     },
+                    // ]}
+                >
                         <Input className="input-text smaller" />
                 </Form.Item>
             ) : (
@@ -121,11 +128,15 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             for (const i in remove_field) {
                 delete update_data[remove_field[i]];
             }
-            for (const i in update_data) {
-                if (!isNaN(update_data[i])) {
-                    update_data[i] = parseInt(update_data[i]);
+            Object.keys(update_data).forEach((key) => {
+                if (update_data[key] === "true") {
+                    update_data[key] = true;
+                } if (update_data[key] === "false") {
+                    update_data[key] = false;
+                } if (!isNaN(update_data[key])) {
+                    update_data[key] = parseInt(update_data[key]);
                 }
-            }
+            });
             update_data["measured_time"] = new Date(update_data["measured_time"]);
             update_data["updated_time"] = new Date(update_data["updated_time"]);
             updateRecordRow(globalProject.projectId, record_id, [update_data])
@@ -172,20 +183,23 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                     dataIndex: column === "clinician" ? "clinician_first_name" : column,
                     key: column === "clinician" ? "clinician_first_name" : column,
                     align: "center",
-                    ellipsis: {
-                        showTitle: false,
-                    },
-                    render: column === "measured_time" || column === "updated_time" ? column => (
-                        <Tooltip placement="topLeft" title={column}>
-                            {column}
-                        </Tooltip>
-                    ) : null,
+                    // ellipsis: {
+                    //     showTitle: false,
+                    // },
+                    width: 120,
+                    // render: column === "measured_time" || column === "updated_time" ? column => (
+                    //     <Tooltip placement="topLeft" title={column}>
+                    //         {column}
+                    //     </Tooltip>
+                    // ) : null,
                     editable: column === "measured_time" || column === "updated_time" || column === "clinician" ? false : true,
                 }));
                 column_list.push({
                     title: "Action",
                     key: "action",
                     dataIndex: "action",
+                    width: 80,
+                    fixed: "right",
                     render: (_, record) => {
                         const editable = isEditing(record);
                         return(
@@ -247,6 +261,13 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                     res.data[i]["key"] = (parseInt(i)+1).toString();
                     res.data[i]["measured_time"] = new Date(res.data[i]["measured_time"]).toLocaleString("sv-SE");
                     res.data[i]["updated_time"] = new Date(res.data[i]["updated_time"]).toLocaleString("sv-SE");
+                    Object.keys(res.data[i]).forEach((key) => {
+                        if (res.data[i][key] === true) {
+                            res.data[i][key] = "true";
+                        } if (res.data[i][key] === false) {
+                            res.data[i][key] = "false";
+                        }
+                    });
                 }
                 setData(res.data);
                 currentData.current = res.data;
@@ -267,11 +288,12 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                         key={field}
                         label={fieldsLabel[field]}
                         initialValue={props.MedRec === null ? null :
-                            (field === "measured_time" ? new Date(props.MedRec[field]).toLocaleString("sv-SE") : props.MedRec[field])}
+                            (field === "measured_time" ? new Date(props.MedRec[field]).toLocaleString("sv-SE") :
+                                (props.MedRec[field] === true ? "true" : (props.MedRec[field] === false ? "false" : props.MedRec[field])))}
                         style={{marginBottom: "5px"}}
                         rules={[
                             {
-                                required: true,
+                                required: field === "measured_time" ? true : false,
                             },
                         ]}>
                             <Input
@@ -335,8 +357,9 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                         dataSource={data} 
                         rowSelection={rowSelection}
                         size="small"
-                        // className="seven-rows-table"
+                        className="record-table"
                         style={{ marginBottom: data ? (data.length > 10 ? 0 : "10px") : 0 }}
+                        scroll={{ x: 770 }}
                         pagination={
                             data.length > 10 && {
                               size: "small",
