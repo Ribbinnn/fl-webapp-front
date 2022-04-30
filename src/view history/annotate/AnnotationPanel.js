@@ -357,7 +357,11 @@ export default function AnnotationPanel(props) {
                         boxShadow: "none",
                         backgroundColor: "#de5c8e",
                       },
+                      id: "select-label-ok-button",
                     },
+                    cancelButtonProps: {
+                      id: "select-label-cancel-button"
+                    }
                   });
                 }}
               />
@@ -966,6 +970,7 @@ export default function AnnotationPanel(props) {
           boxShadow: "none",
           backgroundColor: "#de5c8e",
         },
+        id: "select-label-ok-button",
       },
     });
   };
