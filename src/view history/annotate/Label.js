@@ -23,8 +23,7 @@ export default function Label(props) {
     "enter",
     () => {
       if (!dropdownOpen) {
-        var confirmbutton = document.getElementById("select-label-ok-button");
-        confirmbutton.click();
+        document.getElementById("select-label-ok-button").click();
       }
     },
     {
@@ -67,12 +66,13 @@ export default function Label(props) {
       ref={selectRef}
       onDropdownVisibleChange={(open) => {
         setDropdownOpen(open);
+        console.log("onDropdownVisibleChange")
       }}
       onChange={handleChange}
-      onSelect={() => {
-        setDropdownOpen(false);
-        selectRef.current.blur();
-      }}
+      // onSelect={() => {
+        // setDropdownOpen(false);
+        // selectRef.current.blur();
+      // }}
       style={{ width: 300 }}
       className="label-selector"
       defaultValue={props.defaultLabel ?? labelList[0] ?? ""}
@@ -80,6 +80,18 @@ export default function Label(props) {
       filterOption={(input, option) =>
         option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
       }
+      onInputKeyDown={(evt)=>{
+        // console.log(evt)
+        if (evt.code ===  "Escape"){
+          selectRef.current.blur();
+          setDropdownOpen(false);
+          document.getElementById("select-label-cancel-button").click();
+        }
+        if (evt.code === "Enter" && !dropdownOpen){
+          selectRef.current.blur();
+          document.getElementById("select-label-ok-button").click();
+        }
+      }}
       /* dropdownRender={(menu) => (
         <div>
           {menu}

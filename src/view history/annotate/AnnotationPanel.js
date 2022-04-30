@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useHotkeys } from 'react-hotkeys-hook';
 import {
   Button,
   Row,
@@ -360,8 +361,8 @@ export default function AnnotationPanel(props) {
                       id: "select-label-ok-button",
                     },
                     cancelButtonProps: {
-                      id: "select-label-cancel-button"
-                    }
+                      id: "select-label-cancel-button",
+                    },
                   });
                 }}
               />
@@ -665,7 +666,65 @@ export default function AnnotationPanel(props) {
     });
   }
 
+  // count Tools in Label list
+  function countLabelTool () {
+    return labels.reduce(
+      (counter, item) => {
+        if (item.invisible) return counter;
+        if (item.tool === "ratio") counter["length"] = counter["length"] + 2;
+        else counter[item.tool] = counter[item.tool] + 1;
+        return counter;
+      },
+      { rectangleRoi: 0, length: 0, freehand: 0, arrowAnnotate: 0 }
+    );
+
+  }
+
+  function cancelBBox (completed){
+    if (!completed && tool === "freehand") return
+    let count = countLabelTool();
+    let toolState = cornerstoneTools.getToolState(
+      dicomElement,
+      tool === "ratio" ? "length" : tool
+    );
+    console.log(toolState)
+    if (tool === "ratio"){
+      if (!completed && !labelBuffer && toolState.data.length > count["length"]){
+        cornerstoneTools.removeToolState(dicomElement, "length", toolState.data[toolState.data.length - 1]);
+      }
+      else if (labelBuffer?.index?.length === 1){
+        if (toolState.data.length > count["length"] + 1){
+          cornerstoneTools.removeToolState(dicomElement, "length", toolState.data[toolState.data.length - 1]);
+        }
+        cornerstoneTools.removeToolState(dicomElement, "length", toolState.data[labelBuffer.index[0]]);
+        setLabelBuffer();
+      }
+    }
+    else if (toolState.data.length > count[tool]){
+      cornerstoneTools.removeToolState(dicomElement, tool, toolState.data[toolState.data.length - 1]);
+    }
+    cornerstone.updateImage(dicomElement);
+  }
+
+  useHotkeys('esc', () => {
+    console.log("esc - pressed");
+    console.log(tool);
+    console.log(labelBuffer);
+    if (["mouse","pan"].includes(tool)) return;
+    var cancelBtn = document.getElementById("select-label-cancel-button");
+    if (cancelBtn){
+      cancelBtn.click();
+      return
+    }
+    cancelBBox(false);
+  }
+  ,{
+    filter: () => true
+  },[/* tool,labelBuffer,labels */]
+  );
+
   function selectTool(prop) {
+    if (!imgLoaded) return
     /**
      * check if current is ratio and not complete yet -> remove
      */
@@ -944,7 +1003,7 @@ export default function AnnotationPanel(props) {
 
   const addNewLabel = (tool, index, buffer) => {
     let key = labels.length > 0 ? labels[labels.length - 1].key + 1 : 1;
-    Modal.info({
+    Modal.confirm({
       title: "Choose label",
       content: (
         <Label
@@ -956,6 +1015,7 @@ export default function AnnotationPanel(props) {
       keyboard: false,
       className: "label-selector-modal",
       okText: "Submit",
+      cancelText: "Remove",
       onOk: () => {
         buffer
           ? setLabelBuffer(buffer)
@@ -971,6 +1031,10 @@ export default function AnnotationPanel(props) {
           backgroundColor: "#de5c8e",
         },
         id: "select-label-ok-button",
+      },
+      onCancel: () => cancelBBox(true),
+      cancelButtonProps: {
+        id: "select-label-cancel-button",
       },
     });
   };
