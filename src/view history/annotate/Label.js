@@ -66,7 +66,7 @@ export default function Label(props) {
       ref={selectRef}
       onDropdownVisibleChange={(open) => {
         setDropdownOpen(open);
-        console.log("onDropdownVisibleChange")
+        // console.log("onDropdownVisibleChange")
       }}
       onChange={handleChange}
       // onSelect={() => {

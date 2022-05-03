@@ -687,7 +687,7 @@ export default function AnnotationPanel(props) {
       dicomElement,
       tool === "ratio" ? "length" : tool
     );
-    console.log(toolState)
+    // console.log(toolState)
     if (tool === "ratio"){
       if (!completed && !labelBuffer && toolState.data.length > count["length"]){
         cornerstoneTools.removeToolState(dicomElement, "length", toolState.data[toolState.data.length - 1]);
@@ -707,9 +707,9 @@ export default function AnnotationPanel(props) {
   }
 
   useHotkeys('esc', () => {
-    console.log("esc - pressed");
-    console.log(tool);
-    console.log(labelBuffer);
+    // console.log("esc - pressed");
+    // console.log(tool);
+    // console.log(labelBuffer);
     if (["mouse","pan"].includes(tool)) return;
     var cancelBtn = document.getElementById("select-label-cancel-button");
     if (cancelBtn){
@@ -833,14 +833,6 @@ export default function AnnotationPanel(props) {
             tool: tool,
             index: [toolState.data.length - 1],
           });
-          return;
-        }
-      }
-      if (tool === "arrowAnnotate"){
-        if (toolState.data &&
-        toolState.data.length > count[tool] &&
-        !toolState.data[toolState.data.length - 1].handles.end.active){
-          addNewLabel(tool, toolState.data.length - 1);
           return;
         }
       }
