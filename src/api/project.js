@@ -63,3 +63,14 @@ export const deleteProjectById = async (id) => {
     throw e
   }
 }
+
+export const getAllTasks = async () => {
+  try {
+      const res = (
+          await instance.get("/projects/tasks")
+      ).data
+      return res;
+  } catch (e) {
+      throw e
+  }
+}
