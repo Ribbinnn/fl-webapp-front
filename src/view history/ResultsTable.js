@@ -109,7 +109,7 @@ export default function ResultsTable(props) {
         render: (text, record) => (record.isPositive ? 1 : 0),
       },
     ];
-    if (props.gradCamList !== ["original"] && props.gradCamList !== []) {
+    if (!(props.gradCamList.length === 1 && props.gradCamList.includes("original") && props.gradCamList.length)) {
       col = [
         ...col,
         {
@@ -144,7 +144,6 @@ export default function ResultsTable(props) {
         },
       ];
     }
-    // console.log(props.gradCam,props.gradCamList)
     setColumn(col);
   }
 
