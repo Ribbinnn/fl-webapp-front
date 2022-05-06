@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams, useHistory } from "react-router-dom";
 import {
   Collapse,
@@ -18,6 +18,7 @@ import {
   CloudDownloadOutlined,
   LoadingOutlined,
 } from "@ant-design/icons";
+import Contexts from "../utils/Contexts";
 import AnnotationModal from "./annotate/AnnotationModal";
 import ProjectInfo from "../component/ProjectInfo";
 import ResultsTable from "./ResultsTable";
@@ -31,6 +32,8 @@ const LoadingIcon = (
 );
 
 export default function Report(props) {
+  const { currentActivity } = useContext(Contexts).active;
+  const { globalProject } = useContext(Contexts).project;
   const { mode, rid } = useParams();
   const history = useHistory();
   const [loaded, setLoaded] = useState(false);
@@ -39,7 +42,7 @@ export default function Report(props) {
   useEffect(() => {
     getReport(rid)
       .then((res) => {
-        // console.log(res);
+        // console.log(res.data);
         setInfo(res.data);
         setLoaded(true);
       })
@@ -47,6 +50,12 @@ export default function Report(props) {
         return Modal.error({ title: "Report not Found", onOk:  () => history.push("/viewhistory")});
       });
   }, []);
+
+  useEffect(() => {
+    if(currentActivity.enablePageChange && info && info.result.project_id._id !== globalProject.projectId){
+      history.push("/viewhistory")
+    }
+  }, [globalProject]);
 
   const downloadImage = () => {
     saveAs(
