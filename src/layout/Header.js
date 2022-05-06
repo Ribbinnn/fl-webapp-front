@@ -13,7 +13,7 @@ export default function Header() {
   const user = JSON.parse(sessionStorage.getItem("user"));
 
   return (
-    <Row span={24} id="header" justify="space-between">
+    <Row span={24} id="header" justify="space-between" style={{ zIndex: 2 }}>
       <Col
         span={8}
         style={{ paddingLeft: "10px", height: "50px" }}

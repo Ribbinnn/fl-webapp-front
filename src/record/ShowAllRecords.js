@@ -56,11 +56,11 @@ const ShowAllRecords = forwardRef((props, ref) => {
           <Form.Item
             name={dataIndex}
             style={{ margin: 0 }}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
+            // rules={[
+            //   {
+            //     required: true,
+            //   },
+            // ]}
           >
             <Input className="input-text smaller" />
           </Form.Item>
@@ -96,11 +96,15 @@ const ShowAllRecords = forwardRef((props, ref) => {
       const index = newData.findIndex((item) => key === item.key);
       const update_data = { ...newData[index], ...row };
       delete update_data["key"];
-      for (const i in update_data) {
-        if (!isNaN(update_data[i])) {
-          update_data[i] = parseInt(update_data[i]);
+      Object.keys(update_data).forEach((key) => {
+        if (update_data[key] === "true") {
+          update_data[key] = true;
+        } if (update_data[key] === "false") {
+          update_data[key] = false;
+        } if (!isNaN(update_data[key])) {
+          update_data[key] = parseInt(update_data[key]);
         }
-      }
+      });
       update_data["measured_time"] = new Date(update_data["measured_time"]);
       update_data["updated_time"] = new Date(update_data["updated_time"]);
       updateRecordRow(props.project.projectId, recordId.current, [update_data])
@@ -145,25 +149,23 @@ const ShowAllRecords = forwardRef((props, ref) => {
           title:
             column === "hn"
               ? column.toUpperCase()
-              : (column === "measured_time" || column === "updated_time"
-                ? <Tooltip placement="topLeft" title={column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" ")}>
-                      {column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" ")}
-                  </Tooltip>
-                : column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" ")),
+              : column.charAt(0).toUpperCase() + column.slice(1).split("_").join(" "),
           dataIndex: column,
           key: column,
           align: "center",
-          ellipsis: {
-            showTitle: false,
-          },
-          render:
-            column === "measured_time" || column === "updated_time"
-              ? (column) => (
-                  <Tooltip placement="topLeft" title={column}>
-                    {column}
-                  </Tooltip>
-                )
-              : null,
+          // ellipsis: {
+          //   showTitle: false,
+          // },
+          width: column === "entry_id" ? 100 : 120,
+          fixed: column === "entry_id" ? "left" : "",
+          // render:
+          //   column === "measured_time" || column === "updated_time"
+          //     ? (column) => (
+          //         <Tooltip placement="topLeft" title={column}>
+          //           {column}
+          //         </Tooltip>
+          //       )
+          //     : null,
           editable:
             column === "hn" ||
             column === "entry_id" ||
@@ -176,6 +178,8 @@ const ShowAllRecords = forwardRef((props, ref) => {
           title: "Action",
           key: "action",
           dataIndex: "action",
+          width: 100,
+          fixed: "right",
           render: (_, record) => {
             const editable = isEditing(record);
             return editable ? (
@@ -241,6 +245,13 @@ const ShowAllRecords = forwardRef((props, ref) => {
           res.data[0].records[i]["updated_time"] = new Date(
             res.data[0].records[i]["updated_time"]
           ).toLocaleString("sv-SE");
+          Object.keys(res.data[0].records[i]).forEach((key) => {
+            if (res.data[0].records[i][key] === true) {
+              res.data[0].records[i][key] = "true";
+            } if (res.data[0].records[i][key] === false) {
+              res.data[0].records[i][key] = "false";
+            }
+          });
         }
         setData(res.data[0].records);
         currentData.current = res.data[0].records;
@@ -301,7 +312,9 @@ const ShowAllRecords = forwardRef((props, ref) => {
               columns={mergedColumns}
               dataSource={data}
               size="small"
+              className="record-table"
               style={{ margin: data.length > 20 ? "30px 0 0 0" : "30px 0 40px 0" }}
+              scroll={{ x: 1100 }}
               pagination={
                 data.length > 20 && {
                   size: "small",

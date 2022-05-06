@@ -203,6 +203,7 @@ export default function ResultsTable(props) {
   };
   const rowSelection = {
     type: "checkbox",
+    columnWidth: 113,
     selectedRowKeys,
     onChange: (selectedKeys, selectedRows) => {
       setSelectedRowKeys(selectedKeys);
@@ -216,7 +217,7 @@ export default function ResultsTable(props) {
     <div>
       {mode === "edit" && status !== "finalized" && (
         <Table
-          className="report-table"
+          // className="report-table"
           rowSelection={{
             ...rowSelection,
           }}
@@ -225,17 +226,19 @@ export default function ResultsTable(props) {
           }}
           columns={columns}
           dataSource={data}
+          scroll={{ y: 200 }}
           pagination={false}
         />
       )}
       {(mode === "view" || status === "finalized") && (
         <Table
-          className="report-table"
+          // className="report-table"
           rowClassName={(record, index) => {
             return record.isPositive ? "pos-row" : "";
           }}
           columns={columns}
           dataSource={data}
+          scroll={{ y: 200 }}
           pagination={false}
         />
       )}
