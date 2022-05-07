@@ -52,6 +52,7 @@ export default function UploadRecord() {
               <ProjectInfo
                 project_id={globalProject.projectId}
                 collapse={false}
+                width="290px"
               />
             </Col>
             <Col span={17}>

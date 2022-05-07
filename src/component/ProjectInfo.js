@@ -56,16 +56,16 @@ export default function ProjectInfo(props) {
       {loaded && pinfo && <Collapse defaultActiveKey={props.collapse ? ["1"] : null} expandIconPosition="right" ghost>
             <Panel key="1" header="Project information">
             <div className="info" style={{ width: props.width ?? "100%" }}>
-        <div>
+        <div style={{ width: props.width ?? "100%", wordWrap:"break-word" }}>
           Task : <Tag color="#e9c869">{pinfo.Task}</Tag>
         </div>
-        <div>
+        <div style={{ width: props.width ?? "100%", wordWrap:"break-word" }}>
           Head : 
           {pinfo.Head.map((item, i) => (
             <ol key={i}>{`${item.first_name} ${item.last_name}`}</ol>
           ))}
         </div>
-        <div>
+        <div style={{ width: props.width ?? "100%", wordWrap:"break-word" }}>
           Classes :{" "}
           {pinfo.Classes.map((item, i) => (
             <Tag key={i} color={palette[(item.charCodeAt(0))%palette.length]}>
@@ -73,8 +73,8 @@ export default function ProjectInfo(props) {
             </Tag>
           ))}
         </div>
-        <div>Description: {pinfo.Description}</div>
-        <div>
+        <div style={{ width: props.width ?? "100%", wordWrap:"break-word" }}>Description: {pinfo.Description}</div>
+        <div style={{ width: props.width ?? "100%", wordWrap:"break-word" }}>
           Requirement : {!pinfo.Requirement.length && "-"}
           {pinfo.Requirement.map((item, i) => (
             <ol key={i}>{item.name}</ol>
