@@ -24,12 +24,12 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                     data["entry_id"] = 1;
                     data["hn"] = parseInt(props.HN); // add HN
                     Object.keys(data).forEach((key) => {
-                        if (data[key] === "true") {
+                        if (!isNaN(data[key])) {
+                            data[key] = parseInt(data[key]);
+                        } if (data[key] === "true") {
                             data[key] = true;
                         } if (data[key] === "false") {
                             data[key] = false;
-                        } if (!isNaN(data[key])) {
-                            data[key] = parseInt(data[key]);
                         }
                     });
                     data["measured_time"] = new Date(data["measured_time"]);
@@ -129,12 +129,12 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                 delete update_data[remove_field[i]];
             }
             Object.keys(update_data).forEach((key) => {
-                if (update_data[key] === "true") {
+                if (!isNaN(update_data[key])) {
+                    update_data[key] = parseInt(update_data[key]);
+                } if (update_data[key] === "true") {
                     update_data[key] = true;
                 } if (update_data[key] === "false") {
                     update_data[key] = false;
-                } if (!isNaN(update_data[key])) {
-                    update_data[key] = parseInt(update_data[key]);
                 }
             });
             update_data["measured_time"] = new Date(update_data["measured_time"]);
