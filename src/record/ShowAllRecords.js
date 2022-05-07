@@ -97,12 +97,12 @@ const ShowAllRecords = forwardRef((props, ref) => {
       const update_data = { ...newData[index], ...row };
       delete update_data["key"];
       Object.keys(update_data).forEach((key) => {
-        if (update_data[key] === "true") {
+        if (!isNaN(update_data[key])) {
+          update_data[key] = parseInt(update_data[key]);
+        } if (update_data[key] === "true") {
           update_data[key] = true;
         } if (update_data[key] === "false") {
           update_data[key] = false;
-        } if (!isNaN(update_data[key])) {
-          update_data[key] = parseInt(update_data[key]);
         }
       });
       update_data["measured_time"] = new Date(update_data["measured_time"]);

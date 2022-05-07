@@ -18,6 +18,16 @@ const UploadRecordForm = forwardRef((props, ref) => {
     useImperativeHandle(ref, () => ({
         uploadRecord: () => {
             if (uploadedRecord.without_key !== null) {
+                for (const i in uploadedRecord.without_key) {
+                    Object.keys(uploadedRecord.without_key[i]).forEach((key) => {
+                        if (uploadedRecord.without_key[i][key] === "true") {
+                            uploadedRecord.without_key[i][key] = true;
+                        } if (uploadedRecord.without_key[i][key] === "false") {
+                            uploadedRecord.without_key[i][key] = false;
+                        }
+                    });
+                }
+                console.log(uploadedRecord.without_key);
                 uploadVitalsRecord(
                     props.project.projectId,
                     (JSON.parse(sessionStorage.getItem('user'))).id,
