@@ -85,9 +85,40 @@ function SelectXRayImage(props) {
         return data;
     }
 
+    const onSearch = () => {
+        setLoaded(false);
+        getPatientData(
+            props.HN, 
+            props.searchAccNo === null ? "" : props.searchAccNo, 
+            props.fromDate === null ? "" : props.fromDate, 
+            props.toDate === null ? "" : props.toDate)
+        .then((res) => {
+            console.log(res);
+            if (Object.keys(res.data).length === 0) {
+                createColumns();
+                setTableData([]);
+                props.setPacsTableData([]);
+                props.setAccessionNoIndex([]);
+                props.setAccessionNo(null);
+                setLoaded(true);
+            } else {
+                const data = prepareTable(res.data);
+                setTableData(data);
+                props.setPacsTableData(data);
+                props.setAccessionNoIndex([]);
+                props.setAccessionNo(null);
+                setLoaded(true);
+            }
+        }).catch((err) => {
+            console.log(err.response);
+        })
+    }
+
     useEffect(() => {
         if (props.pacsTableData) {
             setTableData(prepareTable(props.pacsTableData));
+        } else {
+            onSearch();
         }
     }, []);
 
@@ -136,34 +167,7 @@ function SelectXRayImage(props) {
                     <Button
                         className="primary-btn smaller"
                         style={{marginTop:"32px"}}
-                        onClick={() => {
-                            setLoaded(false);
-                            getPatientData(
-                                props.HN, 
-                                props.searchAccNo === null ? "" : props.searchAccNo, 
-                                props.fromDate === null ? "" : props.fromDate, 
-                                props.toDate === null ? "" : props.toDate)
-                            .then((res) => {
-                                console.log(res);
-                                if (Object.keys(res.data).length === 0) {
-                                    createColumns();
-                                    setTableData([]);
-                                    props.setPacsTableData([]);
-                                    props.setAccessionNoIndex([]);
-                                    props.setAccessionNo(null);
-                                    setLoaded(true);
-                                } else {
-                                    const data = prepareTable(res.data);
-                                    setTableData(data);
-                                    props.setPacsTableData(data);
-                                    props.setAccessionNoIndex([]);
-                                    props.setAccessionNo(null);
-                                    setLoaded(true);
-                                }
-                            }).catch((err) => {
-                                console.log(err.response);
-                            })
-                        }}>
+                        onClick={onSearch}>
                             Search
                     </Button>
                 </Form.Item>

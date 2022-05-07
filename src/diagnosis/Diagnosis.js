@@ -1,4 +1,5 @@
 import React, { useState, useRef, useContext } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 import { Steps, Button, Form, Input, Row, Col, Modal, Spin } from "antd";
 import "antd/dist/antd.css";
 import { LoadingOutlined } from "@ant-design/icons";
@@ -104,6 +105,32 @@ export default function Diagnosis(props) {
     }
   };
 
+  useHotkeys(
+    "enter",
+    () => {
+      if (document.getElementById("diagnosis-next-btn") && !document.getElementsByClassName("ant-modal").length) {
+        next();
+      }
+    },
+    {
+      filter: () => true,
+    },
+    []
+  );
+
+  useHotkeys(
+    "shift+b",
+    () => {
+      if (document.getElementById("diagnosis-back-btn") && !document.getElementsByClassName("ant-modal").length) {
+        prev();
+      }
+    },
+    {
+      filter: () => true,
+    },
+    []
+  );
+
   return (
     <div className={loading ? "content loading" : "content"}>
       <Steps progressDot current={current}>
@@ -125,6 +152,7 @@ export default function Diagnosis(props) {
             setAccessionNoIndex={setAccessionNoIndex}
             loading={loading}
             setLoading={setLoading}
+            next={next}
           />
         )}
         {current === 1 && (
@@ -208,6 +236,7 @@ export default function Diagnosis(props) {
         {current > 0 && current < stepsTitle.length - 1 && (
           <Button
             className="primary-btn"
+            id="diagnosis-back-btn"
             style={current > 0 ? null : { visibility: "hidden" }}
             onClick={() => prev()}
           >
@@ -215,7 +244,7 @@ export default function Diagnosis(props) {
           </Button>
         )}
         {HN !== "" && current < stepsTitle.length - 1 && (
-          <Button className="primary-btn" onClick={() => next()}>
+          <Button className="primary-btn" id="diagnosis-next-btn" onClick={() => next()}>
             Next
           </Button>
         )}
@@ -226,6 +255,14 @@ export default function Diagnosis(props) {
 
 function SelectHN(props) {
   //const [patientName, setPatientName] = useState();
+  const hnInputRef = useRef(null);
+  useHotkeys("shift+f", () => {
+    // but without timeout,
+    // the hotkey will be sent to select input
+    setTimeout(() => {
+      hnInputRef.current.focus({cursor: 'all'});
+    }, 20);
+  });
   const handleSubmit = () => {
     let input_hn = document.getElementById("hn-input").value.trim();
     if (!input_hn) return;
@@ -240,6 +277,7 @@ function SelectHN(props) {
           props.setMedRecIndex([]);
           props.setAccessionNo(null);
           props.setAccessionNoIndex([]);
+          props.next();
         } else props.setPatient(false);
         props.setLoading(false);
       })
@@ -249,10 +287,12 @@ function SelectHN(props) {
     <Form layout="vertical">
       <Form.Item label="Patient's HN">
         <Input
+          ref={hnInputRef}
           className="input-text"
           id="hn-input"
           style={{ width: "300px" }}
           defaultValue={props.HN}
+          onPressEnter={handleSubmit}
           onChange={() => {
             if (props.HN.length > 0 || props.Patient === false) {
               props.setHN("");

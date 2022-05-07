@@ -71,17 +71,17 @@ export default function ResultsTable(props) {
     changeGradcam(props.gradCam);
   }, [props.gradCam]);
 
-  useEffect(()=>{
-    if (reportState.btnGroup === "back" && !currentActivity.enablePageChange){
+  useEffect(() => {
+    if (reportState.btnGroup === "back" && !currentActivity.enablePageChange) {
       setCurrentActivity({ ...currentActivity, enablePageChange: true });
     }
-    if (reportState.btnGroup === "save" && currentActivity.enablePageChange){
+    if (reportState.btnGroup === "save" && currentActivity.enablePageChange) {
       setCurrentActivity({ ...currentActivity, enablePageChange: false });
     }
-  },[reportState])
+  }, [reportState]);
 
   function changeGradcam(selected_class) {
-    const col = [
+    let col = [
       {
         title: "Class",
         dataIndex: "class",
@@ -108,37 +108,42 @@ export default function ResultsTable(props) {
         },
         render: (text, record) => (record.isPositive ? 1 : 0),
       },
-      {
-        title: "Gradcam",
-        key: "action",
-        render: (text, record) =>
-          record.gradCam && (
-            <Button
-              type="link"
-              icon={
-                record.class === selected_class ? (
-                  <EyeOutlined
-                    style={
-                      record.isPositive
-                        ? { ...GradCamStyle, color: "#03989e" }
-                        : GradCamStyle
-                    }
-                  />
-                ) : (
-                  <EyeInvisibleOutlined
-                    style={
-                      record.isPositive
-                        ? { ...GradCamStyle, color: "#03989e" }
-                        : GradCamStyle
-                    }
-                    onClick={() => props.setGradCam(record.class)}
-                  />
-                )
-              }
-            />
-          ),
-      },
     ];
+    if (!(props.gradCamList.length === 1 && props.gradCamList.includes("original") && props.gradCamList.length)) {
+      col = [
+        ...col,
+        {
+          title: "Gradcam",
+          key: "action",
+          render: (text, record) =>
+            record.gradCam && (
+              <Button
+                type="link"
+                icon={
+                  record.class === selected_class ? (
+                    <EyeOutlined
+                      style={
+                        record.isPositive
+                          ? { ...GradCamStyle, color: "#03989e" }
+                          : GradCamStyle
+                      }
+                    />
+                  ) : (
+                    <EyeInvisibleOutlined
+                      style={
+                        record.isPositive
+                          ? { ...GradCamStyle, color: "#03989e" }
+                          : GradCamStyle
+                      }
+                      onClick={() => props.setGradCam(record.class)}
+                    />
+                  )
+                }
+              />
+            ),
+        },
+      ];
+    }
     setColumn(col);
   }
 

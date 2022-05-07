@@ -51,6 +51,7 @@ export default function AnnotationModal(props) {
         onCancel={handleCancel}
         footer={null}
         width="1350px"
+        keyboard={false}
       >
         <AnnotationPanel
           handleCancel={handleCancel}

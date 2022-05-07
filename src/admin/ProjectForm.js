@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { Form, Input, Select, Button, Modal, Spin, Tag, Tooltip, Popconfirm } from "antd";
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import { getAllUsers } from "../api/admin";
-import { createProject, getAllProjects, getProjectInfoByID, updateProjectById } from "../api/project";
+import { createProject, getAllProjects, getProjectInfoByID, updateProjectById, getAllTasks } from "../api/project";
 
 const LoadingIcon = (
     <LoadingOutlined style={{ fontSize: 50, color: "#de5c8e" }} spin />
@@ -17,7 +17,7 @@ function ProjectForm() {
     const palette = ["magenta","red","volcano","orange","gold","green","cyan","blue","geekblue","purple"];
     const [projects, setProjects] = useState([]);
     const [projectName, setProjectName] = useState("");
-    const tasks = ["classification_pylon_1024"];
+    const [tasks, setTasks] = useState("");
     const [users, setUsers] = useState([]);
     const [classes, setClasses] = useState([]);
     const [classesError, setClassesError] = useState(false);
@@ -54,6 +54,9 @@ function ProjectForm() {
     const [submit, setSubmit] = useState(false);
     const [inputVisible, setInputVisible] = useState(true);
     useEffect(() => {
+        getAllTasks()
+          .then((res) => setTasks(res.data))
+          .catch((err) => console.log(err.response));
         setLoaded(false);
         setSubmit(false);
         form.resetFields();
