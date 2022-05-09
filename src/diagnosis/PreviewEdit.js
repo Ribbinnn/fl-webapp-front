@@ -37,6 +37,11 @@ export default function PreviewEdit(props) {
             field.charAt(0).toUpperCase() + field.slice(1).split("_").join(" ")
           } must be a number.`,
         });
+    } else if (
+      props.projectReq.find((item) => item.name === field)?.type === "boolean"
+    ) {
+      value = value.toLowerCase() === 'true' ? true : value.toLowerCase() === 'false' ? false : value;
+      // console.log(value)
     }
     // console.log(field, typeof value);
     props.setMedRec({
@@ -83,7 +88,7 @@ export default function PreviewEdit(props) {
                 <Input
                   className="input-prev-edit-text"
                   style={{ width: "200px" }}
-                  value={props.MedRec[item]}
+                  value={/* props.projectReq.find((proj) => proj.name === item)?.type === "boolean" ? props.MedRec[item]?.toString() :  */props.MedRec[item]}
                   onChange={onChangeMedRec(item)}
                 />
               </Form.Item>
