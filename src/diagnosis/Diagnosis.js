@@ -72,7 +72,6 @@ export default function Diagnosis(props) {
       Modal.warning({ content: "Please select X-Ray Image." });
     } else {
       if (current === 3) {
-        console.log(MedRec)
         setLoading(true);
         infer(
           accessionNo,
