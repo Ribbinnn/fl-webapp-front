@@ -66,6 +66,13 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             for (const i in remove_field) {
                 delete selected_data[remove_field[i]];
             }
+            Object.keys(selected_data).forEach((key) => {
+                if (typeof selected_data[key] === "string" && selected_data[key].toLowerCase() === "true") {
+                    selected_data[key] = true;
+                } if (typeof selected_data[key] === "string" && selected_data[key].toLowerCase() === "false") {
+                    selected_data[key] = false;
+                }
+            });
             props.setMedRecIndex(selectedRowKeys);
             props.setMedRec(selected_data);
         },
