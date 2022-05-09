@@ -20,7 +20,7 @@ const UploadRecordForm = forwardRef((props, ref) => {
             if (uploadedRecord.without_key !== null) {
                 for (const i in uploadedRecord.without_key) {
                     Object.keys(uploadedRecord.without_key[i]).forEach((key) => {
-                        if (uploadedRecord.without_key[i][key] === "true") {
+                        if (uploadedRecord.without_key[i][key].toLowerCase() === "true") {
                             uploadedRecord.without_key[i][key] = true;
                         } if (uploadedRecord.without_key[i][key] === "false") {
                             uploadedRecord.without_key[i][key] = false;
