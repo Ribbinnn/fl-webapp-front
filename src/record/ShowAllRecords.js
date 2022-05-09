@@ -99,9 +99,9 @@ const ShowAllRecords = forwardRef((props, ref) => {
       Object.keys(update_data).forEach((key) => {
         if (!isNaN(update_data[key])) {
           update_data[key] = parseInt(update_data[key]);
-        } if (update_data[key].toLowerCase() === "true") {
+        } if (typeof update_data[key] === "string" && update_data[key].toLowerCase() === "true") {
           update_data[key] = true;
-        } if (update_data[key] === "false") {
+        } if (typeof update_data[key] === "string" && update_data[key].toLowerCase() === "false") {
           update_data[key] = false;
         }
       });
