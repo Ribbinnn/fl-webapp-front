@@ -72,6 +72,7 @@ export default function Diagnosis(props) {
       Modal.warning({ content: "Please select X-Ray Image." });
     } else {
       if (current === 3) {
+        console.log(MedRec)
         setLoading(true);
         infer(
           accessionNo,
@@ -108,8 +109,9 @@ export default function Diagnosis(props) {
   useHotkeys(
     "enter",
     () => {
-      if (document.getElementById("diagnosis-next-btn") && !document.getElementsByClassName("ant-modal").length) {
-        next();
+      var nextBtn = document.getElementById("diagnosis-next-btn");
+      if (nextBtn && !document.getElementsByClassName("ant-modal").length) {
+        nextBtn.click();
       }
     },
     {
@@ -121,8 +123,9 @@ export default function Diagnosis(props) {
   useHotkeys(
     "shift+b",
     () => {
-      if (document.getElementById("diagnosis-back-btn") && !document.getElementsByClassName("ant-modal").length) {
-        prev();
+      var prevBtn = document.getElementById("diagnosis-back-btn");
+      if (prevBtn && !document.getElementsByClassName("ant-modal").length) {
+        prevBtn.click();
       }
     },
     {
@@ -171,6 +174,7 @@ export default function Diagnosis(props) {
                 <ProjectInfo
                   project_id={globalProject.projectId}
                   collapse={false}
+                  width="290px"
                 />
               </div>
             </Col>
