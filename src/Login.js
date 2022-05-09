@@ -107,7 +107,7 @@ function Login() {
                 <label id="smaller-label">OR</label>
               </div>
               <div className="center-div">
-                <a href={`https://account.it.chula.ac.th/login?service=http://${process.env.REACT_APP_IP_ADDRESS}/auth`}>
+                <a href={`https://account.it.chula.ac.th/login?service=http://${process.env.REACT_APP_IP_ADDRESS}:${process.env.REACT_APP_FRONTEND_PORT}/auth`}>
                   <img
                     src="https://account.it.chula.ac.th/images/ConnectWithChulaSSO.png"
                     width="300"
