@@ -26,9 +26,9 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
                     Object.keys(data).forEach((key) => {
                         if (!isNaN(data[key])) {
                             data[key] = parseInt(data[key]);
-                        } if (data[key].toLowerCase() === "true") {
+                        } if (typeof data[key] === "string" && data[key].toLowerCase() === "true") {
                             data[key] = true;
-                        } if (data[key] === "false") {
+                        } if (typeof data[key] === "string" && data[key].toLowerCase() === "false") {
                             data[key] = false;
                         }
                     });
@@ -131,9 +131,9 @@ const SelectMedicalRecord = forwardRef((props, ref) => {
             Object.keys(update_data).forEach((key) => {
                 if (!isNaN(update_data[key])) {
                     update_data[key] = parseInt(update_data[key]);
-                } if (update_data[key].toLowerCase() === "true") {
+                } if (typeof update_data[key] === "string" && update_data[key].toLowerCase() === "true") {
                     update_data[key] = true;
-                } if (update_data[key] === "false") {
+                } if (typeof update_data[key] === "string" && update_data[key].toLowerCase() === "false") {
                     update_data[key] = false;
                 }
             });
